@@ -93,6 +93,16 @@ $('.modal-confirm').on('click', function () {
     }
 });
 
+$('.submission-failed#2').on('click', 'p', function () {
+    let currHref = $(location).attr('href');
+    currHref = currHref.slice(0, currHref.lastIndexOf('/'));
+    $(location).attr('href', currHref);
+});
+
+$('.submission-failed#1').on('click', 'p', function () {
+    location.reload(true);
+});
+
 function getWeek(date) {
     $.ajax({
         type: 'GET',
@@ -183,11 +193,23 @@ function sendVisitor(inputData){
         dataType: 'json',
         contentType: "application/json",
         success: function (data) {
+            let success = data.success;
             $('.timeline').css('display', 'none');
             $('.submit-modal').css('display', 'none');
             $('.submission-content').css('display', 'flex');
-            if (data.success == 0){
-                $('.submission-success').css('display', 'block');
+            switch (success) {
+                case 0:
+                    $('.submission-success').css('display', 'block');
+                    break;
+                case 1:
+                    $('.submission-failed#1').css('display', 'flex');
+                    break;
+                case 2:
+                    $('.submission-failed#2').css('display', 'flex');
+                    break;
+                case 3:
+                    $('.submission-failed#3').css('display', 'flex');
+                    break;
             }
         }
     })

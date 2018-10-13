@@ -8,7 +8,19 @@ block content
             i.fa.fa-check.success#submission
             br
             #succ-message= 'УРА! Вы были успешно записаны на событие ' + eventType
-        .submission-failed
+        .submission-failed#1
+            i.fa.fa-times.error
+            br
+            .message#error= 'УПС! Кто-то оказался проворнее вас. На данное событие не осталось свободных мест :('
+            p= 'Попробовать записаться на другую дату/время'
+        .submission-failed#2
+            i.fa.fa-exclamation.warning
+            br
+            .message= 'Внимание! Вы уже записаны на текущее событие. Нет нужды в повторной записи.'
+            p= 'Записаться на другое событие'
+        .submission-failed#3
+            i.fa.fa-exclamation.warning
+            .message= 'Внимание! Вы уже записаны на это событие в другой день или время. Выберите более подходящий вариант.'
     .timeline
         #event-header
             .top_container

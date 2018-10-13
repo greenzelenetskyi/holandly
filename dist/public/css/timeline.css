@@ -423,9 +423,10 @@ i.fa.fa-exclamation.warning{
 
 .submission-content{
     margin: 2vw auto auto;
-    width: 50%;
+    width: 60%;
     display: none;
     justify-content: center;
+    font-size: calc(14px + 0.3vw);
 }
 
 .submission-success{
@@ -443,6 +444,48 @@ i.fa.fa-exclamation.warning{
 
 .submission-failed{
     display: none;
+    color: orange;
+    flex-direction: column;
+}
+
+.message#error{
+    color: red;
+}
+
+.submission-failed > .message{
+    margin: auto;
+}
+
+.submission-failed > i.fa.fa-exclamation.warning{
+    width: 100%;
+    font-size: 4vw;
+    position: relative;
+    display: block;
+    text-align: center;
+}
+
+.submission-failed > i.fa.fa-times.error{
+    width: 100%;
+    font-size: 4vw;
+    position: relative;
+    display: block;
+    text-align: center;
+}
+
+.submission-failed > p{
+    width: 60%;
+    color: black;
+    margin: 2vw auto auto;
+    padding: 15px;
+    border: 3px solid #27AE60;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.submission-failed > p:hover {
+    background-color: #27AE60;
+    color: #fff;
+    cursor: pointer;
 }
 
 #succ-message{
