@@ -65,8 +65,15 @@ block content
                         #modal-event= eventType
                         #modal-description= description
                     .modal-time
-                        #modal-start
-                        #modal-duration= "Длительность: " + duration + ' мин'
+                        .modal-date
+                            i.far.fa-calendar-check
+                            #modal-date
+                        .modal-start
+                            i.far.fa-clock
+                            #modal-start
+                        .modal-dur
+                            i.far.fa-hourglass
+                            #modal-duration= "Длительность: " + duration + ' мин'
                 .modal-left
                     p#modal-message Для подтвердждения записи на событие введите ваши данные
                     form

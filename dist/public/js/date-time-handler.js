@@ -3,7 +3,7 @@ $('ul').on('click', '.active', function () {
     $(this).css('background-color', "#27AE60");
     $(this).css('color', "white");
     $('.time-container ul').html('');
-    var date = $(this).children($('.list-full-date')).html();
+    date = $(this).children($('.list-full-date')).html();
     getTimeline(formatDate(date));
     $('.time-container').css('display', 'block');
 });
@@ -50,7 +50,12 @@ $('.time-container ul').on('click', '.pick', function () {
     eventId = $(this).children('.event-id').text();
     $('.submit-modal').css('display', 'flex');
     let startTime = $(this).parent().children('.time').text();
-    $('#modal-start').html("⌚    Начало: "  +startTime.slice(0, 5));
+    $('#modal-start').html("Начало: "  +startTime.slice(0, 5));
+    let modalDate = new Date(formatDate(date));
+    let arr = [weekArray[modalDate.getDay()].full, modalDate.getDate()];
+    let dateMssg = arr.join(', ');
+    dateMssg += " " + monthArray[modalDate.getMonth()].full;
+    $('#modal-date').html(dateMssg);
 });
 
 $('.submit-modal').on('mouseover mouseout', function (e) {
@@ -72,11 +77,11 @@ $('.submit-modal').on('click', 'i.fa.fa-times.error#close-modal', function (e) {
     $('.submit-modal').css('display', 'none');
 });
 
-$('#visitorName').focusout(function () {
+$('#visitorName').on('keydown keyup focusout', function () {
    checkName();
 });
 
-$('#visitorEmail').focusout(function () {
+$('#visitorEmail').on('keydown keyup focusout', function () {
    checkEmail(); 
 });
 
@@ -100,9 +105,9 @@ function getWeek(date) {
                 let iDate = new Date(days[i].date);
                 let currLi = $('.date-bar li').eq(i);
                 currLi.children('.list-full-date').html(iDate.getDate() + '/'+ (iDate.getMonth()+1) + '/' +iDate.getFullYear());
-                currLi.children('.list-day').html(weekArray[iDate.getDay()]);
+                currLi.children('.list-day').html(weekArray[iDate.getDay()].short);
                 currLi.children('.list-date').html(iDate.getDate());
-                currLi.children('.list-month').html(monthArray[iDate.getMonth()]);
+                currLi.children('.list-month').html(monthArray[iDate.getMonth()].short);
                 if (days[i].available) {
                     $('.date-bar li').eq(i).attr('class', 'active');
                 }
@@ -256,5 +261,24 @@ var patternId = $('#patternId').html();
 var eventId;
 
 
-var weekArray = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
-var monthArray = ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Ноя', 'Дек'];
+var weekArray = [{short: 'ВС', full: 'Воскресенье'},
+    {short: 'ПН', full: 'Понедельник'},
+    {short: 'ВТ', full: 'Вторник'},
+    {short: 'СР', full: 'Среда'},
+    {short: 'ЧТ', full: 'Четверг'},
+    {short: 'ПТ', full: 'Пятница'},
+    {short: 'СБ', full: 'Суббота'}];
+var monthArray = [{short: 'Янв', full: "Января"},
+    {short: 'Фев', full: "Февраля"},
+    {short: 'Март', full: "Марта"},
+    {short: 'Апр', full: "Апреля"},
+    {short: 'Май', full: "Мая"},
+    {short: 'Июнь', full: "Июня"},
+    {short: 'Июль', full: "Июля"},
+    {short: 'Авг', full: "Августа"},
+    {short: 'Сент', full: "Сентября"},
+    {short: 'Окт', full: "Октября"},
+    {short: 'Ноя', full: "Ноября"},
+    {short: 'Дек', full: "Декабря"}];
+
+var date;
