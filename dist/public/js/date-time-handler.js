@@ -182,7 +182,7 @@ function sendVisitor(inputData){
             $('.submit-modal').css('display', 'none');
             $('.submission-content').css('display', 'flex');
             if (data.success == 0){
-                $('.submission-success').css('display', 'flex');
+                $('.submission-success').css('display', 'block');
             }
         }
     })
