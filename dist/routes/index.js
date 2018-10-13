@@ -19,9 +19,9 @@ var igorDB = {
     database: "shppcalendly"
 };
 
-// var con = mysql.createConnection(igorDB);
+var con = mysql.createConnection(igorDB);
 //var con = mysql.createConnection(borisDB);
-var con = userModel.dbConnect;
+// var con = userModel.dbConnect;
 
 con.connect(function(err) {
     if (err) throw err;
@@ -38,7 +38,6 @@ var DEAD_ZONE = 120;
 exports.router.get('/', function (req, res, next) {
     res.render('index', {title: 'Express'});
 });
-
 
 
 exports.router.get('/:userName', function (req, res, next) {
@@ -68,7 +67,7 @@ exports.router.get('/:userName/:patternId', function (req, res, next) {
         if (results.length == 0) res.render('index', {description: '', duration: 0, dates: []});
         else {
             var conditions = [patternId, DAYS_FOR_SEARCH];
-            con.query('select e.date, p.number, p.description, p.duration, p.type, count(v.visitorId) as amount from eventslist e ' +
+            con.query('select e.date, e.time, p.number, p.description, p.duration, p.type, count(v.visitorId) as amount from eventslist e ' +
                 'left join eventpattern p on p.patternId = e.patternId ' +
                 'left join eventvisitors v on v.eventId = e.eventId  ' +
                 'where p.patternId = ? and e.date >= curdate() and (datediff(e.date, curdate()) <= ?) ' +
@@ -83,23 +82,6 @@ exports.router.get('/:userName/:patternId', function (req, res, next) {
         }
     });
 });
-
-// exports.router.get('/events/:userName/:eventType', function (req, res, next) {
-//     var conditions = [req.params.userName, req.params.eventType];
-//     con.query('select * from eventslist ' +
-//         'left join eventpattern on eventpattern.patternId = eventslist.patternId ' +
-//         'join users on eventpattern.userId = users.userId ' +
-//         'where users.login = ? and eventpattern.type = ? and eventslist.date >= curdate();',
-//         conditions, function (err, results, fields) {
-//             if (err) throw err;
-//             var events = [];
-//             results.forEach(function (entry) {
-//                 events.push(entry.date);
-//             });
-//             res.render('index', {event: results[0].type, description: results[0].description,
-//                 duration: results[0].duration, data: events});
-//         });
-// });
 
 // modelling post-queries as get-queries
 exports.router.get('/getWeek/:date/:patternId', function (req, res, next) {
@@ -212,8 +194,6 @@ exports.router.post('/submitVisitor', function (req, res, next) {
                                                 }
                                             });
                                     });
-
-
                     }
                             else {   //  visitor has already recorded on this event
                                 console.log("You've already recorded on this event.");
@@ -221,11 +201,9 @@ exports.router.post('/submitVisitor', function (req, res, next) {
                             }
                         });
                     });
-
             }
             console.log('End of checking.');
         });
-
 });
 
 function weekAvailable (dayCur, rsl) {
@@ -236,6 +214,7 @@ function weekAvailable (dayCur, rsl) {
     }
     var currentDay = new Date();
     rsl.forEach(function (entry) {
+        currentDay.setHours(0, 0, 0, 0);
         if (entry.number - entry.amount > 0) {
             for (var i = 0; i < DAYS_FOR_SEARCH; i++) {
                 if ((entry.date < currentDay) || (dateFormat(entry.date) != days[i].date)) continue;
@@ -243,6 +222,7 @@ function weekAvailable (dayCur, rsl) {
                     days[i].available = true;
                     break;
                 }
+                currentDay = new Date();
                 currentDay.setMinutes(currentDay.getMinutes() + DEAD_ZONE);
                 var timeArray = entry.time.split(':');
                 var dateTime = entry.date;
