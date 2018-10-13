@@ -52,7 +52,7 @@ app.use(body_parser_1.default.text());
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 // processes user admin page routes
 app.use('/', user_1.userRouter);
-app.use('/user', visitor.router);
+//app.use('/user', visitor.router);
 app.listen(8130, () => {
     console.log('wat up');
 });

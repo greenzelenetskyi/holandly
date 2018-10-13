@@ -46,6 +46,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // processes user admin page routes
 app.use('/', userRouter)
 
+//app.use('/user', visitor.router);
+
 app.listen(8130, () => {
     console.log('wat up');
 });
