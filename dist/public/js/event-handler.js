@@ -7,7 +7,7 @@ $('ul').on('click', 'li', function () {
     patternId = $(this).children('.patternId').html();
     $('.bg-modal').css('display', 'flex');
     $('#modal-owner').text(event_owner);
-    $('#modal-desc').text("Are you sure you want to visit " + eventType + "?");
+    $('#modal-desc').text("Вы уверены что хотите посетить событие " + eventType + "?");
 });
 
 

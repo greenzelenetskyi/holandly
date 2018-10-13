@@ -306,7 +306,9 @@ i.fa.fa-times.error#close-modal:hover, i.fa.fa-times.error#close-modal.hovered{
 
 .modal-left{
     margin: auto;
-    border: solid 1px black;
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 3px solid #27AE60;;
     width: 100%;
 }
 
@@ -407,4 +409,33 @@ i.fa.fa-exclamation.warning{
 
 .modal-left form.modal-container label{
     margin-right: 100px;
+}
+
+.submission-content{
+    margin: auto;
+    margin-top: 2vw;
+    width: 50%;
+    display: none;
+    justify-content: center;
+}
+
+.submission-success{
+    display: none;
+    color: green;
+}
+
+.submission-success i.fa.fa-check.success#submission{
+    width: 100%;
+    font-size: 4vw;
+    position: relative;
+    display: block;
+    text-align: center;
+}
+
+.submission-failed{
+    display: none;
+}
+
+#succ-message{
+    font-size: calc(16px + 0.2vw);
 }

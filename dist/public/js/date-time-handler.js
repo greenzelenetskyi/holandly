@@ -178,7 +178,12 @@ function sendVisitor(inputData){
         dataType: 'json',
         contentType: "application/json",
         success: function (data) {
-            console.log(data);
+            $('.timeline').css('display', 'none');
+            $('.submit-modal').css('display', 'none');
+            $('.submission-content').css('display', 'flex');
+            if (data.success == 0){
+                $('.submission-success').css('display', 'flex');
+            }
         }
     })
 }

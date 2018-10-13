@@ -3,9 +3,13 @@ extends layout
 block content
     #patternId= patternId
     #eventDuration= duration
+    .submission-content
+        .submission-success
+            i.fa.fa-check.success#submission
+            br
+            #succ-message= 'УРА! Вы были успешно записаны на событие ' + eventType
+        .submission-failed
     .timeline
-        .head
-            .event-owner= userName
         #event-header
             .top_container
                 #event-name= eventType
@@ -54,7 +58,7 @@ block content
     .submit-modal
         i.fa.fa-times.error#close-modal
         .submit-content
-            #modal-owner= userName
+            #modal-owner= username
             .modal-inner
                 .modal-right
                     .modal-description
