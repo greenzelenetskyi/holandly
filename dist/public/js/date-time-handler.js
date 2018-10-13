@@ -4,7 +4,6 @@ $('ul').on('click', '.active', function () {
     $(this).css('color', "white");
     $('.time-container ul').html('');
     var date = $(this).children($('.list-full-date')).html();
-    console.log(date)
     getTimeline(formatDate(date));
     $('.time-container').css('display', 'block');
 });
@@ -54,10 +53,22 @@ $('.time-container ul').on('click', '.pick', function () {
     $('#modal-start').html("⌚    Начало: "  +startTime.slice(0, 5));
 });
 
+$('.submit-modal').on('mouseover mouseout', function (e) {
+    if (e.target !== this)
+        return;
+    $(this).toggleClass('hovered');
+    $('i.fa.fa-times.error#close-modal').toggleClass('hovered');
+});
+
 $('.submit-modal').on('click', function (e) {
     if (e.target !== this)
         return;
+    $('.submit-modal').css('display', 'none');
+});
 
+$('.submit-modal').on('click', 'i.fa.fa-times.error#close-modal', function (e) {
+    if (e.target !== this)
+        return;
     $('.submit-modal').css('display', 'none');
 });
 
@@ -160,7 +171,6 @@ function formatTimelineTime(date, time){
 }
 
 function sendVisitor(inputData){
-    console.log(inputData);
     $.ajax({
         type: 'POST',
         url: '/user/submitVisitor',
@@ -190,7 +200,7 @@ function checkName() {
             currItem.css('border-bottom', '2px solid orange');
         } else {
             currItem.parent().children('i.fa.fa-times.error').css('display', 'inline');
-            currItem.parent().children('span.spanEmpty').css('display', 'inline');
+            currItem.parent().children('span.spanInvalid').css('display', 'inline');
             currItem.css('border-bottom', '2px solid #f90a0a');
         }
         error_name = true;
@@ -241,5 +251,5 @@ var patternId = $('#patternId').html();
 var eventId;
 
 
-var weekArray = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
+var weekArray = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
 var monthArray = ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Ноя', 'Дек'];
