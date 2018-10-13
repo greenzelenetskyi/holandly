@@ -127,24 +127,25 @@ exports.router.post('/submitVisitor', function (req, res, next) {
     let vname = req.body.name;
     let vemail = req.body.email;
     let eventId = req.body.event;
-    console.log(eventId);
+    // console.log(eventId);
 
     let visitor = [vname, vemail, vname, vemail];
-    let vstrId, eventCapacity;
+    let vstrId, eventCapacity, access;
 
-    //  check the possibility of recording on the event
-    con.query('select e.date, e.time, p.number, count(v.visitorId) as amount from eventslist e ' +
+    //  checking the possibility of recording on the event
+    con.query('select e.date, e.time, p.number, p.multiaccess, count(v.visitorId) as amount from eventslist e ' +
         'left join eventpattern p on p.patternId = e.patternId ' +
         'left join eventvisitors v on v.eventId = e.eventId where e.eventId = ? ;',
         [eventId], function (err, possibility, fields) {
             if (err) throw err;
             if (possibility.length == 0 || possibility[0].number - possibility[0].amount < 1) {   // recording possibility  = false
                 console.log('Sorry...');
-                res.json({success: false, name: vname, email: vemail});
+                res.json({success: 1, name: vname, email: vemail});
             }
             else {                                                                                // recording possibility  = true
                 //   input visitor ( + uniqueness check)
                 eventCapacity = possibility[0].number;
+                access = possibility[0].multiaccess;
                 con.query('select visitorId from visitors where name = ? and email = ?;',
                     visitor, function (err, visitorid, fields) {
                         if (err) throw err;
@@ -160,11 +161,24 @@ exports.router.post('/submitVisitor', function (req, res, next) {
                                 });
                         }
 
-                        // check for duplicate entries on an event
+                        // checking for duplicate entries on an event
                         con.query(`select count(visitorId) as amount from eventvisitors
                         where eventId = ? and visitorId = ?`, [eventId, vstrId], function (err, duplicate, fields) {
                             if (err) throw err;
                             if (duplicate[0].amount == 0) {
+
+                                // checking for pattern restrictions
+                                if (access > 0) {
+                                    con.query(`select count(v.evId) as alreadyRecords from eventvisitors v 
+                                      left join eventslist e on v.eventId = e.eventId 
+                                      left join eventpattern p on p.patternId = e.patternId
+                                      where v.visitorId = ?;`, [vstrId], function (err, isRecords, fields) {
+                                        if (err) throw err;
+
+                                    });
+                                }
+
+
                                 //  event recording
                                 con.query('insert into eventvisitors (eventId, visitorId) values (?, ?);',
                                     [eventId, vstrId], function (err, recording, fields) {
@@ -190,19 +204,19 @@ exports.router.post('/submitVisitor', function (req, res, next) {
                                                 }
                                                 else {
                                                     console.log('Success!');
-                                                    res.json({success: true, name: vname, email: vemail});
+                                                    res.json({success: 0, name: vname, email: vemail});
                                                 }
                                             });
                                     });
-                    }
+                            }
                             else {   //  visitor has already recorded on this event
                                 console.log("You've already recorded on this event.");
-                                res.json({success: true, name: vname, email: vemail});
+                                res.json({success: 2, name: vname, email: vemail});
                             }
                         });
                     });
             }
-            console.log('End of checking.');
+            // console.log('End of checking.');
         });
 });
 
