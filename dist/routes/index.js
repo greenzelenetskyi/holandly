@@ -43,17 +43,41 @@ exports.router.get('/', function (req, res) {
 exports.router.get('/:userName', function (req, res) {
     var usr = req.params.userName;
     var patterns = [];
-    // con.query('select distinct type, description from eventpattern ' +
-    con.query('select * from eventpattern ' +
-        'left join users on eventpattern.userId = users.userId ' +
-        'left join eventslist on eventpattern.patternId = eventslist.patternId and eventslist.date >= curdate() ' +
-        'where users.login = ? group by type, duration, number;',
-        usr, function (err, results) {
+    //  collects information about possible events of user patterns
+    con.query('select p.type, p.patternId, p.duration, p.description, p.number, e.eventId, e.date, e.time, count(v.visitorId) as amount ' +
+        'from eventpattern p  ' +
+        'left join eventslist e on p.patternId = e.patternId and e.date >= curdate() ' +
+        'left join eventvisitors v on v.eventId = e.eventId ' +
+        'where p.patternId in ' +
+        '(select distinct p.patternId from eventpattern p ' +
+        'left join users u on p.userId = u.userId ' +
+        'left join eventslist e on p.patternId = e.patternId and e.date >= curdate() ' +
+        'where u.login = ? ) group by e.eventId;',
+        [usr], function (err, results) {
             if (err) throw err;
+            var timeArray, dateTime, noPatterns;
+            var currentDay = new Date();
+            currentDay.setMinutes(currentDay.getMinutes() + DEAD_ZONE);  //  the beginning of the possible recording time
             results.forEach(function (entry) {
-                if (entry.patternId != null)
-                    patterns.push({event: entry.type, patternId: entry.patternId, duration: entry.duration,
-                        number: entry.number, description: entry.description});
+                if (entry.patternId != null && entry.eventId != null) {  //   is there a subject of record ?
+                    dateTime = entry.date;
+                    if (dateTime < currentDay) {  //  need to check the current date event's time
+                        timeArray = entry.time.split(':');
+                        dateTime.setHours(timeArray[0], timeArray[1], timeArray[2]);
+                    }
+                    if (dateTime > currentDay && entry.number > entry.amount) {  // event's pattern must be considered
+                        noPatterns = true;
+                        for (var i = 0; i < patterns.length; i++) {  // check for duplicate pattern entry
+                            if (patterns[i].patternId == entry.patternId) {
+                                noPatterns = false;
+                                break;
+                            }
+                        }
+                        if (noPatterns)   //  present the pattern to the visitor
+                            patterns.push({event: entry.type, patternId: entry.patternId, duration: entry.duration,
+                                number: entry.number, description: entry.description});
+                    }
+                }
             });
             res.render('index', {username: usr, patterns: patterns});
         });
@@ -238,6 +262,7 @@ function weekAvailable (dayCur, rsl) {
         dayCur.setDate(dayCur.getDate() + 1);
     }
     var currentDay = new Date();
+    var timeArray, dateTime;
     rsl.forEach(function (entry) {
         currentDay.setHours(0, 0, 0, 0);
         if (entry.number - entry.amount > 0) {
@@ -249,8 +274,8 @@ function weekAvailable (dayCur, rsl) {
                 }
                 currentDay = new Date();
                 currentDay.setMinutes(currentDay.getMinutes() + DEAD_ZONE);
-                var timeArray = entry.time.split(':');
-                var dateTime = entry.date;
+                timeArray = entry.time.split(':');
+                dateTime = entry.date;
                 dateTime.setHours(timeArray[0], timeArray[1], timeArray[2]);
                 if (dateTime > currentDay) {
                     days[i].available = true;
