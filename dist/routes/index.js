@@ -163,17 +163,19 @@ exports.router.post('/submitVisitor', function (req, res) {
                         }
 
                         // checking for duplicate entries on an event
-                        con.query(`select count(visitorId) as amount from eventvisitors
-                        where eventId = ? and visitorId = ?`, [eventId, vstrId], function (err, duplicate) {
+                        con.query('select count(visitorId) as amount from eventvisitors ' +
+                        'where eventId = ? and visitorId = ?;', [eventId, vstrId], function (err, duplicate) {
                             if (err) throw err;
                             if (duplicate[0].amount == 0) {
 
                                 // checking for pattern restrictions
                                 if (access > 0) {  // there are restrictions on the number of pattern events that a visitor can be recorded
+                                    var currentDay = new Date();
+                                    currentDay.setHours(0, 0, 0, 0);
                                     con.query('select count(v.evId) as alreadyRecords from eventvisitors v ' +
                                         'where v.visitorId = ? and v.eventId in ' +
-                                        '(select e.eventId from eventslist e where e.patternId = ?);',
-                                        [vstrId, eventPattern], function (err, isRecords) {
+                                        '(select e.eventId from eventslist e where e.patternId = ? and e.date >= ?);',
+                                        [vstrId, eventPattern, currentDay], function (err, isRecords) {
                                         if (err) throw err;
                                         if (isRecords[0].alreadyRecords < access) {  // it's still possible to record to the pattern events
                                             eventRecording(eventId, vstrId, eventCapacity);
