@@ -1,6 +1,7 @@
 import mysql, { MysqlError } from 'mysql';
 import { Request, Response} from 'express';
 import moment from 'moment';
+import * as calendar from './calendar';
 
 export const dbConnect = mysql.createConnection({
     host: '127.0.0.1',
@@ -17,6 +18,7 @@ export let verifyUser = (username: any, password: any, done: any) => {
       return done(null, usr[0]);
     })
   }
+  
 /* returns events sorted by data, time and type */
 export let sendScheduledEvents = (req: Request, res: Response) => {
     dbConnect.query(`select visitors.name, visitors.email, eventslist.date, eventslist.time, eventslist.patternId, eventvisitors.eventId, eventpattern.type, eventpattern.number,
@@ -31,11 +33,20 @@ export let sendScheduledEvents = (req: Request, res: Response) => {
           console.log(err)
           res.json("Data retrieval failed");
       } else if(results.length > 0) {
-        let scheduledEvents: any[] = [];
-        let prevDate: any;
-        let prevTime: any;
-        let prevType: any;
-        let isPrevDatePast: any;
+        res.send(JSON.stringify(makeSortedEventList(results)));
+      } else {
+        res.json("No scheduled events");
+      } 
+    })
+  }
+
+  /* aggregates events by common date and time */
+  const makeSortedEventList = (results: any) => {
+    let scheduledEvents: any[] = [];
+    let prevDate: any;
+    let prevTime: any;
+    let prevType: any;
+    let isPrevDatePast: any;
         results.forEach(function(entry: any) {
           if(+entry.date === +prevDate) {
             delete entry.date;
@@ -60,12 +71,8 @@ export let sendScheduledEvents = (req: Request, res: Response) => {
             scheduledEvents.push(event);
           }
         })
-        res.send(JSON.stringify(scheduledEvents));
-      } else {
-        res.json("No scheduled events");
-      } 
-    })
-  } 
+    return scheduledEvents;
+  }
 
   /* if the appointment is in 30 min or less, it is considered to be past*/
   const makeAppointment = (entry: any, isPrevDatePast: boolean) => {
@@ -95,8 +102,7 @@ export let sendEventPatterns = (req: Request, res: Response) => {
     })
   }
 
-  export let sendAvailableEvents = (req: Request, res: Response) => {
-    let respObjects: any[] = [];
+export let sendAvailableEvents = (req: Request, res: Response) => {
     dbConnect.query(`select eventslist.*, visitCount.occupied, eventpattern.number, eventpattern.type from holandly.eventslist
                       inner join eventpattern on eventslist.patternId = eventpattern.patternId
                       left join (select eventId, COUNT(*) AS occupied from eventvisitors group by eventId) AS visitCount on eventslist.eventId = visitCount.eventId
@@ -121,7 +127,6 @@ export let sendEventPatterns = (req: Request, res: Response) => {
 
   export let addNewEventPattern = (req: Request, res: Response) => {
     let user = req.user.userId;
-    console.log(user)
     let type = req.body.type;
     let pattern: any[] = [type, req.body.number, req.body.duration, req.body.description, user, type, user];
     dbConnect.query(`insert into eventpattern (type, number, duration, description, userId)
@@ -156,17 +161,22 @@ export let sendEventPatterns = (req: Request, res: Response) => {
     })
   }
 
-  export let deleteEventPattern = (req: Request, res: Response) => {
+  export let deleteEventPattern = (req: Request, res: Response) => { // delete all the active events
     let patternId: string = req.params[0];
     dbConnect.query(`delete from eventpattern where eventpattern.patternId = ?`, patternId, function(err: MysqlError, results: any, fields: any) {
       if(err) {
         res.json("Error ocurred");
       } else if(results.affectedRows > 0) {
+        deleteCalendarPatternEvents();
         res.json("Successful")
       } else {
         res.json('The operation is failed')
       }
     })
+  }
+
+  const deleteCalendarPatternEvents = () => {
+
   }
 
   export let deleteEvent = (req: Request, res: Response) => {
@@ -175,6 +185,7 @@ export let sendEventPatterns = (req: Request, res: Response) => {
       if(err) {
         res.json("Data retrieval failed");
       }  else if(results.affectedRows > 0) {
+        calendar.deleteCalendarEvent(req.params[0])
         res.json("Successful")
       } else {
         res.json('The operation is failed')
@@ -183,12 +194,12 @@ export let sendEventPatterns = (req: Request, res: Response) => {
   }
 
   export let deleteEventVisitor = (req: Request, res: Response) => {
-    let eventRecord: any = [req.body.eventId, req.body.email];
     dbConnect.query(`delete from eventvisitors where eventId = ? and visitorId = 
-    (select visitors.visitorId from visitors where email=?)`, eventRecord, function(err: MysqlError, results: any, fields: any) {
+    (select visitors.visitorId from visitors where email=?)`, [req.body.eventId, req.body.email], function(err: MysqlError, results: any, fields: any) {
       if(err) {
         res.json("Data retrieval failed");
       } else if(results.affectedRows > 0) {
+        deleteVisitorInCalendar(req.body.eventId)
         res.json("Successful")
       } else {
         res.json('The operation is failed')
@@ -196,17 +207,78 @@ export let sendEventPatterns = (req: Request, res: Response) => {
     })
   }
 
-  export let addEvent = (req: Request, res: Response) => {
+  const deleteVisitorInCalendar = (eventId: any) => {
+    dbConnect.query(`select visitors.visitorId as id, visitors.email, visitors.name as displayName from eventvisitors
+                      inner join visitors on visitors.visitorId = eventvisitors.visitorId
+                      where eventId=?`, [eventId]
+    , function(err: MysqlError, results: any, fields: any) {
+      if(err) {
+        console.log('Failed to fetch Google Calendar data');
+      } else if(results.length > 0) {
+        calendar.updateEvent(eventId, {
+          'attendees': JSON.parse(JSON.stringify(results))
+        })
+      } else {
+        console.log("No visitors")
+      }
+    })
+  }
+
+  // schedules new or updates existing
+  export let scheduleEvent = (req: Request, res: Response) => {
     let event: any = req.body;
     delete event[0].reason; //the reason is saved on front end in the form
-    dbConnect.query(`insert into eventslist SET ? ON DUPLICATE KEY UPDATE time=?,date=?, patternId=?`
+    dbConnect.query(`insert into eventslist SET ? ON DUPLICATE KEY UPDATE time=?, date=?, patternId=?`
                       ,[event[0], event[0].time, event[0].date, event[0].patternId] , function(err: MysqlError, results: any, fields: any) {
       if(err) {
-        res.json("Data retrieval failed");
-      } else if(results.affectedRows > 0) {
+        res.json("Error");
+      } else if (results.affectedRows > 0) {
+        if(results.affectedRows < 2) {
+          event[0].eventId = results.insertId;
+          addEventToCalendar(event[0])
+        } else {
+          rescheduleInCalendar(event[0])
+        }
         res.json("Successful")
       } else {
-        res.json('The operation is failed')
+        res.json('The operation failed')
       }
+    })
+  }
+
+  const rescheduleInCalendar = (newEventData: any) => {
+    let dateTime = moment(newEventData.date + " " + newEventData.time).format();
+    dbConnect.query(`select duration from eventpattern where patternId=?`
+    , [newEventData.patternId], (err: MysqlError, results: any) => { // queries properties needed for api call
+        if (err) {
+          console.log('Failed to fetch Google Calendar data');
+        } else if (results.length == 0) {
+          console.log('No pattern')
+        } else {
+          // creates resources object for Calendar API
+          calendar.updateEvent(newEventData.eventId, {
+            'start': {
+              'dateTime': dateTime,
+            },
+            'end': {
+              'dateTime': moment(dateTime).add(results.duration, 'minutes'),
+            },
+          })
+        }
+    })
+  }
+
+  // google calendar api insert event call
+  const addEventToCalendar = (eventData: any) => {
+    dbConnect.query(`select description, duration, type from eventpattern where patternId=?`
+    , [eventData.patternId], (err: MysqlError, results: any) => { // queries properties needed for api call
+        if (err) {
+          console.log('Failed to fetch Google Calendar data');
+        } else if (results.length == 0) {
+          console.log('No pattern')
+        } else {
+          eventData = { ...eventData, ...results[0] }
+          calendar.insertToCalendar(eventData); 
+        }
     })
   }
