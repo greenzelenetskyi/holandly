@@ -6,7 +6,9 @@ html {
 body{
     background-color: #d2d2d2;
     min-width: 650px;
+    margin: 1%;
 }
 .ico{
     height: 2rem;
 }
+

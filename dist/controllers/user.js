@@ -13,7 +13,8 @@ exports.requireLogin = (req, res, next) => {
     }
 };
 exports.getMainPage = (req, res) => {
-    res.sendFile(path_1.default.join(__dirname, '../public/personal.html'));
+    //res.sendFile(path_1.default.join(__dirname, '../public/personal.html'));
+    res.render('personal');
 };
 exports.stopSession = (req, res) => {
     req.session.destroy(function (err) {
