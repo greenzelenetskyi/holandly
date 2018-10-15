@@ -1,27 +1,29 @@
+//import * as userModel from "../models/user";
+
 var express = require('express');
 exports.router = express.Router();
 // var parser = require('body-parser');
-// var userModel = require('../models/user')
+ var userModel = require('../models/user')
 
 var mysql = require('mysql');
 
 var borisDB = {
     host: "localhost",
     user: "root",
-    password: "7B0fb6967",
+    password: "0",
     database: "holandly"
 };
 
 var igorDB = {
     host: "localhost",
     user: "root",
-    password: "54321",
+    password: "0",
     database: "shppcalendly"
 };
 
-var con = mysql.createConnection(igorDB);
+//var con = mysql.createConnection(igorDB);
 //var con = mysql.createConnection(borisDB);
-// var con = userModel.dbConnect;
+var con = userModel.dbConnect;
 
 con.connect(function(err) {
     if (err) throw err;
