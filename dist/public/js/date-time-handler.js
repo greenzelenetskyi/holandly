@@ -3,8 +3,7 @@ $('ul').on('click', '.active', function () {
     $(this).css('background-color', "#27AE60");
     $(this).css('color', "white");
     $('.time-container ul').html('');
-    var date = $(this).children($('.list-full-date')).html();
-    console.log(date)
+    date = $(this).children($('.list-full-date')).html();
     getTimeline(formatDate(date));
     $('.time-container').css('display', 'block');
 });
@@ -51,21 +50,38 @@ $('.time-container ul').on('click', '.pick', function () {
     eventId = $(this).children('.event-id').text();
     $('.submit-modal').css('display', 'flex');
     let startTime = $(this).parent().children('.time').text();
-    $('#modal-start').html("⌚    Начало: "  +startTime.slice(0, 5));
+    $('#modal-start').html("Начало: "  +startTime.slice(0, 5));
+    let modalDate = new Date(formatDate(date));
+    let arr = [weekArray[modalDate.getDay()].full, modalDate.getDate()];
+    let dateMssg = arr.join(', ');
+    dateMssg += " " + monthArray[modalDate.getMonth()].full;
+    $('#modal-date').html(dateMssg);
+});
+
+$('.submit-modal').on('mouseover mouseout', function (e) {
+    if (e.target !== this)
+        return;
+    $(this).toggleClass('hovered');
+    $('i.fa.fa-times.error#close-modal').toggleClass('hovered');
 });
 
 $('.submit-modal').on('click', function (e) {
     if (e.target !== this)
         return;
-
     $('.submit-modal').css('display', 'none');
 });
 
-$('#visitorName').focusout(function () {
+$('.submit-modal').on('click', 'i.fa.fa-times.error#close-modal', function (e) {
+    if (e.target !== this)
+        return;
+    $('.submit-modal').css('display', 'none');
+});
+
+$('#visitorName').on('keydown keyup focusout', function () {
    checkName();
 });
 
-$('#visitorEmail').focusout(function () {
+$('#visitorEmail').on('keydown keyup focusout', function () {
    checkEmail(); 
 });
 
@@ -75,6 +91,16 @@ $('.modal-confirm').on('click', function () {
         let vEmail = $('#visitorEmail').val();
         sendVisitor({name: vName, email: vEmail, event: eventId});
     }
+});
+
+$('.submission-failed#2').on('click', 'p', function () {
+    let currHref = $(location).attr('href');
+    currHref = currHref.slice(0, currHref.lastIndexOf('/'));
+    $(location).attr('href', currHref);
+});
+
+$('.submission-failed#1').on('click', 'p', function () {
+    location.reload(true);
 });
 
 function getWeek(date) {
@@ -89,9 +115,9 @@ function getWeek(date) {
                 let iDate = new Date(days[i].date);
                 let currLi = $('.date-bar li').eq(i);
                 currLi.children('.list-full-date').html(iDate.getDate() + '/'+ (iDate.getMonth()+1) + '/' +iDate.getFullYear());
-                currLi.children('.list-day').html(weekArray[iDate.getDay()]);
+                currLi.children('.list-day').html(weekArray[iDate.getDay()].short);
                 currLi.children('.list-date').html(iDate.getDate());
-                currLi.children('.list-month').html(monthArray[iDate.getMonth()]);
+                currLi.children('.list-month').html(monthArray[iDate.getMonth()].short);
                 if (days[i].available) {
                     $('.date-bar li').eq(i).attr('class', 'active');
                 }
@@ -160,7 +186,6 @@ function formatTimelineTime(date, time){
 }
 
 function sendVisitor(inputData){
-    console.log(inputData);
     $.ajax({
         type: 'POST',
         url: '/user/submitVisitor',
@@ -168,7 +193,24 @@ function sendVisitor(inputData){
         dataType: 'json',
         contentType: "application/json",
         success: function (data) {
-            console.log(data);
+            let success = data.success;
+            $('.timeline').css('display', 'none');
+            $('.submit-modal').css('display', 'none');
+            $('.submission-content').css('display', 'flex');
+            switch (success) {
+                case 0:
+                    $('.submission-success').css('display', 'block');
+                    break;
+                case 1:
+                    $('.submission-failed#1').css('display', 'flex');
+                    break;
+                case 2:
+                    $('.submission-failed#2').css('display', 'flex');
+                    break;
+                case 3:
+                    $('.submission-failed#3').css('display', 'flex');
+                    break;
+            }
         }
     })
 }
@@ -190,7 +232,7 @@ function checkName() {
             currItem.css('border-bottom', '2px solid orange');
         } else {
             currItem.parent().children('i.fa.fa-times.error').css('display', 'inline');
-            currItem.parent().children('span.spanEmpty').css('display', 'inline');
+            currItem.parent().children('span.spanInvalid').css('display', 'inline');
             currItem.css('border-bottom', '2px solid #f90a0a');
         }
         error_name = true;
@@ -241,5 +283,24 @@ var patternId = $('#patternId').html();
 var eventId;
 
 
-var weekArray = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
-var monthArray = ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Ноя', 'Дек'];
+var weekArray = [{short: 'ВС', full: 'Воскресенье'},
+    {short: 'ПН', full: 'Понедельник'},
+    {short: 'ВТ', full: 'Вторник'},
+    {short: 'СР', full: 'Среда'},
+    {short: 'ЧТ', full: 'Четверг'},
+    {short: 'ПТ', full: 'Пятница'},
+    {short: 'СБ', full: 'Суббота'}];
+var monthArray = [{short: 'Янв', full: "Января"},
+    {short: 'Фев', full: "Февраля"},
+    {short: 'Март', full: "Марта"},
+    {short: 'Апр', full: "Апреля"},
+    {short: 'Май', full: "Мая"},
+    {short: 'Июнь', full: "Июня"},
+    {short: 'Июль', full: "Июля"},
+    {short: 'Авг', full: "Августа"},
+    {short: 'Сент', full: "Сентября"},
+    {short: 'Окт', full: "Октября"},
+    {short: 'Ноя', full: "Ноября"},
+    {short: 'Дек', full: "Декабря"}];
+
+var date;

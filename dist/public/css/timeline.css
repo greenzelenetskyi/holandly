@@ -224,6 +224,30 @@
     overflow: hidden;
 }
 
+.submit-modal.hovered{
+    cursor: pointer;
+}
+
+i.fa.fa-times.error#close-modal{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding-left: 0.2vw;
+    padding-right: 0.2vw;
+    font-size: 3vw;
+    border: 3px solid #27AE60;
+    border-radius: 10px;
+    background-color: white;
+    display: block;
+    color: black;
+    cursor: pointer;
+}
+
+i.fa.fa-times.error#close-modal:hover, i.fa.fa-times.error#close-modal.hovered{
+    background-color: #27AE60;
+    color: white;
+}
+
 .submit-content{
     position: absolute;
     margin: auto;
@@ -280,9 +304,21 @@
     font-size: calc(12px + 0.1vw);
 }
 
+.modal-time > *{
+    display: flex;
+}
+
+i.far {
+    margin: auto;
+    padding-right: 5px;
+    font-size: calc(11px + 0.1vw);
+}
+
 .modal-left{
     margin: auto;
-    border: solid 1px black;
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 3px solid #27AE60;;
     width: 100%;
 }
 
@@ -383,4 +419,75 @@ i.fa.fa-exclamation.warning{
 
 .modal-left form.modal-container label{
     margin-right: 100px;
+}
+
+.submission-content{
+    margin: 2vw auto auto;
+    width: 60%;
+    display: none;
+    justify-content: center;
+    font-size: calc(14px + 0.3vw);
+}
+
+.submission-success{
+    display: none;
+    color: green;
+}
+
+.submission-success i.fa.fa-check.success#submission{
+    width: 100%;
+    font-size: 4vw;
+    position: relative;
+    display: block;
+    text-align: center;
+}
+
+.submission-failed{
+    display: none;
+    color: orange;
+    flex-direction: column;
+}
+
+.message#error{
+    color: red;
+}
+
+.submission-failed > .message{
+    margin: auto;
+}
+
+.submission-failed > i.fa.fa-exclamation.warning{
+    width: 100%;
+    font-size: 4vw;
+    position: relative;
+    display: block;
+    text-align: center;
+}
+
+.submission-failed > i.fa.fa-times.error{
+    width: 100%;
+    font-size: 4vw;
+    position: relative;
+    display: block;
+    text-align: center;
+}
+
+.submission-failed > p{
+    width: 60%;
+    color: black;
+    margin: 2vw auto auto;
+    padding: 15px;
+    border: 3px solid #27AE60;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.submission-failed > p:hover {
+    background-color: #27AE60;
+    color: #fff;
+    cursor: pointer;
+}
+
+#succ-message{
+    font-size: calc(16px + 0.2vw);
 }

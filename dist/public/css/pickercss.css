@@ -109,7 +109,7 @@ body{
     justify-content: space-between;
 }
 
-.modal-button{
+form p.modal-button{
     color: black;
     width: 20%;
     padding: 14px 25px;
@@ -121,9 +121,10 @@ body{
     font-family: "Roboto", sans-serif;
     font-size: calc(16px + 0.3vw);
     user-select: none;
+    cursor: pointer;
 }
 
-.modal-button:hover, .modal-button:active {
+form p.modal-button:hover, form p.modal-button:active {
     background-color: #27AE60;
     color: #fff;
 }

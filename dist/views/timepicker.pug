@@ -3,9 +3,25 @@ extends layout
 block content
     #patternId= patternId
     #eventDuration= duration
+    .submission-content
+        .submission-success
+            i.fa.fa-check.success#submission
+            br
+            #succ-message= 'УРА! Вы были успешно записаны на событие ' + eventType
+        .submission-failed#1
+            i.fa.fa-times.error
+            br
+            .message#error= 'УПС! Кто-то оказался проворнее вас. На данное событие не осталось свободных мест :('
+            p= 'Попробовать записаться на другую дату/время'
+        .submission-failed#2
+            i.fa.fa-exclamation.warning
+            br
+            .message= 'Внимание! Вы уже записаны на текущее событие. Нет нужды в повторной записи.'
+            p= 'Записаться на другое событие'
+        .submission-failed#3
+            i.fa.fa-exclamation.warning
+            .message= 'Внимание! Вы уже записаны на это событие в другой день или время. Выберите более подходящий вариант.'
     .timeline
-        .head
-            .event-owner= userName
         #event-header
             .top_container
                 #event-name= eventType
@@ -14,7 +30,7 @@ block content
         .timeline-content
             span.backward ❮
             ul.date-bar
-                - var weekArray = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
+                - var weekArray = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
                 - var monthArray = ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Ноя', 'Дек']
                 - var currDate = 0
                 - list = days
@@ -52,21 +68,29 @@ block content
         .time-container
             ul
     .submit-modal
+        i.fa.fa-times.error#close-modal
         .submit-content
-            #modal-owner= userName
+            #modal-owner= username
             .modal-inner
                 .modal-right
                     .modal-description
                         #modal-event= eventType
                         #modal-description= description
                     .modal-time
-                        #modal-start
-                        #modal-duration= "Длительность: " + duration + ' мин'
+                        .modal-date
+                            i.far.fa-calendar-check
+                            #modal-date
+                        .modal-start
+                            i.far.fa-clock
+                            #modal-start
+                        .modal-dur
+                            i.far.fa-hourglass
+                            #modal-duration= "Длительность: " + duration + ' мин'
                 .modal-left
-                    p#modal-message Для подтвердждения записи на событие ведите ваши данные
+                    p#modal-message Для подтвердждения записи на событие введите ваши данные
                     form
                         .modal-container
-                            label Введите имя:
+                            label Имя:
                             br
                             input#visitorName
                             i.fa.fa-check.success
@@ -76,7 +100,7 @@ block content
                             span.spanEmpty Поле не может быть пустым
                             span.spanInvalid Имя не может содержать цифры, спецсимволы или пробелы
                         .modal-container
-                            label Введите e-mail:
+                            label E-Mail:
                             br
                             input#visitorEmail(type='email', placeholder="Введите действующий e-mail адрес")
                             i.fa.fa-check.success
