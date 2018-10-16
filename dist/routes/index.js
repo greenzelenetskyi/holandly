@@ -85,6 +85,7 @@ exports.router.get('/:userName', function (req, res) {
         });
 });
 
+// events of the selected pattern
 exports.router.get('/:userName/:patternId', function (req, res) {
     var usr = req.params.userName;
     var patternId = req.params.patternId;
@@ -109,7 +110,7 @@ exports.router.get('/:userName/:patternId', function (req, res) {
     });
 });
 
-// modelling post-queries as get-queries
+// pattern events for the specified week
 exports.router.get('/getWeek/:date/:patternId', function (req, res) {
     var conditions = [req.params.patternId, req.params.date, req.params.date, DAYS_FOR_SEARCH];
     con.query('select e.date, e.time, p.number, count(v.visitorId) as amount from eventslist e ' +
