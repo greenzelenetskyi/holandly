@@ -96,12 +96,13 @@ exports.router.get('/:userName/:patternId', function (req, res) {
             con.query('select e.date, e.time, p.number, p.description, p.duration, p.type, count(v.visitorId) as amount from eventslist e ' +
                 'left join eventpattern p on p.patternId = e.patternId ' +
                 'left join eventvisitors v on v.eventId = e.eventId  ' +
-                'where p.patternId = ? and e.date >= curdate() and (datediff(e.date, curdate()) <= ?) ' +
+                'where p.patternId = ? and e.date >= curdate()   ' +
                 'group by e.eventId order by e.date;',
-                conditions, function (err, rslts) {
+                conditions, function (err, rslts) { //and (datediff(e.date, curdate()) <= ?)
                     if (err) throw err;
                     var dayCur = new Date();
                     var days = weekAvailable(dayCur, rslts);
+                    console.log(rslts)
                     res.render('timepicker', {username: usr, eventType: rslts[0].type, description: rslts[0].description,
                         duration: rslts[0].duration, patternId: patternId, days: days});
                 });

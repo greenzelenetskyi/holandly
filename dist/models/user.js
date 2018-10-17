@@ -236,7 +236,9 @@ const deleteVisitorInCalendar = (eventId) => {
             });
         }
         else {
-            console.log("No visitors");
+            calendar.updateEvent(eventId, {
+                'attendees': []
+            });
         }
     });
 };
@@ -252,11 +254,12 @@ exports.scheduleEvent = (req, res) => {
             if (results.affectedRows < 2) {
                 event[0].eventId = results.insertId;
                 addEventToCalendar(event[0]);
+                res.json("The event scheduled");
             }
             else {
                 rescheduleInCalendar(event[0]);
+                res.json('The event rescheduled');
             }
-            res.json("Successful");
         }
         else {
             res.json('The operation failed');
@@ -280,7 +283,7 @@ const rescheduleInCalendar = (newEventData) => {
                 },
                 'end': {
                     'dateTime': moment_1.default(dateTime).add(results.duration, 'minutes'),
-                },
+                }
             });
         }
     });
