@@ -54,6 +54,7 @@ window.onload = function () {
     getVisitors();
 };
 
+
 function logOut() {
     console.log('logout');
     $.ajax({
@@ -450,7 +451,7 @@ function makePatternCard(data) {
     }
     document.getElementById('pattern-amount').innerText = patternAmount;
 
-    $(document).ready(function(){
+    $(document).ready(function () {
         $('[data-tooltip="tooltip"]').tooltip();
     });
 
