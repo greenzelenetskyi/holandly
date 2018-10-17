@@ -219,7 +219,9 @@ export let sendAvailableEvents = (req: Request, res: Response) => {
           'attendees': JSON.parse(JSON.stringify(results))
         })
       } else {
-        console.log("No visitors")
+        calendar.updateEvent(eventId, {
+          'attendees': []
+        })
       }
     })
   }
@@ -233,13 +235,14 @@ export let sendAvailableEvents = (req: Request, res: Response) => {
       if(err) {
         res.json("Error");
       } else if (results.affectedRows > 0) {
-        if(results.affectedRows < 2) {
+        if (results.affectedRows < 2) {
           event[0].eventId = results.insertId;
           addEventToCalendar(event[0])
+          res.json("The event scheduled")
         } else {
           rescheduleInCalendar(event[0])
+          res.json('The event rescheduled')
         }
-        res.json("Successful")
       } else {
         res.json('The operation failed')
       }
@@ -262,7 +265,7 @@ export let sendAvailableEvents = (req: Request, res: Response) => {
             },
             'end': {
               'dateTime': moment(dateTime).add(results.duration, 'minutes'),
-            },
+            }
           })
         }
     })

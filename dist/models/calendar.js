@@ -61,15 +61,15 @@ exports.deleteCalendarEvent = (eventData) => {
         auth: jwtClient,
         calendarId: calendId,
         eventId: id
-    }), (err, response) => {
+    }, (err, response) => {
         if (err) {
             console.log('The API returned an error: ' + err);
             return;
         }
         else {
-            console.log('Event created: %s', response.data.htmlLink);
+            console.log('Event deleted');
         }
-    };
+    });
 };
 // // adds or deletes visitor, providing new visitor list
 // export const changeVisitorList = (eventData: any) => {
@@ -95,14 +95,14 @@ exports.updateEvent = (eventId, resourceFields) => {
         calendarId: calendId,
         eventId: id,
         resource: resourceFields
-    }), (err, response) => {
+    }, (err, response) => {
         if (err) {
             console.log('The API returned an error: ' + err);
             return;
         }
         else {
-            console.log('Event created: %s', response.data.htmlLink);
+            console.log('Event updated');
         }
-    };
+    });
 };
 //# sourceMappingURL=calendar.js.map

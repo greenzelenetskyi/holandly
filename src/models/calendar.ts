@@ -56,14 +56,14 @@ export const deleteCalendarEvent = (eventData: any) => {
         auth: jwtClient,
         calendarId: calendId,
         eventId: id
-    }), (err: Error, response: any) => {
+    }, (err: Error, response: any) => {
         if (err) {
             console.log('The API returned an error: ' + err);
             return;
         } else {
-            console.log('Event created: %s', response.data.htmlLink);
+            console.log('Event deleted');
         }
-    }
+    })
 }
 
 // // adds or deletes visitor, providing new visitor list
@@ -91,12 +91,12 @@ export const updateEvent = (eventId: any, resourceFields: any) => {
         calendarId: calendId,
         eventId: id,
         resource: resourceFields
-    }), (err: Error, response: any) => {
+    }, (err: Error, response: any) => {
           if (err) {
               console.log('The API returned an error: ' + err);
               return;
           } else {
-              console.log('Event created: %s', response.data.htmlLink);
+              console.log('Event updated');
           }
-      }
+      })
 }
