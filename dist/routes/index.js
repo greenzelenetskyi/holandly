@@ -97,11 +97,7 @@ exports.router.get('/:userName/:patternId', function (req, res) {
             con.query('select e.date, e.time, p.number, p.description, p.duration, p.type, count(v.visitorId) as amount from eventslist e ' +
                 'left join eventpattern p on p.patternId = e.patternId ' +
                 'left join eventvisitors v on v.eventId = e.eventId  ' +
-<<<<<<< HEAD
-                'where p.patternId = ? and e.date >= curdate()   ' +
-=======
                 'where p.patternId = ? and e.date >= curdate()' +
->>>>>>> cad9c3b9066899f3f61302e00f9ef091b2921d49
                 'group by e.eventId order by e.date;',
                 conditions, function (err, rslts) { //and (datediff(e.date, curdate()) <= ?)
                     if (err) throw err;
