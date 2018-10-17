@@ -27,11 +27,12 @@ CREATE TABLE `eventslist` (
   `date` date NOT NULL,
   `time` time NOT NULL,
   `patternId` int(11) NOT NULL,
+  `hasCalendarEntry` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`eventId`),
   UNIQUE KEY `id` (`eventId`),
   KEY `id_idx` (`patternId`),
   CONSTRAINT `id` FOREIGN KEY (`patternId`) REFERENCES `eventpattern` (`patternId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +41,7 @@ CREATE TABLE `eventslist` (
 
 LOCK TABLES `eventslist` WRITE;
 /*!40000 ALTER TABLE `eventslist` DISABLE KEYS */;
-INSERT INTO `eventslist` VALUES (4,'2018-10-12','10:00:00',1),(5,'2018-11-30','11:11:00',3),(6,'2018-10-02','00:00:00',3);
+INSERT INTO `eventslist` VALUES (47,'2018-10-20','11:30:00',12,0),(48,'2018-10-25','23:11:00',14,0),(50,'2018-10-29','11:11:00',16,0),(51,'2018-10-18','11:11:00',21,0),(52,'2018-10-25','11:11:00',18,0),(53,'2018-10-24','11:11:00',22,0);
 /*!40000 ALTER TABLE `eventslist` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -53,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-10-05 18:31:52
+-- Dump completed on 2018-10-17 15:49:37

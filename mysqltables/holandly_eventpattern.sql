@@ -24,16 +24,17 @@ DROP TABLE IF EXISTS `eventpattern`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `eventpattern` (
   `patternId` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(40) NOT NULL,
+  `type` varchar(40) CHARACTER SET utf8 NOT NULL,
   `number` smallint(6) NOT NULL,
   `duration` smallint(6) NOT NULL,
-  `description` text,
+  `description` text CHARACTER SET utf8,
   `userId` int(11) NOT NULL,
+  `multiaccess` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`patternId`),
   UNIQUE KEY `id_UNIQUE` (`patternId`),
   KEY `fk_eventpattern_1_idx` (`userId`),
   CONSTRAINT `fk_eventpattern_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +43,7 @@ CREATE TABLE `eventpattern` (
 
 LOCK TABLES `eventpattern` WRITE;
 /*!40000 ALTER TABLE `eventpattern` DISABLE KEYS */;
-INSERT INTO `eventpattern` VALUES (1,'test',1,40,'blabla',1),(2,'exam',1,30,'wtf',1),(3,'hackathon',10,240,'lil hack',1),(9,'exam',1,22,'wat up',1);
+INSERT INTO `eventpattern` VALUES (12,'турнир',5,10,'побатлимся',1,0),(14,'баня',5,10,'помоемся',1,0),(16,'гонки',2,10,'покатаемся',1,0),(17,'тренинг',2,10,'прокачаемся',1,0),(18,'каякинг',2,10,'прокачаемся',1,0),(21,'обучение',2,10,'прокачаемся',1,0),(22,'самбука',2,10,'прокачаемся',1,0);
 /*!40000 ALTER TABLE `eventpattern` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-10-05 18:31:52
+-- Dump completed on 2018-10-17 15:49:37

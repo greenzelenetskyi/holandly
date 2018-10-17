@@ -32,7 +32,7 @@ CREATE TABLE `eventvisitors` (
   KEY `eventVisitors_ibfk_1` (`eventId`),
   CONSTRAINT `eventvisitors_ibfk_1` FOREIGN KEY (`eventId`) REFERENCES `eventslist` (`eventId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `eventvisitors_ibfk_2` FOREIGN KEY (`visitorId`) REFERENCES `visitors` (`visitorId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,6 +41,7 @@ CREATE TABLE `eventvisitors` (
 
 LOCK TABLES `eventvisitors` WRITE;
 /*!40000 ALTER TABLE `eventvisitors` DISABLE KEYS */;
+INSERT INTO `eventvisitors` VALUES (47,25,11);
 /*!40000 ALTER TABLE `eventvisitors` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -53,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-10-05 18:31:52
+-- Dump completed on 2018-10-17 15:49:37
