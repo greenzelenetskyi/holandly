@@ -23,9 +23,8 @@ exports.stopSession = (req, res) => {
         res.redirect("/");
     });
 };
-
 exports.getLoginPage = (req, res) => {
     res.render('signIn');
-    // res.sendFile(path_1.default.join(__dirname, '../public/login/signIn.html'));
+    //res.sendFile(path.join(__dirname, '../public/login/signIn.html'));
 };
 //# sourceMappingURL=user.js.map

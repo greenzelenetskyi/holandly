@@ -6,7 +6,9 @@ import sessionStore from 'memorystore';
 import * as userModel from "./models/user";
 import { userRouter } from "./routes/user";
 import passport from 'passport';
-import passportLocal from 'passport-local'
+import passportLocal from 'passport-local';
+//import * as calendar from './models/calendar';
+const visitor = require('./routes/index');
 const LocalStrategy = passportLocal.Strategy;
 const memoryStore = sessionStore(session);
 const app = express();
@@ -22,9 +24,10 @@ app.use(session({
 }))
 
 userModel.dbConnect;
+//calendar.insertToCalendar();
 
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 passport.use(new LocalStrategy(userModel.verifyUser))
 app.use(passport.initialize());
@@ -45,6 +48,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // processes user admin page routes
 app.use('/', userRouter)
+
+app.use('/user', visitor.router);
 
 app.listen(8130, () => {
     console.log('wat up');

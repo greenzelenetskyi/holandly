@@ -2,9 +2,17 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mysql_1 = __importDefault(require("mysql"));
 const moment_1 = __importDefault(require("moment"));
+const calendar = __importStar(require("./calendar"));
 exports.dbConnect = mysql_1.default.createConnection({
     host: '127.0.0.1',
     user: 'root',
@@ -39,43 +47,47 @@ exports.sendScheduledEvents = (req, res) => {
             res.json("Data retrieval failed");
         }
         else if (results.length > 0) {
-            let scheduledEvents = [];
-            let prevDate;
-            let prevTime;
-            let prevType;
-            let isPrevDatePast;
-            results.forEach(function (entry) {
-                if (+entry.date === +prevDate) {
-                    delete entry.date;
-                    if (entry.time === prevTime && entry.type === prevType) {
-                        scheduledEvents[scheduledEvents.length - 1]
-                            .appointments[scheduledEvents[scheduledEvents.length - 1].appointments.length - 1]
-                            .visitors.push(makeVisitorObject(entry));
-                    }
-                    else {
-                        prevTime = entry.time;
-                        prevType = entry.type;
-                        scheduledEvents[scheduledEvents.length - 1].appointments.push(makeAppointment(entry, isPrevDatePast));
-                    }
-                }
-                else {
-                    let event = {};
-                    prevDate = event.date = entry.date;
-                    let mom = moment_1.default();
-                    event.isDatePast = isPrevDatePast = mom.isAfter(entry.date, 'day');
-                    prevTime = entry.time;
-                    prevType = entry.type;
-                    delete entry.date;
-                    event.appointments = [makeAppointment(entry, isPrevDatePast)];
-                    scheduledEvents.push(event);
-                }
-            });
-            res.send(JSON.stringify(scheduledEvents));
+            res.send(JSON.stringify(makeSortedEventList(results)));
         }
         else {
             res.json("No scheduled events");
         }
     });
+};
+/* aggregates events by common date and time */
+const makeSortedEventList = (results) => {
+    let scheduledEvents = [];
+    let prevDate;
+    let prevTime;
+    let prevType;
+    let isPrevDatePast;
+    results.forEach(function (entry) {
+        if (+entry.date === +prevDate) {
+            delete entry.date;
+            if (entry.time === prevTime && entry.type === prevType) {
+                scheduledEvents[scheduledEvents.length - 1]
+                    .appointments[scheduledEvents[scheduledEvents.length - 1].appointments.length - 1]
+                    .visitors.push(makeVisitorObject(entry));
+            }
+            else {
+                prevTime = entry.time;
+                prevType = entry.type;
+                scheduledEvents[scheduledEvents.length - 1].appointments.push(makeAppointment(entry, isPrevDatePast));
+            }
+        }
+        else {
+            let event = {};
+            prevDate = event.date = entry.date;
+            let mom = moment_1.default();
+            event.isDatePast = isPrevDatePast = mom.isAfter(entry.date, 'day');
+            prevTime = entry.time;
+            prevType = entry.type;
+            delete entry.date;
+            event.appointments = [makeAppointment(entry, isPrevDatePast)];
+            scheduledEvents.push(event);
+        }
+    });
+    return scheduledEvents;
 };
 /* if the appointment is in 30 min or less, it is considered to be past*/
 const makeAppointment = (entry, isPrevDatePast) => {
@@ -105,7 +117,6 @@ exports.sendEventPatterns = (req, res) => {
     });
 };
 exports.sendAvailableEvents = (req, res) => {
-    let respObjects = [];
     exports.dbConnect.query(`select eventslist.*, visitCount.occupied, eventpattern.number, eventpattern.type from holandly.eventslist
                       inner join eventpattern on eventslist.patternId = eventpattern.patternId
                       left join (select eventId, COUNT(*) AS occupied from eventvisitors group by eventId) AS visitCount on eventslist.eventId = visitCount.eventId
@@ -130,7 +141,6 @@ exports.sendAvailableEvents = (req, res) => {
 };
 exports.addNewEventPattern = (req, res) => {
     let user = req.user.userId;
-    console.log(user);
     let type = req.body.type;
     let pattern = [type, req.body.number, req.body.duration, req.body.description, user, type, user];
     exports.dbConnect.query(`insert into eventpattern (type, number, duration, description, userId)
@@ -173,12 +183,15 @@ exports.deleteEventPattern = (req, res) => {
             res.json("Error ocurred");
         }
         else if (results.affectedRows > 0) {
+            deleteCalendarPatternEvents();
             res.json("Successful");
         }
         else {
             res.json('The operation is failed');
         }
     });
+};
+const deleteCalendarPatternEvents = () => {
 };
 exports.deleteEvent = (req, res) => {
     let eventId = req.params[0];
@@ -187,6 +200,7 @@ exports.deleteEvent = (req, res) => {
             res.json("Data retrieval failed");
         }
         else if (results.affectedRows > 0) {
+            calendar.deleteCalendarEvent(req.params[0]);
             res.json("Successful");
         }
         else {
@@ -195,13 +209,13 @@ exports.deleteEvent = (req, res) => {
     });
 };
 exports.deleteEventVisitor = (req, res) => {
-    let eventRecord = [req.body.eventId, req.body.email];
     exports.dbConnect.query(`delete from eventvisitors where eventId = ? and visitorId = 
-    (select visitors.visitorId from visitors where email=?)`, eventRecord, function (err, results, fields) {
+    (select visitors.visitorId from visitors where email=?)`, [req.body.eventId, req.body.email], function (err, results, fields) {
         if (err) {
             res.json("Data retrieval failed");
         }
         else if (results.affectedRows > 0) {
+            deleteVisitorInCalendar(req.body.eventId);
             res.json("Successful");
         }
         else {
@@ -209,18 +223,80 @@ exports.deleteEventVisitor = (req, res) => {
         }
     });
 };
-exports.addEvent = (req, res) => {
+const deleteVisitorInCalendar = (eventId) => {
+    exports.dbConnect.query(`select visitors.visitorId as id, visitors.email, visitors.name as displayName from eventvisitors
+                      inner join visitors on visitors.visitorId = eventvisitors.visitorId
+                      where eventId=?`, [eventId], function (err, results, fields) {
+        if (err) {
+            console.log('Failed to fetch Google Calendar data');
+        }
+        else if (results.length > 0) {
+            calendar.updateEvent(eventId, {
+                'attendees': JSON.parse(JSON.stringify(results))
+            });
+        }
+        else {
+            console.log("No visitors");
+        }
+    });
+};
+// schedules new or updates existing
+exports.scheduleEvent = (req, res) => {
     let event = req.body;
     delete event[0].reason; //the reason is saved on front end in the form
-    exports.dbConnect.query(`insert into eventslist SET ? ON DUPLICATE KEY UPDATE time=?,date=?, patternId=?`, [event[0], event[0].time, event[0].date, event[0].patternId], function (err, results, fields) {
+    exports.dbConnect.query(`insert into eventslist SET ? ON DUPLICATE KEY UPDATE time=?, date=?, patternId=?`, [event[0], event[0].time, event[0].date, event[0].patternId], function (err, results, fields) {
         if (err) {
-            res.json("Data retrieval failed");
+            res.json("Error");
         }
         else if (results.affectedRows > 0) {
+            if (results.affectedRows < 2) {
+                event[0].eventId = results.insertId;
+                addEventToCalendar(event[0]);
+            }
+            else {
+                rescheduleInCalendar(event[0]);
+            }
             res.json("Successful");
         }
         else {
-            res.json('The operation is failed');
+            res.json('The operation failed');
+        }
+    });
+};
+const rescheduleInCalendar = (newEventData) => {
+    let dateTime = moment_1.default(newEventData.date + " " + newEventData.time).format();
+    exports.dbConnect.query(`select duration from eventpattern where patternId=?`, [newEventData.patternId], (err, results) => {
+        if (err) {
+            console.log('Failed to fetch Google Calendar data');
+        }
+        else if (results.length == 0) {
+            console.log('No pattern');
+        }
+        else {
+            // creates resources object for Calendar API
+            calendar.updateEvent(newEventData.eventId, {
+                'start': {
+                    'dateTime': dateTime,
+                },
+                'end': {
+                    'dateTime': moment_1.default(dateTime).add(results.duration, 'minutes'),
+                },
+            });
+        }
+    });
+};
+// google calendar api insert event call
+const addEventToCalendar = (eventData) => {
+    exports.dbConnect.query(`select description, duration, type from eventpattern where patternId=?`, [eventData.patternId], (err, results) => {
+        if (err) {
+            console.log('Failed to fetch Google Calendar data');
+        }
+        else if (results.length == 0) {
+            console.log('No pattern');
+        }
+        else {
+            eventData = Object.assign({}, eventData, results[0]);
+            calendar.insertToCalendar(eventData);
         }
     });
 };

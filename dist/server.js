@@ -19,9 +19,10 @@ const userModel = __importStar(require("./models/user"));
 const user_1 = require("./routes/user");
 const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = __importDefault(require("passport-local"));
+//import * as calendar from './models/calendar';
+const visitor = require('./routes/index');
 const LocalStrategy = passport_local_1.default.Strategy;
 const memoryStore = memorystore_1.default(express_session_1.default);
-const visitor = require('./routes/index');
 const app = express_1.default();
 app.use(express_session_1.default({
     secret: 'waffle',
@@ -32,10 +33,12 @@ app.use(express_session_1.default({
     })
 }));
 userModel.dbConnect;
+//calendar.insertToCalendar();
+app.set('views', path_1.default.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 passport_1.default.use(new LocalStrategy(userModel.verifyUser));
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
-
 passport_1.default.serializeUser(function (user, done) {
     done(null, user.userId);
 });
@@ -44,9 +47,6 @@ passport_1.default.deserializeUser(function (user, done) {
         done(null, usr[0]);
     });
 });
-app.set('views', path_1.default.join(__dirname, 'views'));
-//app.set('view engine', 'jade');
-app.set('view engine', 'pug');
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.text());
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));

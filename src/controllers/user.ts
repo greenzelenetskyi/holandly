@@ -20,5 +20,6 @@ export let stopSession = (req: Request, res: Response) => {
     }
 
 export let getLoginPage = (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, '../public/login/signIn.html'));
+    res.render('signIn');
+    //res.sendFile(path.join(__dirname, '../public/login/signIn.html'));
   }
