@@ -155,9 +155,8 @@ exports.router.post('/submitVisitor', function (req, res) {
     var vname = req.body.name;
     var vemail = req.body.email;
     var eventId = req.body.event;
-    // console.log(eventId);
 
-    var visitor = [vname, vemail, vname, vemail];
+    var visitor = [vemail, vname, vemail];
     var vstrId, eventCapacity, eventPattern, access;
 
     //  checking the possibility of recording on the event
@@ -175,15 +174,15 @@ exports.router.post('/submitVisitor', function (req, res) {
                 eventCapacity = possibility[0].number;
                 eventPattern = possibility[0].patternId;
                 access = possibility[0].multiaccess;
-                con.query('select visitorId from visitors where name = ? and email = ?;',
+                con.query('select visitorId from visitors where email = ?;',
                     visitor, function (err, visitorid) {
                         if (err) throw err;
                         if (visitorid.length != 0) {
                             vstrId = visitorid[0].visitorId;
                         }
                         else {
-                            con.query('insert into visitors (name, email) select * from (select ?, ?) as tmp ' +
-                                'where not exists(select * from visitors where name = ? and email = ?) limit 1;',
+                            con.query('insert into visitors (email, name) select * from (select ?, ?) as tmp ' +
+                                'where not exists(select * from visitors where email = ?) limit 1;',
                                 visitor, function (err, results) {
                                     if (err) throw err;
                                     vstrId = results.insertId;
@@ -213,7 +212,7 @@ exports.router.post('/submitVisitor', function (req, res) {
                                         }
                                         else {  /* it's impossible to be written to the pattern events,
                                                 because the visitor has already been recorded to other pattern events */
-                                            res.json({success: 3, name: vname, email: vemail});
+                                            res.json({success: 3, name: vname, email: vemail, eventId: eventId});
                                         }
                                     });
                                 }
@@ -234,17 +233,18 @@ exports.router.post('/submitVisitor', function (req, res) {
 });
 
 // information about the pattern events to which the visitor is subscribed
-exports.router.get('/reschedule/:patternId/:name/:email', function (req, res) {
+exports.router.get('/reschedule/:patternId/:eventId/:email', function (req, res) {
     var currentDay = new Date();
     currentDay.setHours(0, 0, 0, 0);
-    var conditions = [req.params.patternId, req.params.name, req.params.email, currentDay];
+    var newEvent = req.params.eventId;
+    var conditions = [newEvent, req.params.patternId, req.params.email, currentDay];
     con.query('select e.date, e.time, e.eventId, p.type, p.description, p.userId, u.login from eventslist e ' +
         'left join eventpattern p on p.patternId = e.patternId ' +
         'left join users u on u.userId = p.userId ' +
-        'where p.patternId = ? and e.eventId in ' +
+        'where e.eventId = ? or (p.patternId = ? and e.eventId in ' +
         '(select e.eventId from eventslist e left join eventvisitors v on v.eventId = e.eventId ' +
         'left join visitors s on s.visitorId = v.visitorId ' +
-        'where s.name = ? and s.email = ? and e.date >= ?);', conditions, function (err, vstrEvents) {
+        'where s.email = ? and e.date >= ?));', conditions, function (err, vstrEvents) {
         if (err) throw err;
         var events = [], timeArray, dateTime;
         currentDay = new Date();
@@ -255,7 +255,7 @@ exports.router.get('/reschedule/:patternId/:name/:email', function (req, res) {
                 dateTime.setHours(timeArray[0], timeArray[1], timeArray[2]);
                 if (dateTime < currentDay) return; //  the event has passed
             }
-            events.push({eventId: evnt.eventId, date: evnt.date, time: evnt.time, isRecord: true});
+            events.push({eventId: evnt.eventId, date: evnt.date, time: evnt.time, isRecord: evnt.eventId != newEvent});
         });
         res.json({user: vstrEvents[0].login, type: vstrEvents[0].type, description: vstrEvents[0].description,
             events: events});
