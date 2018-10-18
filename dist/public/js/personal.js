@@ -223,10 +223,10 @@ function makeVisitorsList(data) {
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.data;
             console.log(data);
-            $('.removeId').click(
+            document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     deleteEvent(data.eventId, $("#removeDescription").val());
-                });
+                };
         });
 
     $(".cancelVisitor").click(
@@ -235,11 +235,11 @@ function makeVisitorsList(data) {
             data.email = this.getAttribute('email');
             data.eventId = this.getAttribute('eventId');
             console.log(data);
-            $('.removeId').click(
+            document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     data.reason = $("#removeDescription").val();
                     cancelVisitor(data);
-                });
+                };
         });
 }
 
@@ -269,7 +269,7 @@ function getEvents() {
             xhr.setRequestHeader('Authorization', "Basic " + btoa('user' + ':' + 'passw'))
         },
         success: function (data) {
-            console.log('event');
+            console.log('getEvents');
             console.log(data);
             makeEventsPoint(data);
         }
@@ -342,14 +342,15 @@ function makeEventsPoint(data) {
         function () {
             let data = this.parentNode.parentNode.data;
             console.log(data);
-            $('.removeId').click(
+            document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     deleteEvent(data.eventId, $("#removeDescription").val());
-                });
+                };
         });
 }
 
 function putEvent(events) {
+    console.log('>putEvent');
     console.log(events);
     $.ajax({
         type: "POST",
@@ -366,6 +367,7 @@ function putEvent(events) {
 }
 
 function deleteEvent(id, description) {
+    console.log('>deleteEvent');
     console.log(id);
     console.log(description);
     $.ajax({
@@ -383,6 +385,7 @@ function deleteEvent(id, description) {
 }
 
 function newEvent() {
+    console.log('>newEvent');
     let event = {
         "patternId": 0,
         "time": 0,
@@ -412,7 +415,7 @@ function getPatterns() {
         data: {},
         response: 'json',
         success: function (data) {
-            console.log('pattern');
+            console.log('getPatterns');
             console.log(data);
             makePatternCard(data);
         }
@@ -463,21 +466,20 @@ function makePatternCard(data) {
             data.reason = true;
             data.label = 'Запланировать событие';
             fillModalEventForm(data);
-        }
-    );
+        });
     $("#pattern-row .delPater").click(
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.data;
             console.log(data);
-            $('.removeId').click(
+            document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     deletePattern(data.patternId, $("#removeDescription").val());
-                });
-        }
-    );
+                }
+        });
     $("#pattern-row .editPattern").click(
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.data;
+            console.log('>editPattern');
             console.log(data);
             $("input#inputPatternType").val(data.type);
             $("#inputDescription").val(data.description);
@@ -495,7 +497,7 @@ function putPattern() {
     pattern.description = $("#inputDescription").val();
     pattern.number = $("input#inputNumber").val();
     pattern.duration = $("input#inputDuration").val();
-    console.log('/pattern>>>');
+    console.log('putPattern>>>');
     console.log(pattern);
     $.ajax({
         type: (pattern.patternId === "0") ? "POST" : "PUT",
@@ -512,8 +514,13 @@ function putPattern() {
 }
 
 function newPattern() {
+    console.log('>newPattern')
     $("input#modalPattern_patternId").val('0');
-    putPattern();
+    $("input#inputPatternType").val('');
+    $("#inputDescription").val('');
+    $("input#inputNumber").val('');
+    $("input#inputDuration").val('');
+    // putPattern();
 }
 
 function deletePattern(id, description) {
