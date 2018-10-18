@@ -6,6 +6,10 @@
     <title>Holandly</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/personal.css" rel="stylesheet">
+    <!--<link href='../public/css/fullcalendar.min.css' rel='stylesheet'/>-->
+    <!--<link href='../public/css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>-->
+    <!--<link href='../public/css/calendar.css' rel='stylesheet'/>-->
+
 </head>
 <body >
 <div class="card">
@@ -57,13 +61,15 @@
             <div id="div-event">
 
             </div>
+            <div id='calendar'></div>
+
+            <div style='clear:both'></div>
         </div>
         <!-- pattern------------------------------------->
         <div class="tab-pane fade text-center" id="patternBoard" role="tabpanel" aria-labelledby="Pattern-tab">
             <div class="row" id="pattern-row">
             </div>
             <!-- Button trigger modal -->
-            <div id='calendar'></div>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newPatternModal" onclick="newPattern()">
                 + Создать новый шаблон
             </button>
@@ -201,4 +207,11 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/personal.js"></script>
 <script src="js/moment.js"></script>
+
+<!--<script src='js/moment.min.js'></script>-->
+<!--<script src='js/jquery.min.js'></script>-->
+<!--<script src='js/jquery-ui.min.js'></script>-->
+<!--<script src='js/fullcalendar.min.js'></script>-->
+<!--<script src='js/ru.js'></script>-->
+<!--<script src='js/theme-chooser.js'></script>-->
 </html>
