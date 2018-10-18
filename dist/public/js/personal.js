@@ -49,11 +49,17 @@ window.onload = function () {
             'Authorization': "Basic " + btoa('user' + ':' + 'passw')
         }
     });
+    updateAll();
+    let timer = setInterval(function () {
+        updateAll();
+    }, 5000);
+};
+
+function updateAll() {
     getPatterns();
     getEvents();
     getVisitors();
-};
-
+}
 
 function logOut() {
     console.log('logout');
