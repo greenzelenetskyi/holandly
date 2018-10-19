@@ -18,7 +18,7 @@ userRouter.get('/logout', userController.stopSession);
 
 userRouter.route("/events")
 .get(userController.requireLogin, userModel.sendAvailableEvents)
-.post(userModel.scheduleEvent)
+.post(userController.requireLogin, userModel.scheduleEvent)
   
 
 userRouter.route('/pattern')

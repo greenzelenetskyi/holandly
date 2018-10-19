@@ -244,25 +244,35 @@ const deleteVisitorInCalendar = (eventId) => {
 };
 // schedules new or updates existing
 exports.scheduleEvent = (req, res) => {
-    let event = req.body;
-    delete event[0].reason; //the reason is saved on front end in the form
-    exports.dbConnect.query(`insert into eventslist SET ? ON DUPLICATE KEY UPDATE time=?, date=?, patternId=?`, [event[0], event[0].time, event[0].date, event[0].patternId], function (err, results, fields) {
+    let event = req.body[0];
+    delete event.reason; //the reason is saved on front end in the form
+    exports.dbConnect.query(`UPDATE eventslist SET ? WHERE eventId=?`, [event, event.eventId], function (err, results, fields) {
         if (err) {
+            console.log(err);
             res.json("Error");
         }
         else if (results.affectedRows > 0) {
-            if (results.affectedRows < 2) {
-                event[0].eventId = results.insertId;
-                addEventToCalendar(event[0]);
-                res.json("The event scheduled");
-            }
-            else {
-                rescheduleInCalendar(event[0]);
-                res.json('The event rescheduled');
-            }
+            rescheduleInCalendar(event);
+            res.json('The event rescheduled');
         }
         else {
-            res.json('The operation failed');
+            event.hasCalendarEntry = 0;
+            scheduleNewEvent(req, res, event);
+        }
+    });
+};
+const scheduleNewEvent = (req, res, event) => {
+    exports.dbConnect.query(`INSERT INTO eventslist
+      SELECT ?, ?, ?, ?, ? FROM eventslist
+      WHERE eventId = ? or patternId = ? and time = ? and date = ?
+      HAVING COUNT(*) = 0`, [event.eventId, event.time, event.date, event.patternId, event.hasCalendarEntry, event.eventId, event.patternId, event.time, event.date], function (err, results, fields) {
+        if (err) {
+            console.log(err);
+            res.json("Error");
+        }
+        else if (results.affectedRows > 0) {
+            addEventToCalendar(event);
+            res.json("The event scheduled");
         }
     });
 };

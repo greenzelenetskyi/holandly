@@ -24,7 +24,7 @@ exports.userRouter.route('/login')
 exports.userRouter.get('/logout', userController.stopSession);
 exports.userRouter.route("/events")
     .get(userController.requireLogin, userModel.sendAvailableEvents)
-    .post(userModel.scheduleEvent);
+    .post(userController.requireLogin, userModel.scheduleEvent);
 exports.userRouter.route('/pattern')
     .get(userController.requireLogin, userModel.sendEventPatterns)
     .post(userController.requireLogin, userModel.addNewEventPattern)
