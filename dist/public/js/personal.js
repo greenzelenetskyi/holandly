@@ -49,10 +49,17 @@ window.onload = function () {
             'Authorization': "Basic " + btoa('user' + ':' + 'passw')
         }
     });
+    updateAll();
+    let timer = setInterval(function () {
+        updateAll();
+    }, 5000);
+};
+
+function updateAll() {
     getPatterns();
     getEvents();
     getVisitors();
-};
+}
 
 function logOut() {
     console.log('logout');
@@ -222,10 +229,10 @@ function makeVisitorsList(data) {
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.data;
             console.log(data);
-            $('.removeId').click(
+            document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     deleteEvent(data.eventId, $("#removeDescription").val());
-                });
+                };
         });
 
     $(".cancelVisitor").click(
@@ -234,11 +241,11 @@ function makeVisitorsList(data) {
             data.email = this.getAttribute('email');
             data.eventId = this.getAttribute('eventId');
             console.log(data);
-            $('.removeId').click(
+            document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     data.reason = $("#removeDescription").val();
                     cancelVisitor(data);
-                });
+                };
         });
 }
 
@@ -268,7 +275,7 @@ function getEvents() {
             xhr.setRequestHeader('Authorization', "Basic " + btoa('user' + ':' + 'passw'))
         },
         success: function (data) {
-            console.log('event');
+            console.log('getEvents');
             console.log(data);
             makeEventsPoint(data);
         }
@@ -341,14 +348,15 @@ function makeEventsPoint(data) {
         function () {
             let data = this.parentNode.parentNode.data;
             console.log(data);
-            $('.removeId').click(
+            document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     deleteEvent(data.eventId, $("#removeDescription").val());
-                });
+                };
         });
 }
 
 function putEvent(events) {
+    console.log('>putEvent');
     console.log(events);
     $.ajax({
         type: "POST",
@@ -365,6 +373,7 @@ function putEvent(events) {
 }
 
 function deleteEvent(id, description) {
+    console.log('>deleteEvent');
     console.log(id);
     console.log(description);
     $.ajax({
@@ -382,6 +391,7 @@ function deleteEvent(id, description) {
 }
 
 function newEvent() {
+    console.log('>newEvent');
     let event = {
         "patternId": 0,
         "time": 0,
@@ -411,7 +421,7 @@ function getPatterns() {
         data: {},
         response: 'json',
         success: function (data) {
-            console.log('pattern');
+            console.log('getPatterns');
             console.log(data);
             makePatternCard(data);
         }
@@ -450,7 +460,7 @@ function makePatternCard(data) {
     }
     document.getElementById('pattern-amount').innerText = patternAmount;
 
-    $(document).ready(function(){
+    $(document).ready(function () {
         $('[data-tooltip="tooltip"]').tooltip();
     });
 
@@ -462,21 +472,20 @@ function makePatternCard(data) {
             data.reason = true;
             data.label = 'Запланировать событие';
             fillModalEventForm(data);
-        }
-    );
+        });
     $("#pattern-row .delPater").click(
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.data;
             console.log(data);
-            $('.removeId').click(
+            document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     deletePattern(data.patternId, $("#removeDescription").val());
-                });
-        }
-    );
+                }
+        });
     $("#pattern-row .editPattern").click(
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.data;
+            console.log('>editPattern');
             console.log(data);
             $("input#inputPatternType").val(data.type);
             $("#inputDescription").val(data.description);
@@ -494,7 +503,7 @@ function putPattern() {
     pattern.description = $("#inputDescription").val();
     pattern.number = $("input#inputNumber").val();
     pattern.duration = $("input#inputDuration").val();
-    console.log('/pattern>>>');
+    console.log('putPattern>>>');
     console.log(pattern);
     $.ajax({
         type: (pattern.patternId === "0") ? "POST" : "PUT",
@@ -511,8 +520,13 @@ function putPattern() {
 }
 
 function newPattern() {
+    console.log('>newPattern')
     $("input#modalPattern_patternId").val('0');
-    putPattern();
+    $("input#inputPatternType").val('');
+    $("#inputDescription").val('');
+    $("input#inputNumber").val('');
+    $("input#inputDuration").val('');
+    // putPattern();
 }
 
 function deletePattern(id, description) {
@@ -531,3 +545,46 @@ function deletePattern(id, description) {
         }
     });
 }
+
+// $(document).ready(function () {
+//     $('#external-events .fc-event').each(function () {
+//         // store data so the calendar knows to render an event upon drop
+//         $(this).data('event', {
+//             title: $.trim($(this).text()), // use the element's text as the event title
+//             stick: true // maintain when user navigates (see docs on the renderEvent method)
+//         });
+//         // make the event draggable using jQuery UI
+//         $(this).draggable({
+//             zIndex: 999,
+//             revert: true,      // will cause the event to go back to its
+//             revertDuration: 0  //  original position after the drag
+//         });
+//     });
+//     /* initialize the calendar
+//     -----------------------------------------------------------------*/
+//     initThemeChooser({
+//         init: function (themeSystem) {
+//             $('#calendar').fullCalendar({
+//                 themeSystem: themeSystem,
+//                 header: {
+//                     left: 'prev,next today',
+//                     center: 'title',
+//                     right: 'month,agendaWeek,agendaDay,listMonth'
+//                 },
+//                 editable: true,
+//                 droppable: true, // this allows things to be dropped onto the calendar
+//                 drop: function () {
+//                     // is the "remove after drop" checkbox checked?
+//                     if ($('#drop-remove').is(':checked')) {
+//                         // if so, remove the element from the "Draggable Events" list
+//                         $(this).remove();
+//                     }
+//                 }
+//             });
+//
+//         },
+//         change: function (themeSystem) {
+//             $('#calendar').fullCalendar('option', 'themeSystem', themeSystem);
+//         }
+//     });
+// });

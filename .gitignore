@@ -1,1 +1,14 @@
+<<<<<<< HEAD
 dist/holandlykey.json
+=======
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+/dist/holandlykey.json
+dist/public/testCalendar.html
+node_modules/fullcalendar/
+node_modules/jade-bootstrap/
+node_modules/jquery/
+>>>>>>> f5dab6a3ca7d4365b631280117ef7dd6c5023afe

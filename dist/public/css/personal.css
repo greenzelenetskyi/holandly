@@ -6,7 +6,13 @@ html {
 body{
     background-color: #d2d2d2;
     min-width: 650px;
+    margin: 1%;
 }
 .ico{
     height: 2rem;
+}
+
+#calendar {
+    max-width: 900px;
+    margin: 40px auto;
 }
