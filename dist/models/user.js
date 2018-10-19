@@ -265,12 +265,13 @@ const scheduleNewEvent = (req, res, event) => {
     exports.dbConnect.query(`INSERT INTO eventslist
       SELECT ?, ?, ?, ?, ? FROM eventslist
       WHERE eventId = ? or patternId = ? and time = ? and date = ?
-      HAVING COUNT(*) = 0`, [event.eventId, event.time, event.date, event.patternId, event.hasCalendarEntry, event.eventId, event.patternId, event.time, event.date], function (err, results, fields) {
+      HAVING COUNT(*) = 0`, [event.eventId, event.date, event.time, event.patternId, event.hasCalendarEntry, event.eventId, event.patternId, event.time, event.date], function (err, results, fields) {
         if (err) {
             console.log(err);
             res.json("Error");
         }
         else if (results.affectedRows > 0) {
+            event.eventId = results.insertId;
             addEventToCalendar(event);
             res.json("The event scheduled");
         }
