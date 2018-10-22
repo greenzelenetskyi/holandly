@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Holandly</title>
+    <title>HOLANDLY</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/personal.css" rel="stylesheet">
     <!--<link href='../public/css/fullcalendar.min.css' rel='stylesheet'/>-->
     <!--<link href='../public/css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>-->
     <!--<link href='../public/css/calendar.css' rel='stylesheet'/>-->
-
 </head>
 <body>
 <div class="card">
@@ -80,6 +79,7 @@
     </div>
 </div>
 <!-- Modal new pattern-->
+
 <div class="modal fade" id="newPatternModal" tabindex="-1" role="dialog"
      aria-labelledby="newPatternModalLabel"
      aria-hidden="true">
@@ -130,19 +130,22 @@
     </div>
 </div>
 <!-- Modal  new event-->
-<div class="modal fade" id="newEventModal" tabindex="-1" role="dialog"
+<div class="modal fade"
+     id="newEventModal"
+     tabindex="-1"
+     role="dialog"
      aria-labelledby="newEventModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog " role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="newEventModalLabel">Запланировать событие</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
+    <form>
+        <div class="modal-dialog " role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newEventModalLabel">Запланировать событие</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
                     <input type="text" id="modalPatternId" hidden>
                     <input type="text" id="modalEventId" hidden>
                     <div class="form-group row">
@@ -162,31 +165,35 @@
                                           aria-label="With textarea"></textarea>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="newEvent()">
-                    Заплпнировать
-                </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <input type="submit" value="Заплпнировать" class="btn btn-primary">
+                    <!--<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="newEvent()">-->
+                    <!--Заплпнировать-->
+                    <!--</button>-->
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <!-- Modal  remove-->
-<div class="modal fade" id="removeModal" tabindex="-1" role="dialog"
+<div class="modal fade"
+     id="removeModal"
+     tabindex="-1"
+     role="dialog"
      aria-labelledby="removeModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog " role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="removeModalLabel">Подтверждение удаления</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
+    <form>
+        <div class="modal-dialog " role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="removeModalLabel">Подтверждение удаления</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
                     <input type="text" id="removePatternId" hidden>
                     <input type="text" id="removeEventId" hidden>
                     <div class="form-group row">
@@ -196,24 +203,30 @@
                                           aria-label="With textarea"></textarea>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary removeId" data-dismiss="modal">
-                    Удалить
-                </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <input type="submit" value="Удалить" class="btn btn-primary">
+                    <!--<button type="button" class="btn btn-primary removeId" data-dismiss="modal">-->
+                    <!--Удалить-->
+                    <!--</button>-->
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <p class="mt-1 mb-1 text-muted text-center">© 2018 Holateam 4</p>
 </body>
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/personal.js"></script>
-<script src="js/moment.js"></script>
+<script src="js/lib/jquery-3.3.1.min.js"></script>
+<script src="js/lib/popper.min.js"></script>
+<script src="js/lib/bootstrap.min.js"></script>
+
+<script src="js/events-part.js" type="text/javascript"></script>
+<script src="js/patterns-part.js" type="text/javascript"></script>
+<script src="js/visitors-part.js" type="text/javascript"></script>
+<script src="js/personal.js" type="text/javascript"></script>
+<script src="js/lib/moment.js"></script>
+
 
 <!--<script src='js/moment.min.js'></script>-->
 <!--<script src='js/jquery.min.js'></script>-->
