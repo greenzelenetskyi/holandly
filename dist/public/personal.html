@@ -70,7 +70,7 @@
             <div class="row" id="pattern-row">
             </div>
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newPatternModal"
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#pattern-modal-form"
                     onclick="newPattern()">
                 + Создать новый шаблон
             </button>
@@ -79,59 +79,62 @@
     </div>
 </div>
 <!-- Modal new pattern-->
-
-<div class="modal fade" id="newPatternModal" tabindex="-1" role="dialog"
+<div class="modal fade"
+     id="pattern-modal-form"
+     tabindex="-1"
+     role="dialog"
      aria-labelledby="newPatternModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="newPatternModalLabel">Шаблон события</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <input type="text" id="modalPattern_patternId" hidden>
-                    <div class="form-group row">
-                        <label for="inputPatternType" class="col-sm-4 col-form-label">Тип</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="inputPatternType"
-                                   placeholder="Type">
-                        </div>
-                        <label for="inputNumber" class="col-sm-4 col-form-label">Количество</label>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control" id="inputNumber">
-                        </div>
-                        <label for="inputDuration" class="col-sm-4 col-form-label">Продолжительность</label>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control" id="inputDuration">
-                        </div>
-                        <label for="inputDescription" class="col-sm-4 col-form-label">Описание</label>
-                        <div class="col-sm-8">
+    <form>
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newPatternModalLabel">Шаблон события</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <input type="text" id="modalPattern_patternId" hidden>
+                        <div class="form-group row">
+                            <label for="inputPatternType" class="col-sm-4 col-form-label">Тип</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="inputPatternType"
+                                       placeholder="Type">
+                            </div>
+                            <label for="inputNumber" class="col-sm-4 col-form-label">Количество</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="inputNumber">
+                            </div>
+                            <label for="inputDuration" class="col-sm-4 col-form-label">Продолжительность</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="inputDuration">
+                            </div>
+                            <label for="inputDescription" class="col-sm-4 col-form-label">Описание</label>
+                            <div class="col-sm-8">
                                 <textarea id="inputDescription" class="form-control"
                                           aria-label="With textarea"></textarea>
+                            </div>
+                            <label for="inputMultiAccess" class="col-sm-10 col-form-label">Зпрет
+                                многократной подписки на событие</label>
+                            <div class="col-sm-2">
+                                <input type="checkbox" class="form-control" id="inputMultiAccess">
+                            </div>
                         </div>
-                        <label for="inputMultiAccess" class="col-sm-10 col-form-label">Зпрет
-                            многократной подписки на событие</label>
-                        <div class="col-sm-2">
-                            <input type="checkbox" class="form-control" id="inputMultiAccess">
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="putPattern()">Сохранить
-                </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <input type="submit" value="Сохранить" class="btn btn-primary">
+                    <!--<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="putPattern()">Сохранить-->
+                    <!--</button>-->
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <!-- Modal  new event-->
 <div class="modal fade"
-     id="newEventModal"
+     id="event-modal-form"
      tabindex="-1"
      role="dialog"
      aria-labelledby="newEventModalLabel"
@@ -179,7 +182,7 @@
 </div>
 <!-- Modal  remove-->
 <div class="modal fade"
-     id="removeModal"
+     id="remove-modal-form"
      tabindex="-1"
      role="dialog"
      aria-labelledby="removeModalLabel"

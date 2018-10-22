@@ -46,20 +46,31 @@ $(document).ready(function () {
             'Authorization': "Basic " + btoa('user' + ':' + 'passw')
         }
     });
-    var eventModalForm = $("#newEventModal");
+
+    var patternModalForm = $("#pattern-modal-form");
+    patternModalForm.submit(function (event) {
+        event.preventDefault();
+        putPattern();
+        patternModalForm.modal('hide');
+    });
+
+    var eventModalForm = $("#event-modal-form");
     eventModalForm.submit(function (event) {
         event.preventDefault();
         newEvent();
         eventModalForm.modal('hide');
     });
-    $("#removeModal").submit(function (event) {
-        event.preventDefault();
 
-        //alert("Submit prevented");
-        $("#removeModal").modal('hide');
+    var removeModalForm = $("#remove-modal-form");
+    removeModalForm.submit(function (event) {
+        event.preventDefault();
+        remove();
+        removeModalForm.modal('hide');
     });
     updateAll();
 });
+
+var remove;
 
 function updateAll() {
     getPatterns();

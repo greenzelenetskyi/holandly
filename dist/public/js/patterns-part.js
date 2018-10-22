@@ -35,9 +35,9 @@ function makePatternCard(data) {
                 // '<span class="badge badge-primary">id:' + patternCard.data.patternId + '</span></a>'+
                 '</div>' +
                 '<div class=" rounded float-right ">' +
-                '<img src="../img/EventAdd.png" class="img-fluid btn-outline-success ico newEvent" href="#" data-tooltip="tooltip" title="Заплпнировать событие" data-toggle="modal" data-target="#newEventModal">' +
-                '<img src="../img/PatternEdit.png" class="img-fluid btn-outline-info ico editPattern" href="#" data-tooltip="tooltip" title="Редактировать шаблон" data-toggle="modal" data-target="#newPatternModal">' +
-                '<img src="../img/PatternDelete.png" class="img-fluid btn-outline-danger ico delPater" href="#" data-tooltip="tooltip" title="Удалить шаблон" data-toggle="modal" data-target="#removeModal">' +
+                '<img src="../img/EventAdd.png" class="img-fluid btn-outline-success ico newEvent" href="#" data-tooltip="tooltip" title="Заплпнировать событие" data-toggle="modal" data-target="#event-modal-form">' +
+                '<img src="../img/PatternEdit.png" class="img-fluid btn-outline-info ico editPattern" href="#" data-tooltip="tooltip" title="Редактировать шаблон" data-toggle="modal" data-target="#pattern-modal-form">' +
+                '<img src="../img/PatternDelete.png" class="img-fluid btn-outline-danger ico delPater" href="#" data-tooltip="tooltip" title="Удалить шаблон" data-toggle="modal" removeType="pattern" data-target="#remove-modal-form">' +
                 '</div></div>' +
                 '<div class = "card-body text-primary">' +
                 '<p class="card-text">' + patten.description + '</p>' +
@@ -65,7 +65,8 @@ function makePatternCard(data) {
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.data;
             console.log(data);
-            document.getElementsByClassName('removeId')[0].onclick =
+            remove =
+            // document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     deletePattern(data.patternId, $("#removeDescription").val());
                 }

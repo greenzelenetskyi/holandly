@@ -76,8 +76,10 @@ function makeEventsPoint(data) {
                 '</button>';
             eventCard.innerHTML +=
                 '<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">' +
-                '<a class="dropdown-item updateEvent" href="#" data-toggle="modal" data-target="#newEventModal">Перепланировать</a>' +
-                '<a class="dropdown-item delEvent" data-toggle="modal" data-target="#removeModal" href="#">Отменить</a>' +
+                '<a class="dropdown-item updateEvent" href="#" data-toggle="modal" data-target="#event-modal-form">Перепланировать</a>' +
+                '<a class="dropdown-item delEvent" data-toggle="modal" data-target="#remove-modal-form" ' +
+                'removeType="event"'+
+                'href="#">Отменить</a>' +
                 '</div>';
             PatternEvent.appendChild(eventCard);
         }
@@ -98,7 +100,8 @@ function makeEventsPoint(data) {
         function () {
             let data = this.parentNode.parentNode.data;
             console.log(data);
-            document.getElementsByClassName('removeId')[0].onclick =
+            remove=
+            // document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     deleteEvent(data.eventId, $("#removeDescription").val());
                 };

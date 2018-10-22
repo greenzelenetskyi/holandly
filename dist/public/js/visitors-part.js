@@ -86,10 +86,11 @@ function makeVisitorsList(data) {
                     '<div class="row ">' +
                     '<div class="col-3 align-self-center">' +
                     '<div class="btn-group-vertical">' +
-                    '<button type="button" class="btn btn-outline-success reScheduledEvents" data-toggle="modal" data-target="#newEventModal">' +
+                    '<button type="button" class="btn btn-outline-success reScheduledEvents" data-toggle="modal" data-target="#event-modal-form">' +
                     'Перепланировать' +
                     '</button>' +
-                    '<button type="button" data-toggle="modal" data-target="#removeModal" class="btn btn-outline-info removeScheduledEvents">' +
+                    '<button type="button" data-toggle="modal" data-target="#remove-modal-form" ' +
+                    'class="btn btn-outline-info removeScheduledEvents">' +
                     'Отменить' +
                     '</button>' +
                     '</div>' +
@@ -114,7 +115,8 @@ function makeVisitorsList(data) {
                         '<td><button type="button" class="btn btn-link cancelVisitor" ' +
                         'email="' + visitorsEvents[v].email + '" ' +
                         'eventId="' + timeEvents[t].eventId + '"' +
-                        'data-toggle="modal" data-target="#removeModal">Отменить участие</button></td>' +
+                        'removeType="visitor"'+
+                        'data-toggle="modal" data-target="#remove-modal-form">Отменить участие</button></td>' +
                         '</tr>';
                 }
                 tableVisitor.innerHTML +=
@@ -126,10 +128,10 @@ function makeVisitorsList(data) {
                 let element = document.getElementById(id);
                 element.appendChild(tableVisitor);
                 eventAmount++;
-                $("this .removeVisitor").click(
-                    function () {
-                        alert(this);
-                    });
+                // $("this .removeVisitor").click(
+                //     function () {
+                //         alert(this);
+                //     });
             }
         }
     }
@@ -150,7 +152,8 @@ function makeVisitorsList(data) {
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.data;
             console.log(data);
-            document.getElementsByClassName('removeId')[0].onclick =
+            remove =
+            // document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     deleteEvent(data.eventId, $("#removeDescription").val());
                 };
@@ -162,7 +165,8 @@ function makeVisitorsList(data) {
             data.email = this.getAttribute('email');
             data.eventId = this.getAttribute('eventId');
             console.log(data);
-            document.getElementsByClassName('removeId')[0].onclick =
+            remove =
+            // document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     data.reason = $("#removeDescription").val();
                     cancelVisitor(data);
