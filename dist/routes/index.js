@@ -3,7 +3,7 @@
 var express = require('express');
 exports.router = express.Router();
 // var parser = require('body-parser');
- var userModel = require('../models/user')
+ var userModel = require('../models/user');
 
 var mysql = require('mysql');
 
@@ -103,7 +103,7 @@ exports.router.get('/:userName/:patternId', function (req, res) {
                     if (err) throw err;
                     var dayCur = new Date();
                     var days = weekAvailable(dayCur, rslts);
-                    console.log(rslts)
+                    console.log(rslts);
                     res.render('timepicker', {username: usr, eventType: rslts[0].type, description: rslts[0].description,
                         duration: rslts[0].duration, patternId: patternId, days: days});
                 });
@@ -238,7 +238,7 @@ exports.router.get('/reschedule/:patternId/:eventId/:email', function (req, res)
     currentDay.setHours(0, 0, 0, 0);
     var newEvent = req.params.eventId;
     var conditions = [newEvent, req.params.patternId, req.params.email, currentDay];
-    con.query('select e.date, e.time, e.eventId, p.type, p.description, p.userId, u.login from eventslist e ' +
+    con.query('select e.date, e.time, e.eventId, p.type, p.description, p.userId, p.multiaccess, u.login from eventslist e ' +
         'left join eventpattern p on p.patternId = e.patternId ' +
         'left join users u on u.userId = p.userId ' +
         'where e.eventId = ? or (p.patternId = ? and e.eventId in ' +
@@ -258,7 +258,55 @@ exports.router.get('/reschedule/:patternId/:eventId/:email', function (req, res)
             events.push({eventId: evnt.eventId, date: evnt.date, time: evnt.time, isRecord: evnt.eventId != newEvent});
         });
         res.json({user: vstrEvents[0].login, type: vstrEvents[0].type, description: vstrEvents[0].description,
-            events: events});
+            access: vstrEvents[0].multiaccess, events: events});
+    });
+});
+
+// clarification of pattern events for which the visitor is subscribed
+// json-object is received: {email: email, events: [{eventId: eventId, isRecord: isRecord}]}
+exports.router.post('/rerecording', function (req, res) {
+    var vemail = req.body.email;
+    var events = req.body.events;
+    var vvisitorId;
+    var eventsTrue = [], eventsFalse = [];
+
+    events.forEach(function (evnt) {
+        if (evnt.isRecord) eventsTrue.push(evnt.eventId);
+        else eventsFalse.push(evnt.eventId);
+    });
+    var conditionsTrue = [vemail, eventsTrue];
+    con.query('select visitorId from visitors where email = ?', [vemail], function (err, recVisitor) {
+        if (err) throw err;
+        if (recVisitor.length == 0) console.log('No visitor!');
+        else {
+            vvisitorId = recVisitor[0].visitorId;
+            con.query(
+                'select eventId from eventvisitors where visitorId = ? ;',
+                [vvisitorId], function (err, eventRecords) {
+                    if (err) throw err;
+                    eventRecords.forEach(function (evnt) {
+                        for (var i = 0; i < eventsTrue.length; i++) {
+                            if (evnt.eventId === eventsTrue[i]) {
+                                eventsTrue.splice(i, 1);
+                                break;
+                            }
+                        }
+                    });
+                    if (eventsTrue.length > 0) {
+                        var recordEvents = [];
+                        for (var i = 0; i < eventsTrue.length; i++)
+                            recordEvents.push([eventsTrue[i], vvisitorId]);
+                        con.query('insert into eventvisitors (eventId, visitorId) values ? ;', [recordEvents]);
+                    }
+                    if (eventsFalse.length > 0) {
+                        var deleteEvents = [];
+                        for (var i = 0; i < eventsFalse.length; i++)
+                            deleteEvents.push([eventsFalse[i], vvisitorId]);
+                        con.query('delete from eventvisitors ' +
+                            'where visitorId = ? and eventId in (?) ;', [vvisitorId, eventsFalse]);
+                    }
+                });
+        }
     });
 });
 
