@@ -46,7 +46,7 @@ function makePatternCard(data) {
             patternField.appendChild(patternCard);
         }
     }
-    document.getElementById('pattern-amount').innerText = patternAmount;
+    document.getElementById('patterns-amount').innerText = patternAmount;
 
     $(document).ready(function () {
         $('[data-tooltip="tooltip"]').tooltip();

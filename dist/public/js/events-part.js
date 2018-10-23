@@ -85,7 +85,7 @@ function makeEventsPoint(data) {
         }
     }
 
-    document.getElementById('event-amount').innerText = eventAmount;
+    document.getElementById('events-amount').innerText = eventAmount;
     $("#div-event .updateEvent").click(
         function () {
             let data = this.parentNode.parentNode.data;

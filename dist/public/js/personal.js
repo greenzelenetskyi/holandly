@@ -67,6 +67,15 @@ $(document).ready(function () {
         remove();
         removeModalForm.modal('hide');
     });
+
+    $(".updateData").click(function () {
+        updateAll();
+    });
+
+    $(".logOut").click(function () {
+        logOut();
+    });
+
     updateAll();
 });
 

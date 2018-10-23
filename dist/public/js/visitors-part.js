@@ -128,16 +128,12 @@ function makeVisitorsList(data) {
                 let element = document.getElementById(id);
                 element.appendChild(tableVisitor);
                 eventAmount++;
-                // $("this .removeVisitor").click(
-                //     function () {
-                //         alert(this);
-                //     });
             }
         }
     }
 
     if (data.length > 0)
-        document.getElementById('visitor-amount').innerText = eventAmount;
+        document.getElementById('visitors-amount').innerText = eventAmount;
     $("#div-dashboard .reScheduledEvents").click(
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.data;

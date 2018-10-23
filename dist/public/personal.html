@@ -19,22 +19,22 @@
                 <img src="img/logo-h4.png" style="height: 4rem; margin-top: -2rem">
             </li>
             <li class="nav-item">
-                <a class="nav-link text-warning active" id="dashboard-tab" data-toggle="tab" href="#div-dashboard"
-                   role="tab" aria-controls="dashboard" aria-selected="true" onclick="updateAll()">
+                <a class="nav-link text-warning active updateData" id="dashboard-tab" data-toggle="tab" href="#div-dashboard"
+                   role="tab" aria-controls="dashboard" aria-selected="true">
                     События
-                    <span class="badge badge-warning" id="visitor-amount"> </span></a>
+                    <span class="badge badge-warning" id="visitors-amount"></span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-success" id="event-tab" data-toggle="tab" href="#eventBoard" role="tab"
-                   aria-controls="event" aria-selected="false" onclick="updateAll()">
+                <a class="nav-link text-success updateData" id="event-tab" data-toggle="tab" href="#eventBoard" role="tab"
+                   aria-controls="event" aria-selected="false">
                     Расписания
-                    <span class="badge badge-success" id="event-amount"> </span></a>
+                    <span class="badge badge-success" id="events-amount"></span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-primary" id="pattern-tab" data-toggle="tab" href="#patternBoard" role="tab"
-                   aria-controls="pattern" aria-selected="false" onclick="updateAll()">
+                <a class="nav-link text-primary updateData" id="pattern-tab" data-toggle="tab" href="#patternBoard" role="tab"
+                   aria-controls="pattern" aria-selected="false">
                     Шаблоны
-                    <span class="badge badge-primary" id="pattern-amount"> </span></a>
+                    <span class="badge badge-primary" id="patterns-amount"></span></a>
             </li>
             <li class="nav-item">
                 <div class="dropdown">
@@ -43,7 +43,7 @@
                         Пользователь
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#" onclick="logOut()">Выход</a>
+                        <a class="dropdown-item logOut" href="#">Выход</a>
                     </div>
                 </div>
             </li>
