@@ -237,8 +237,10 @@ exports.router.get('/reschedule/:patternId/:eventId/:email', function (req, res)
     var currentDay = new Date();
     currentDay.setHours(0, 0, 0, 0);
     var newEvent = req.params.eventId;
-    var conditions = [newEvent, req.params.patternId, req.params.email, currentDay];
-    con.query('select e.date, e.time, e.eventId, p.type, p.description, p.userId, p.multiaccess, u.login from eventslist e ' +
+    var vEmail = req.params.email;
+    var conditions = [newEvent, req.params.patternId, vEmail, currentDay];
+    con.query('select e.date, e.time, e.eventId, p.type, p.description, p.userId, p.multiaccess, p.duration, u.login ' +
+        'from eventslist e ' +
         'left join eventpattern p on p.patternId = e.patternId ' +
         'left join users u on u.userId = p.userId ' +
         'where e.eventId = ? or (p.patternId = ? and e.eventId in ' +
@@ -257,8 +259,8 @@ exports.router.get('/reschedule/:patternId/:eventId/:email', function (req, res)
             }
             events.push({eventId: evnt.eventId, date: evnt.date, time: evnt.time, isRecord: evnt.eventId != newEvent});
         });
-        res.json({user: vstrEvents[0].login, type: vstrEvents[0].type, description: vstrEvents[0].description,
-            access: vstrEvents[0].multiaccess, events: events});
+        res.render('rescheduler', {username: vstrEvents[0].login, type: vstrEvents[0].type, description: vstrEvents[0].description,
+            access: vstrEvents[0].multiaccess, duration: vstrEvents[0].duration, email: vEmail, events: events});
     });
 });
 
@@ -296,15 +298,28 @@ exports.router.post('/rerecording', function (req, res) {
                         var recordEvents = [];
                         for (var i = 0; i < eventsTrue.length; i++)
                             recordEvents.push([eventsTrue[i], vvisitorId]);
-                        con.query('insert into eventvisitors (eventId, visitorId) values ? ;', [recordEvents]);
+                        con.query('insert into eventvisitors (eventId, visitorId) values ? ;',
+                            [recordEvents], function (err, recEvents) {
+                                if (err) {
+                                    res.json({success: 1});
+                                    throw err;
+                                }
+                            });
                     }
                     if (eventsFalse.length > 0) {
                         var deleteEvents = [];
                         for (var i = 0; i < eventsFalse.length; i++)
                             deleteEvents.push([eventsFalse[i], vvisitorId]);
                         con.query('delete from eventvisitors ' +
-                            'where visitorId = ? and eventId in (?) ;', [vvisitorId, eventsFalse]);
+                            'where visitorId = ? and eventId in (?) ;',
+                            [vvisitorId, eventsFalse], function (err, delEvents) {
+                                if (err) {
+                                    res.json({success: 2});
+                                    throw err;
+                                }
+                            });
                     }
+                    res.json({success: 0});
                 });
         }
     });
