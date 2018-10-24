@@ -11,7 +11,7 @@ function createTableVisitors(signedVisitors, eventId) {
     signedVisitors.forEach(function (visitor, index, signedVisitors) {
         tableVisitor.innerHTML +=
             '<tr>' +
-            '<th scope="row">' + index + '</th>' +
+            '<th scope="row">' + (index + 1) + '</th>' +
             '<td>' + visitor.name + '</td>' +
             '<td>' + visitor.email + '</td>' +
             '<td><button type="button" class="btn btn-link cancelVisitor" ' +
@@ -58,12 +58,12 @@ function createTimeEvent(timeEvent, date) {
         '<div class="col-3 align-self-center">' +
         '<div class="btn-group-vertical">' +
         '<button type="button" class="btn btn-outline-success reScheduledEvents" data-toggle="modal" data-target="#event-modal-form"' +
-        'data='+JSON.stringify(timeEvent)+'>' +
+        'data=' + JSON.stringify(timeEvent) + '>' +
         'Перепланировать' +
         '</button>' +
         '<button type="button" data-toggle="modal" data-target="#remove-modal-form" ' +
         'class="btn btn-outline-info removeScheduledEvents"' +
-        'data='+JSON.stringify(timeEvent)+'>' +
+        'data=' + JSON.stringify(timeEvent) + '>' +
         'Отменить' +
         '</button>' +
         '</div>' +
