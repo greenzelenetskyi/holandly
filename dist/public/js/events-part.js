@@ -1,4 +1,3 @@
-
 function fillModalEventForm(data) {
     let modalE = $(".Reason");
     modalE[0].hidden = data.reason;
@@ -9,27 +8,6 @@ function fillModalEventForm(data) {
     $("#modalEventId").val(data.eventId);
     $("input#inputDate").val(moment(data.date).format('YYYY-MM-DD'));
     $("#inputTime").val(data.time);
-}
-
-function getEvents() {
-    $.ajax({
-        type: 'get',
-        url: '/events',
-        dataType: 'json',
-        headers: {
-            "Authorization": "Basic " + btoa('user' + ':' + 'passw')
-        },
-        data: {},
-        response: 'json',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', "Basic " + btoa('user' + ':' + 'passw'))
-        },
-        success: function (data) {
-            console.log('getEvents');
-            console.log(data);
-            makeEventsPoint(data);
-        }
-    });
 }
 
 function makeEventsPoint(data) {
@@ -86,6 +64,7 @@ function makeEventsPoint(data) {
     }
 
     document.getElementById('events-amount').innerText = eventAmount;
+
     $("#div-event .updateEvent").click(
         function () {
             let data = this.parentNode.parentNode.data;
@@ -106,41 +85,6 @@ function makeEventsPoint(data) {
                     deleteEvent(data.eventId, $("#removeDescription").val());
                 };
         });
-}
-
-function putEvent(events) {
-    console.log('>putEvent');
-    console.log(events);
-    $.ajax({
-        type: "POST",
-        url: '/events',
-        dataType: 'json',
-        data: JSON.stringify(events),
-        contentType: 'application/json',
-        success: function (data) {
-            console.log(data);
-            getEvents();
-            getVisitors();
-        }
-    });
-}
-
-function deleteEvent(id, description) {
-    console.log('>deleteEvent');
-    console.log(id);
-    console.log(description);
-    $.ajax({
-        type: "delete",
-        url: '/events/' + id,
-        dataType: 'json',
-        data: JSON.stringify({'Reason': description}),
-        contentType: 'application/json',
-        success: function (data) {
-            console.log(data);
-            getEvents();
-            getVisitors();
-        }
-    });
 }
 
 function newEvent() {

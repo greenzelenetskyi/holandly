@@ -1,21 +1,3 @@
-
-function getPatterns() {
-    $.ajax({
-        type: 'get',
-        url: '/pattern',
-        dataType: 'json',
-        // username: 'ub',
-        // password: 'ps',
-        data: {},
-        response: 'json',
-        success: function (data) {
-            console.log('getPatterns');
-            console.log(data);
-            makePatternCard(data);
-        }
-    });
-}
-
 function makePatternCard(data) {
     let patternField = document.getElementById('pattern-row');
     patternField.innerHTML = '';
@@ -84,30 +66,6 @@ function makePatternCard(data) {
         }
     );
 }
-
-function putPattern() {
-    let pattern = {};
-    pattern.patternId = $("input#modalPattern_patternId").val();
-    pattern.type = $("input#inputPatternType").val();
-    pattern.description = $("#inputDescription").val();
-    pattern.number = $("input#inputNumber").val();
-    pattern.duration = $("input#inputDuration").val();
-    console.log('putPattern>>>');
-    console.log(pattern);
-    $.ajax({
-        type: (pattern.patternId === "0") ? "POST" : "PUT",
-        url: '/pattern',
-        dataType: 'json',
-        data: JSON.stringify(pattern),
-        contentType: 'application/json',
-        success: function (data) {
-            console.log('/pattern<<<');
-            console.log(data);
-            getPatterns();
-        }
-    });
-}
-
 function newPattern() {
     console.log('>newPattern')
     $("input#modalPattern_patternId").val('0');
@@ -118,19 +76,3 @@ function newPattern() {
     // putPattern();
 }
 
-function deletePattern(id, description) {
-    console.log(id);
-    console.log(description);
-    $.ajax({
-        type: "delete",
-        url: '/pattern/' + id,
-        dataType: 'json',
-        data: JSON.stringify({'Reason': description}),
-        contentType: 'application/json',
-        success: function (data) {
-            console.log(data);
-            getPatterns();
-            getEvents();
-        }
-    });
-}

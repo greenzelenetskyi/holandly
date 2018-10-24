@@ -43,6 +43,7 @@
                         Пользователь
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item " href="/user/andrey">Получить ссылку</a>
                         <a class="dropdown-item logOut" href="#">Выход</a>
                     </div>
                 </div>
@@ -100,15 +101,15 @@
                             <label for="inputPatternType" class="col-sm-4 col-form-label">Тип</label>
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" id="inputPatternType"
-                                       placeholder="Type">
+                                       placeholder="Type" minlength="5">
                             </div>
                             <label for="inputNumber" class="col-sm-4 col-form-label">Количество</label>
                             <div class="col-sm-8">
-                                <input type="number" class="form-control" id="inputNumber">
+                                <input type="number" class="form-control" id="inputNumber" min="1">
                             </div>
                             <label for="inputDuration" class="col-sm-4 col-form-label">Продолжительность</label>
                             <div class="col-sm-8">
-                                <input type="number" class="form-control" id="inputDuration">
+                                <input type="number" class="form-control" id="inputDuration"min="1">
                             </div>
                             <label for="inputDescription" class="col-sm-4 col-form-label">Описание</label>
                             <div class="col-sm-8">
@@ -227,6 +228,7 @@
 <script src="js/events-part.js" type="text/javascript"></script>
 <script src="js/patterns-part.js" type="text/javascript"></script>
 <script src="js/visitors-part.js" type="text/javascript"></script>
+<script src="js/server-request.js" type="text/javascript"></script>
 <script src="js/personal.js" type="text/javascript"></script>
 <script src="js/lib/moment.js"></script>
 

@@ -40,12 +40,13 @@ window.onload = function () {
         })
     });
 };
+
 $(document).ready(function () {
-    $.ajaxSetup({
-        headers: {
-            'Authorization': "Basic " + btoa('user' + ':' + 'passw')
-        }
-    });
+    // $.ajaxSetup({
+    //     headers: {
+    //         'Authorization': "Basic " + btoa('user' + ':' + 'passw')
+    //     }
+    // });
 
     var patternModalForm = $("#pattern-modal-form");
     patternModalForm.submit(function (event) {
@@ -87,20 +88,42 @@ function updateAll() {
     getVisitors();
 }
 
-function logOut() {
-    console.log('logout');
-    $.ajax({
-        type: "get",
-        url: '/logout',
-        success: function (data, textStatus, request) {
-            $.ajax({
-                type: "get",
-                url: "/",
-                dataType: "html",
-                success: function (data, textStatus, request) {
-                    window.location = "/";
-                }
-            })
+function addHandlerEditEvent(element, eventData) {
+    $('.reScheduledEvents').click(
+        function () {
+            console.log(this);
+            let data = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.data;
+            console.log(data);
+            data.reason = false;
+            data.label = 'Изменить событие';
+            fillModalEventForm(data);
         }
-    });
+    );
 }
+
+function addEventRemoveScheduledEvent() {
+    $(".removeScheduledEvents").click(
+        function () {
+            let data = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.data;
+            console.log(data);
+            remove = function () {
+                deleteEvent(data.eventId, $("#removeDescription").val());
+            };
+        });
+}
+
+function addEventCancelVisitor() {
+    $(".cancelVisitor").click(
+        function () {
+            let data = {};
+            data.email = this.getAttribute('email');
+            data.eventId = this.getAttribute('eventId');
+            console.log(data);
+            remove = function () {
+                data.reason = $("#removeDescription").val();
+                cancelVisitor(data);
+            };
+        })
+}
+
+
