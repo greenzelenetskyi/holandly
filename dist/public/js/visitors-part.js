@@ -27,17 +27,6 @@ function createTableVisitors(signedVisitors, eventId) {
     return tableVisitor;
 }
 
-function createButtonEdit(timeEvent) {
-    var buttons = document.createElement('button');
-    buttons.classList.add('btn', 'btn-outline-success', 'reScheduledEvents');
-    buttons.data = timeEvent;
-    var buttons2 = document.createElement('button');
-    buttons2.classList.add('btn', 'btn-outline-success', 'reScheduledEvents');
-    buttons2.data = timeEvent;
-    buttons.appendChild(buttons2);
-    return buttons;
-}
-
 function createTimeEvent(timeEvent, index) {
     var TimeEvent = document.createElement('div');
     TimeEvent.classList.add("accordion");
@@ -67,7 +56,6 @@ function createTimeEvent(timeEvent, index) {
         '<div class="row ">' +
         '<div class="col-3 align-self-center">' +
         '<div class="btn-group-vertical">' +
-        createButtonEdit(timeEvent).outerHTML +
         '<button type="button" class="btn btn-outline-success reScheduledEvents" data-toggle="modal" data-target="#event-modal-form">' +
         'Перепланировать' +
         '</button>' +
@@ -86,7 +74,6 @@ function createDateEvent(dateEvent, dateIndex) {
     var dateElement = document.createElement('div');
     dateElement.classList.add('shadow-lg', 'p-3', 'mb-5', 'bg-white', 'rounded');
     dateElement.innerHTML = '<strong>' + moment(dateEvent.date).format('DD/MM/YYYY') + '</strong><hr>';
-
     dateEvent.appointments.forEach(function (timeEvent, index, dateEvent) {
         dateElement.appendChild(createTimeEvent(timeEvent, index));
     });
@@ -101,10 +88,8 @@ function makeVisitorsList(signedVisitorsList) {
             visitorsField.appendChild(createDateEvent(dateEvent, index));
         });
         document.getElementById('visitors-amount').innerText = getVisitorEventsAmount(signedVisitorsList);
-
-
-        addEventRemoveScheduledEvent();
-        addEventCancelVisitor();
+        addHandlerRemoveScheduledEvent();
+        addHandlerCancelVisitor();
         addHandlerEditEvent();
     }
 }

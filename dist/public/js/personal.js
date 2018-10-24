@@ -101,7 +101,7 @@ function addHandlerEditEvent(element, eventData) {
     );
 }
 
-function addEventRemoveScheduledEvent() {
+function addHandlerRemoveScheduledEvent() {
     $(".removeScheduledEvents").click(
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.data;
@@ -112,7 +112,7 @@ function addEventRemoveScheduledEvent() {
         });
 }
 
-function addEventCancelVisitor() {
+function addHandlerCancelVisitor() {
     $(".cancelVisitor").click(
         function () {
             let data = {};
