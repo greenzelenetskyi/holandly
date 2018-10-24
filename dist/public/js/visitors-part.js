@@ -27,7 +27,8 @@ function createTableVisitors(signedVisitors, eventId) {
     return tableVisitor;
 }
 
-function createTimeEvent(timeEvent, index) {
+function createTimeEvent(timeEvent, date) {
+    timeEvent.date = date;
     var TimeEvent = document.createElement('div');
     TimeEvent.classList.add("accordion");
     TimeEvent.id = 'accordionVisitorsList' + timeEvent.eventId;
@@ -56,11 +57,13 @@ function createTimeEvent(timeEvent, index) {
         '<div class="row ">' +
         '<div class="col-3 align-self-center">' +
         '<div class="btn-group-vertical">' +
-        '<button type="button" class="btn btn-outline-success reScheduledEvents" data-toggle="modal" data-target="#event-modal-form">' +
+        '<button type="button" class="btn btn-outline-success reScheduledEvents" data-toggle="modal" data-target="#event-modal-form"' +
+        'data='+JSON.stringify(timeEvent)+'>' +
         'Перепланировать' +
         '</button>' +
         '<button type="button" data-toggle="modal" data-target="#remove-modal-form" ' +
-        'class="btn btn-outline-info removeScheduledEvents">' +
+        'class="btn btn-outline-info removeScheduledEvents"' +
+        'data='+JSON.stringify(timeEvent)+'>' +
         'Отменить' +
         '</button>' +
         '</div>' +
@@ -74,8 +77,9 @@ function createDateEvent(dateEvent, dateIndex) {
     var dateElement = document.createElement('div');
     dateElement.classList.add('shadow-lg', 'p-3', 'mb-5', 'bg-white', 'rounded');
     dateElement.innerHTML = '<strong>' + moment(dateEvent.date).format('DD/MM/YYYY') + '</strong><hr>';
+    var date = dateEvent.date;
     dateEvent.appointments.forEach(function (timeEvent, index, dateEvent) {
-        dateElement.appendChild(createTimeEvent(timeEvent, index));
+        dateElement.appendChild(createTimeEvent(timeEvent, date));
     });
     return dateElement;
 }
@@ -88,9 +92,9 @@ function makeVisitorsList(signedVisitorsList) {
             visitorsField.appendChild(createDateEvent(dateEvent, index));
         });
         document.getElementById('visitors-amount').innerText = getVisitorEventsAmount(signedVisitorsList);
-        addHandlerRemoveScheduledEvent();
-        addHandlerCancelVisitor();
-        addHandlerEditEvent();
+        addHandlerRemoveScheduledEvent('.removeScheduledEvents');
+        addHandlerCancelVisitor('.cancelVisitor');
+        addHandlerEditEvent('.reScheduledEvents');
     }
 }
 

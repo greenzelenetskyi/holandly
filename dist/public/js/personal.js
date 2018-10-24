@@ -88,11 +88,10 @@ function updateAll() {
     getVisitors();
 }
 
-function addHandlerEditEvent(element, eventData) {
-    $('.reScheduledEvents').click(
-        function () {
-            console.log(this);
-            let data = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.data;
+function addHandlerEditEvent(element) {
+    $(element).click(
+        function (event) {
+            var data = JSON.parse(this.getAttribute('data'));
             console.log(data);
             data.reason = false;
             data.label = 'Изменить событие';
@@ -101,10 +100,10 @@ function addHandlerEditEvent(element, eventData) {
     );
 }
 
-function addHandlerRemoveScheduledEvent() {
-    $(".removeScheduledEvents").click(
-        function () {
-            let data = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.data;
+function addHandlerRemoveScheduledEvent(element) {
+    $(element).click(
+        function (event) {
+            var data = JSON.parse(this.getAttribute('data'));
             console.log(data);
             remove = function () {
                 deleteEvent(data.eventId, $("#removeDescription").val());
@@ -112,8 +111,8 @@ function addHandlerRemoveScheduledEvent() {
         });
 }
 
-function addHandlerCancelVisitor() {
-    $(".cancelVisitor").click(
+function addHandlerCancelVisitor(element) {
+    $(element).click(
         function () {
             let data = {};
             data.email = this.getAttribute('email');
