@@ -116,7 +116,8 @@ function appendEvents(data) {
             title: ev.type,
             start: moment(ev.date).format('YYYY-MM-DD') + 'T' + ev.time,
             data: ev,
-            color: 'red'
+            color: 'red',
+            // description:'description'
         });
     });
     var calendar = $('#calendar');

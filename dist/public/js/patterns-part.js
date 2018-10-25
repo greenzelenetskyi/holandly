@@ -82,18 +82,19 @@ function appendPattern(data) {
     var patternList = document.getElementById('external-events');
     patternList.innerHTML = '<h4>Шаблоны событий</h4>';
     data.forEach(function (pattern, index, data) {
-        patternList.innerHTML +=  "<div class='fc-event'>"+pattern.type+"</div>";
+        var patternElement = document.createElement('div');
+        patternElement.classList.add('fc-event');
+        patternElement.dataPattern = pattern;
+        patternElement.innerText = pattern.type;
+        patternList.appendChild(patternElement);
     });
 
     $('#external-events .fc-event').each(function () {
-
-        // store data so the calendar knows to render an event upon drop
         $(this).data('event', {
             title: $.trim($(this).text()), // use the element's text as the event title
-            stick: true // maintain when user navigates (see docs on the renderEvent method)
+            stick: true,// maintain when user navigates (see docs on the renderEvent method)
+            dataP: this.dataPattern
         });
-
-        // make the event draggable using jQuery UI
         $(this).draggable({
             zIndex: 999,
             revert: true,      // will cause the event to go back to its
@@ -101,16 +102,4 @@ function appendPattern(data) {
         });
 
     });
-    // $('#calendar').fullCalendar({
-    //     eventClick: function(calEvent, jsEvent, view) {
-    //
-    //         alert('Event: ' + calEvent.title);
-    //         alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
-    //         alert('View: ' + view.name);
-    //
-    //         // change the border color just for fun
-    //         $(this).css('border-color', 'red');
-    //
-    //     }
-    // });
 }
