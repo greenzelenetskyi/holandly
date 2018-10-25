@@ -78,6 +78,9 @@ $(document).ready(function () {
     });
 
     updateAll();
+
+
+
 });
 
 var remove;

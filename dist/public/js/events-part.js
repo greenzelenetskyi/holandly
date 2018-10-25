@@ -11,6 +11,7 @@ function fillModalEventForm(data) {
 }
 
 function makeEventsPoint(data) {
+    appendEvents(data);
     let eventField = document.getElementById('div-event');
     eventField.innerHTML = '';
     let eventAmount = 0;
@@ -56,7 +57,7 @@ function makeEventsPoint(data) {
                 '<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">' +
                 '<a class="dropdown-item updateEvent" href="#" data-toggle="modal" data-target="#event-modal-form">Перепланировать</a>' +
                 '<a class="dropdown-item delEvent" data-toggle="modal" data-target="#remove-modal-form" ' +
-                'removeType="event"'+
+                'removeType="event"' +
                 'href="#">Отменить</a>' +
                 '</div>';
             PatternEvent.appendChild(eventCard);
@@ -79,8 +80,8 @@ function makeEventsPoint(data) {
         function () {
             let data = this.parentNode.parentNode.data;
             console.log(data);
-            remove=
-            // document.getElementsByClassName('removeId')[0].onclick =
+            remove =
+                // document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     deleteEvent(data.eventId, $("#removeDescription").val());
                 };
@@ -106,4 +107,20 @@ function newEvent() {
     events.push(event);
     console.log(events);
     putEvent(events);
+}
+
+function appendEvents(data) {
+    var eventD = [];
+    data.forEach(function (ev, i, data) {
+        eventD.push({
+            title: ev.type,
+            start: moment(ev.date).format('YYYY-MM-DD') + 'T' + ev.time,
+            data: ev,
+            color: 'red'
+        });
+    });
+    var calendar = $('#calendar');
+    calendar.fullCalendar('removeEvents');
+    calendar.fullCalendar('addEventSource', eventD);
+
 }

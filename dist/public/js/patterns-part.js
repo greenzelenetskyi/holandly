@@ -1,4 +1,5 @@
 function makePatternCard(data) {
+    appendPattern(data);
     let patternField = document.getElementById('pattern-row');
     patternField.innerHTML = '';
     let patternAmount = '';
@@ -48,7 +49,7 @@ function makePatternCard(data) {
             let data = this.parentNode.parentNode.parentNode.parentNode.data;
             console.log(data);
             remove =
-            // document.getElementsByClassName('removeId')[0].onclick =
+                // document.getElementsByClassName('removeId')[0].onclick =
                 function () {
                     deletePattern(data.patternId, $("#removeDescription").val());
                 }
@@ -66,6 +67,7 @@ function makePatternCard(data) {
         }
     );
 }
+
 function newPattern() {
     console.log('>newPattern')
     $("input#modalPattern_patternId").val('0');
@@ -76,3 +78,39 @@ function newPattern() {
     // putPattern();
 }
 
+function appendPattern(data) {
+    var patternList = document.getElementById('external-events');
+    patternList.innerHTML = '<h4>Шаблоны событий</h4>';
+    data.forEach(function (pattern, index, data) {
+        patternList.innerHTML +=  "<div class='fc-event'>"+pattern.type+"</div>";
+    });
+
+    $('#external-events .fc-event').each(function () {
+
+        // store data so the calendar knows to render an event upon drop
+        $(this).data('event', {
+            title: $.trim($(this).text()), // use the element's text as the event title
+            stick: true // maintain when user navigates (see docs on the renderEvent method)
+        });
+
+        // make the event draggable using jQuery UI
+        $(this).draggable({
+            zIndex: 999,
+            revert: true,      // will cause the event to go back to its
+            revertDuration: 0  //  original position after the drag
+        });
+
+    });
+    // $('#calendar').fullCalendar({
+    //     eventClick: function(calEvent, jsEvent, view) {
+    //
+    //         alert('Event: ' + calEvent.title);
+    //         alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+    //         alert('View: ' + view.name);
+    //
+    //         // change the border color just for fun
+    //         $(this).css('border-color', 'red');
+    //
+    //     }
+    // });
+}

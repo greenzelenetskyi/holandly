@@ -6,9 +6,9 @@
     <title>HOLANDLY</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/personal.css" rel="stylesheet">
-    <!--<link href='../public/css/fullcalendar.min.css' rel='stylesheet'/>-->
-    <!--<link href='../public/css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>-->
-    <!--<link href='../public/css/calendar.css' rel='stylesheet'/>-->
+    <link href='css/fullcalendar.min.css' rel='stylesheet'/>
+    <link href='css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>
+    <link href='css/calendar.css' rel='stylesheet'/>
 </head>
 <body>
 <div class="card">
@@ -19,19 +19,22 @@
                 <img src="img/logo-h4.png" style="height: 4rem; margin-top: -2rem">
             </li>
             <li class="nav-item">
-                <a class="nav-link text-warning active updateData" id="dashboard-tab" data-toggle="tab" href="#div-dashboard"
+                <a class="nav-link text-warning active updateData" id="dashboard-tab" data-toggle="tab"
+                   href="#div-dashboard"
                    role="tab" aria-controls="dashboard" aria-selected="true">
                     События
                     <span class="badge badge-warning" id="visitors-amount"></span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-success updateData" id="event-tab" data-toggle="tab" href="#eventBoard" role="tab"
+                <a class="nav-link text-success updateData" id="event-tab" data-toggle="tab" href="#eventBoard"
+                   role="tab"
                    aria-controls="event" aria-selected="false">
                     Расписания
                     <span class="badge badge-success" id="events-amount"></span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-primary updateData" id="pattern-tab" data-toggle="tab" href="#patternBoard" role="tab"
+                <a class="nav-link text-primary updateData" id="pattern-tab" data-toggle="tab" href="#patternBoard"
+                   role="tab"
                    aria-controls="pattern" aria-selected="false">
                     Шаблоны
                     <span class="badge badge-primary" id="patterns-amount"></span></a>
@@ -44,6 +47,39 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item " href="/user/andrey">Получить ссылку</a>
+                        <div id='theme-system-selector' class='selector'>
+                            Theme System:
+                            <select>
+                                <option value='bootstrap4' selected>Bootstrap 4</option>
+                            </select>
+                        </div>
+                        <div data-theme-system="bootstrap4" class='selector' style='display:none'>
+                            Theme Name:
+                            <select>
+                                <option value='' selected>Default</option>
+                                <option value='cerulean'>Cerulean</option>
+                                <option value='cosmo'>Cosmo</option>
+                                <option value='cyborg'>Cyborg</option>
+                                <option value='darkly'>Darkly</option>
+                                <option value='flatly'>Flatly</option>
+                                <option value='journal'>Journal</option>
+                                <option value='litera'>Litera</option>
+                                <option value='lumen'>Lumen</option>
+                                <option value='lux'>Lux</option>
+                                <option value='materia'>Materia</option>
+                                <option value='minty'>Minty</option>
+                                <option value='pulse'>Pulse</option>
+                                <option value='sandstone'>Sandstone</option>
+                                <option value='simplex'>Simplex</option>
+                                <option value='sketchy'>Sketchy</option>
+                                <option value='slate'>Slate</option>
+                                <option value='solar'>Solar</option>
+                                <option value='spacelab'>Spacelab</option>
+                                <option value='superhero'>Superhero</option>
+                                <option value='united'>United</option>
+                                <option value='yeti'>Yeti</option>
+                            </select>
+                        </div>
                         <a class="dropdown-item logOut" href="#">Выход</a>
                     </div>
                 </div>
@@ -59,12 +95,12 @@
         </div>
         <!-- event------------------------------------->
         <div class="tab-pane fade" id="eventBoard" role="tabpanel" aria-labelledby="Event-tab">
-            <div id="div-event">
-
+            <div id='wrap'>
+                <div id='external-events'></div>
+                <div id='calendar'></div>
+                <div style='clear:both'></div>
             </div>
-            <div id='calendar'></div>
-
-            <div style='clear:both'></div>
+            <div id="div-event" hidden></div>
         </div>
         <!-- pattern------------------------------------->
         <div class="tab-pane fade text-center" id="patternBoard" role="tabpanel" aria-labelledby="Pattern-tab">
@@ -96,32 +132,32 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                        <input type="text" id="modalPattern_patternId" hidden>
-                        <div class="form-group row">
-                            <label for="inputPatternType" class="col-sm-4 col-form-label">Тип</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" id="inputPatternType"
-                                       placeholder="Type" minlength="5">
-                            </div>
-                            <label for="inputNumber" class="col-sm-4 col-form-label">Количество</label>
-                            <div class="col-sm-8">
-                                <input type="number" class="form-control" id="inputNumber" min="1">
-                            </div>
-                            <label for="inputDuration" class="col-sm-4 col-form-label">Продолжительность</label>
-                            <div class="col-sm-8">
-                                <input type="number" class="form-control" id="inputDuration"min="1">
-                            </div>
-                            <label for="inputDescription" class="col-sm-4 col-form-label">Описание</label>
-                            <div class="col-sm-8">
+                    <input type="text" id="modalPattern_patternId" hidden>
+                    <div class="form-group row">
+                        <label for="inputPatternType" class="col-sm-4 col-form-label">Тип</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="inputPatternType"
+                                   placeholder="Type" minlength="5">
+                        </div>
+                        <label for="inputNumber" class="col-sm-4 col-form-label">Количество</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="inputNumber" min="1">
+                        </div>
+                        <label for="inputDuration" class="col-sm-4 col-form-label">Продолжительность</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="inputDuration" min="1">
+                        </div>
+                        <label for="inputDescription" class="col-sm-4 col-form-label">Описание</label>
+                        <div class="col-sm-8">
                                 <textarea id="inputDescription" class="form-control"
                                           aria-label="With textarea"></textarea>
-                            </div>
-                            <label for="inputMultiAccess" class="col-sm-10 col-form-label">Зпрет
-                                многократной подписки на событие</label>
-                            <div class="col-sm-2">
-                                <input type="checkbox" class="form-control" id="inputMultiAccess">
-                            </div>
                         </div>
+                        <label for="inputMultiAccess" class="col-sm-10 col-form-label">Зпрет
+                            многократной подписки на событие</label>
+                        <div class="col-sm-2">
+                            <input type="checkbox" class="form-control" id="inputMultiAccess">
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
@@ -221,7 +257,10 @@
 </div>
 <p class="mt-1 mb-1 text-muted text-center">© 2018 Holateam 4</p>
 </body>
-<script src="js/lib/jquery-3.3.1.min.js"></script>
+
+<script src='js/lib/moment.min.js'></script>
+<script src='js/lib/jquery.min.js'></script>
+<script src='js/lib/jquery-ui.min.js'></script>
 <script src="js/lib/popper.min.js"></script>
 <script src="js/lib/bootstrap.min.js"></script>
 
@@ -229,14 +268,9 @@
 <script src="js/patterns-part.js" type="text/javascript"></script>
 <script src="js/visitors-part.js" type="text/javascript"></script>
 <script src="js/server-request.js" type="text/javascript"></script>
+<script src="js/calendar-part.js" type="text/javascript"></script>
+<script src='js/lib/fullcalendar.min.js'></script>
+<script src='js/lib/ru.js'></script>
+<script src='js/lib/theme-chooser.js'></script>
 <script src="js/personal.js" type="text/javascript"></script>
-<script src="js/lib/moment.js"></script>
-
-
-<!--<script src='js/moment.min.js'></script>-->
-<!--<script src='js/jquery.min.js'></script>-->
-<!--<script src='js/jquery-ui.min.js'></script>-->
-<!--<script src='js/fullcalendar.min.js'></script>-->
-<!--<script src='js/ru.js'></script>-->
-<!--<script src='js/theme-chooser.js'></script>-->
 </html>
