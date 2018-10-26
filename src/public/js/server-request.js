@@ -17,7 +17,6 @@ function cancelVisitor(data) {
     $.ajax({
         type: "delete",
         url: '/edit/cancel',
-        dataType: 'json',
         data: JSON.stringify(data),
         contentType: 'application/json',
         success: function (data) {
@@ -49,7 +48,6 @@ function putEvent(events) {
     $.ajax({
         type: "POST",
         url: '/edit/events',
-        dataType: 'json',
         data: JSON.stringify(events),
         contentType: 'application/json',
         success: function (data) {
@@ -67,7 +65,6 @@ function deleteEvent(id, description) {
     $.ajax({
         type: "delete",
         url: '/edit/events/' + id,
-        dataType: 'json',
         data: JSON.stringify({'Reason': description}),
         contentType: 'application/json',
         success: function (data) {
@@ -105,7 +102,6 @@ function putPattern() {
     $.ajax({
         type: (pattern.patternId === "0") ? "POST" : "PUT",
         url: '/edit/pattern',
-        dataType: 'json',
         data: JSON.stringify(pattern),
         contentType: 'application/json',
         success: function (data) {
@@ -122,7 +118,6 @@ function deletePattern(id, description) {
     $.ajax({
         type: "delete",
         url: '/edit/pattern/' + id,
-        dataType: 'json',
         data: JSON.stringify({'Reason': description}),
         contentType: 'application/json',
         success: function (data) {
@@ -144,7 +139,7 @@ function logOut() {
                 url: "/edit",
                 dataType: "html",
                 success: function (data, textStatus, request) {
-                    window.location = "/";
+                    window.location = "/edit";
                 }
             })
         }
