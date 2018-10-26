@@ -67,7 +67,7 @@ if (cluster.isMaster) {
   // processes user admin page routes
   app.use('/:clientname?/edit', userRouter);
 
-  // http://server.com/admin -- admin all clients
+  // http://server.com/:clientname?/edit -- admin all clients
 
   // http://server.com/shpp/p2p-entry-exam
   // http://........../:clientname/:meetingtype
