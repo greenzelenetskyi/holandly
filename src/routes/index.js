@@ -1,9 +1,10 @@
-//import * as userModel from "../models/user";
-
+//import * as userModel from "";
+var userModel = require('../models/user');
 var express = require('express');
 exports.router = express.Router();
 // var parser = require('body-parser');
- var userModel = require('../models/user')
+ //var userModel = require('../models/user')
+
 
 var mysql = require('mysql');
 
@@ -23,12 +24,12 @@ var igorDB = {
 
 //var con = mysql.createConnection(igorDB);
 //var con = mysql.createConnection(borisDB);
-var con = userModel.dbConnect;
+var con = userModel.dbPool;
 
-con.connect(function(err) {
-    if (err) throw err;
-    console.log("DB connected!");
-});
+// con.connect(function(err) {
+//     if (err) throw err;
+//     console.log("DB connected!");
+// });
 
 // sampling period for the time line, days
 var DAYS_FOR_SEARCH = 7;

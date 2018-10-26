@@ -1,22 +1,23 @@
-const {google} = require('googleapis');
-import * as privatekey from '../holandlykey.json';
+const { google } = require('googleapis');
 import moment from 'moment';
 
-const calendId = 'greenzelenetskyi@gmail.com'
+const calendId = process.env.CALENDAR_ID;
+
+let batch = google.calendar.batch;
 
 // configure a JWT auth client
 let jwtClient = new google.auth.JWT(
-    (<any>privatekey).client_email,
+    process.env.API_EMAIL,
     null,
-    (<any>privatekey).private_key,
-    ['https://www.googleapis.com/auth/calendar']);
+    process.env.API_KEY.replace(/\\n/g, '\n'),
+    [process.env.API_PATH]);
 //authenticate request
 jwtClient.authorize(function (err: any, tokens: any) {
     if (err) {
         console.log(err);
         return;
     } else {
-        console.log("Successfully connected!");
+        console.log('Successfully connected!');
     }
 });
 
@@ -24,8 +25,8 @@ jwtClient.authorize(function (err: any, tokens: any) {
 let calendar = google.calendar('v3');
 
 export const insertToCalendar = (newEvent: any) => {
-    let dateTime = moment(newEvent.date + " " + newEvent.time).format();
-    let id = "0000" + newEvent.eventId;
+    let dateTime = moment(newEvent.date + ' ' + newEvent.time).format();
+    let id = '0000' + newEvent.eventId;
     calendar.events.insert({
         auth: jwtClient,
         calendarId: calendId,
@@ -34,12 +35,12 @@ export const insertToCalendar = (newEvent: any) => {
             'summary': newEvent.type,
             'description': newEvent.description,
             'start': {
-              'dateTime': dateTime,
+                'dateTime': dateTime,
             },
             'end': {
-              'dateTime': moment(dateTime).add(newEvent.duration, 'minutes'),
+                'dateTime': moment(dateTime).add(newEvent.duration, 'minutes'),
             }
-          }
+        }
     }, (err: Error, response: any) => {
         if (err) {
             console.log('The API returned an error: ' + err);
@@ -51,7 +52,7 @@ export const insertToCalendar = (newEvent: any) => {
 }
 
 export const deleteCalendarEvent = (eventData: any) => {
-    let id = "0000" + eventData;
+    let id = '0000' + eventData;
     calendar.events.delete({
         auth: jwtClient,
         calendarId: calendId,
@@ -85,18 +86,18 @@ export const deleteCalendarEvent = (eventData: any) => {
 // }
 
 export const updateEvent = (eventId: any, resourceFields: any) => {
-    let id = "0000" + eventId
+    let id = '0000' + eventId
     calendar.events.patch({
         auth: jwtClient,
         calendarId: calendId,
         eventId: id,
         resource: resourceFields
     }, (err: Error, response: any) => {
-          if (err) {
-              console.log('The API returned an error: ' + err);
-              return;
-          } else {
-              console.log('Event updated');
-          }
-      })
+        if (err) {
+            console.log('The API returned an error: ' + err);
+            return;
+        } else {
+            console.log('Event updated');
+        }
+    })
 }

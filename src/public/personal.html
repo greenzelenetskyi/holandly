@@ -6,39 +6,36 @@
     <title>Holandly</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/personal.css" rel="stylesheet">
-    <!--<script src="https://yastatic.net/jquery/1.6.4/jquery.min.js"></script>-->
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/personal.js"></script>
+    <!--<link href='../public/css/fullcalendar.min.css' rel='stylesheet'/>-->
+    <!--<link href='../public/css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>-->
+    <!--<link href='../public/css/calendar.css' rel='stylesheet'/>-->
 
 </head>
-<body style="margin: 1%">
-<div class="card ">
-    <!--text-center-->
+<body>
+<div class="card">
     <!-- Main menu-->
     <div class="card-header">
-        <ul class="nav nav-tabs  flex-grow-1  card-header-tabs" id="myTab" role="tablist">
+        <ul class="nav nav-tabs  flex-grow-1  card-header-tabs" id="myTab" role="tablist" style=" margin-top: 2rem">
             <li class="nav-item flex-grow-1">
-                <h4 class=" mt-1 mb-1 text-left">HOLANDLY </h4>
+                <img src="img/logo-h4.png" style="height: 4rem; margin-top: -2rem">
             </li>
             <li class="nav-item">
-                <a class="nav-link text-warning active" id="dashboard-tab" data-toggle="tab" href="#dashboard"
-                   role="tab" aria-controls="dashboard" aria-selected="true">
+                <a class="nav-link text-warning active" id="dashboard-tab" data-toggle="tab" href="#div-dashboard"
+                   role="tab" aria-controls="dashboard" aria-selected="true" onclick="updateAll()">
                     События
-                    <span class="badge badge-warning " visitor-amount""></span></a>
+                    <span class="badge badge-warning" id="visitor-amount"> </span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-success" id="event-tab" data-toggle="tab" href="#eventBoard" role="tab"
-                   aria-controls="event" aria-selected="false">
+                   aria-controls="event" aria-selected="false" onclick="updateAll()">
                     Расписания
-                    <span class="badge badge-success" id="event-amount"></span></a>
+                    <span class="badge badge-success" id="event-amount"> </span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-primary" id="pattern-tab" data-toggle="tab" href="#patternBoard" role="tab"
-                   aria-controls="pattern" aria-selected="false">
+                   aria-controls="pattern" aria-selected="false" onclick="updateAll()">
                     Шаблоны
-                    <span class="badge badge-primary" id="pattern-amount"></span></a>
+                    <span class="badge badge-primary" id="pattern-amount"> </span></a>
             </li>
             <li class="nav-item">
                 <div class="dropdown">
@@ -47,12 +44,9 @@
                         Пользователь
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Выход</a>
+                        <a class="dropdown-item" href="#" onclick="logOut()">Выход</a>
                     </div>
                 </div>
-                <!--<a class="nav-link text-info" id="logout-tab" data-toggle="tab" href="#logout" role="tab"-->
-                <!--aria-controls="logout" aria-selected="false">-->
-                <!--Выход</a>-->
             </li>
         </ul>
     </div>
@@ -60,111 +54,25 @@
     <!-- BODY Main menu -->
     <div class="tab-content" id="myTabContent" style="margin: 2%">
         <!-- dashboard------------------------------------->
-        <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-            <div id="div-dashboard">
-
-
-                <div class="accordion" id="accordionExample">
-
-                    <div class="card">
-                        <div class="card-header" id="headingOne">
-                            <h6 class="mb-1">
-
-                                <strong class="text-left">15:00 27 sep 2018</strong> Встреча c RRR fff@ggg.maol
-                                <small class="text-muted">3 days ago</small>
-                                <button class="btn btn-link close" type="button" data-toggle="collapse"
-                                        data-target="#collapseOne" aria-expanded="false"
-                                        aria-controls="collapseOne">
-
-                                    <h6>Дополнительно</h6>
-                                </button>
-                            </h6>
-                        </div>
-
-                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
-                             data-parent="#accordionExample">
-                            <div class="card-body">
-                                Note that depending on how they are used, badges may be confusing for users of
-                                screen
-                                readers and similar assistive technologies. While the styling of badges provides a
-                                visual cue as to their purpose, these users will simply be presented with the
-                                content of
-                                the badge. Depending on the specific situation, these badges may seem like random
-                                additional words or numbers at the end of a sentence, link, or button.
-
-                                <div class="alert alert-primary" role="alert">erert</div>
-                                <button type="button" class="btn btn-success btn-sm">Перепланировать</button>
-                                <button type="button" class="btn btn-secondary btn-sm">Отменить</button>
-                            </div>
-
-                        </div>
-                    </div>
-
-
-                    <div class="card">
-                        <div class="card-header" id="headingTwo">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                                        data-target="#collapseTwo" aria-expanded="false"
-                                        aria-controls="collapseTwo">
-                                    Collapsible Group Item #2
-                                </button>
-                            </h5>
-                        </div>
-                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
-                             data-parent="#accordionExample">
-                            <div class="card-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
-                                richardson ad
-                                squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck
-                                quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird
-                                on it
-                                squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh
-                                helvetica,
-                                craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan
-                                excepteur
-                                butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic
-                                synth
-                                nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
+        <div class="tab-pane fade show active text-left" id="div-dashboard" role="tabpanel"
+             aria-labelledby="dashboard-tab">
         </div>
         <!-- event------------------------------------->
         <div class="tab-pane fade" id="eventBoard" role="tabpanel" aria-labelledby="Event-tab">
             <div id="div-event">
 
             </div>
+            <div id='calendar'></div>
+
+            <div style='clear:both'></div>
         </div>
         <!-- pattern------------------------------------->
         <div class="tab-pane fade text-center" id="patternBoard" role="tabpanel" aria-labelledby="Pattern-tab">
             <div class="row" id="pattern-row">
-                <!--<div id="one-pattern" hidden>-->
-                <!--<div class="col-sm-4">-->
-                <!--<div class="card border-primary mb-4">-->
-                <!--<div class="card-header">ЭКЗАМЕН</div>-->
-                <!--<div class="card-body text-primary">-->
-                <!--&lt;!&ndash;<h6 class="card-title">Primary card title</h6>&ndash;&gt;-->
-                <!--<p class="card-text">Some quick example text to build on the card title and make-->
-                <!--up-->
-                <!--card's content.</p>-->
-                <!--<h6 class="card-title">Количество учасников: 1</h6>-->
-                <!--<h6 class="card-title">Продолжительность: 15:00 </h6>-->
-                <!--<button type="button" class="btn btn-primary" data-toggle="modal"-->
-                <!--data-target="#newEventModal">-->
-                <!--+ Добавить в расписание-->
-                <!--</button>-->
-                <!--</div>-->
-                <!--</div>-->
-                <!--</div>-->
-                <!--</div>-->
             </div>
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newPatternModal">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newPatternModal"
+                    onclick="newPattern()">
                 + Создать новый шаблон
             </button>
             <div class="tab-pane fade" id="logout" role="tabpanel" aria-labelledby="Pattern-tab"></div>
@@ -178,13 +86,14 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="newPatternModalLabel">Новый шаблон события</h5>
+                <h5 class="modal-title" id="newPatternModalLabel">Шаблон события</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <form>
+                    <input type="text" id="modalPattern_patternId" hidden>
                     <div class="form-group row">
                         <label for="inputPatternType" class="col-sm-4 col-form-label">Тип</label>
                         <div class="col-sm-8">
@@ -204,12 +113,18 @@
                                 <textarea id="inputDescription" class="form-control"
                                           aria-label="With textarea"></textarea>
                         </div>
+                        <label for="inputMultiAccess" class="col-sm-10 col-form-label">Зпрет
+                            многократной подписки на событие</label>
+                        <div class="col-sm-2">
+                            <input type="checkbox" class="form-control" id="inputMultiAccess">
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="newPattern()">Создать</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="putPattern()">Сохранить
+                </button>
             </div>
         </div>
     </div>
@@ -240,29 +155,70 @@
                             <input type="time" class="form-control" id="inputTime">
                         </div>
                     </div>
+                    <div class="form-group row Reason" hidden>
+                        <label for="reScheduledDescription" class="col-sm-2 col-form-label">Причина</label>
+                        <div class="col-sm-10">
+                                <textarea id="reScheduledDescription" class="form-control"
+                                          aria-label="With textarea"></textarea>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="newEvent()">Заплпнировать
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="newEvent()">
+                    Заплпнировать
                 </button>
             </div>
         </div>
     </div>
 </div>
-
-
-<!--<a href="#" class="badge badge-primary">Primary</a>-->
-<!--<a href="#" class="badge badge-secondary">Secondary</a>-->
-<!--<a href="#" class="badge badge-success">Success</a>-->
-<!--<a href="#" class="badge badge-danger">Danger</a>-->
-<!--<a href="#" class="badge badge-warning">Warning</a>-->
-<!--<a href="#" class="badge badge-info">Info</a>-->
-<!--<a href="#" class="badge badge-light">Light</a>-->
-<!--<a href="#" class="badge badge-dark">Dark</a>-->
-
-
+<!-- Modal  remove-->
+<div class="modal fade" id="removeModal" tabindex="-1" role="dialog"
+     aria-labelledby="removeModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="removeModalLabel">Подтверждение удаления</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="text" id="removePatternId" hidden>
+                    <input type="text" id="removeEventId" hidden>
+                    <div class="form-group row">
+                        <label for="removeDescription" class="col-sm-2 col-form-label">Причина</label>
+                        <div class="col-sm-10">
+                                <textarea id="removeDescription" class="form-control"
+                                          aria-label="With textarea"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary removeId" data-dismiss="modal">
+                    Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <p class="mt-1 mb-1 text-muted text-center">© 2018 Holateam 4</p>
-
 </body>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/personal.js"></script>
+<script src="js/moment.js"></script>
+
+<!--<script src='js/moment.min.js'></script>-->
+<!--<script src='js/jquery.min.js'></script>-->
+<!--<script src='js/jquery-ui.min.js'></script>-->
+<!--<script src='js/fullcalendar.min.js'></script>-->
+<!--<script src='js/ru.js'></script>-->
+<!--<script src='js/theme-chooser.js'></script>-->
 </html>

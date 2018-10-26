@@ -1,56 +1,80 @@
-import express from "express";
-import path from "path";
+import express from 'express';
+//import dotenv from 'dotenv';
+//dotenv.config({ path: '../.env' });
+import path from 'path';
 import bodyParser from 'body-parser';
 import session from 'express-session';
-import sessionStore from 'memorystore';
-import * as userModel from "./models/user";
-import { userRouter } from "./routes/user";
 import passport from 'passport';
 import passportLocal from 'passport-local';
-//import * as calendar from './models/calendar';
+import * as userModel from './models/user';
+import * as userController from './controllers/user';
+import { userRouter } from './routes/user';
+import * as calendar from './models/calendar';
+import os from 'os';
+import cluster from 'cluster';
+//import mysqlStore from 'express-mysql-session';
+const MySqlStore = require('express-mysql-session')(session);
 const visitor = require('./routes/index');
-const LocalStrategy = passportLocal.Strategy;
-const memoryStore = sessionStore(session);
-const app = express();
 
+const numCPUs = os.cpus().length;
 
-app.use(session({
-  secret: 'waffle',
-  resave: false,
-  saveUninitialized: true,
-  store: new memoryStore({
-    checkPeriod: 86400000
-  })
-}))
-
-userModel.dbConnect;
-//calendar.insertToCalendar();
-
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
-
-passport.use(new LocalStrategy(userModel.verifyUser))
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.serializeUser(function(user: any, done) {
-  done(null, user.userId);
-});
-passport.deserializeUser(function(user: any, done) {
-  userModel.dbConnect.query('select * from holandly.users where userId=?', [user], function(err: any, usr: any, fields: any) {
-    done(null, usr[0]);
+if (cluster.isMaster) {
+  console.log('hi I am your master');
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
   }
-)});
 
-app.use(bodyParser.json());
-app.use(bodyParser.text());
-app.use(express.static(path.join(__dirname, 'public')));
+  cluster.on('exit', function () {
+    cluster.fork();
+  });
 
-// processes user admin page routes
-app.use('/', userRouter)
+} else {
 
-app.use('/user', visitor.router);
+  const app = express();
+  console.log('hi i am a worker');
+  const LocalStrategy = passportLocal.Strategy;
 
-app.listen(8130, () => {
+  app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    store: new MySqlStore({}, userModel.dbPool)
+  }));
+
+  app.set('views', path.join(__dirname, '../views'));
+  app.set('view engine', 'pug');
+
+  passport.use(new LocalStrategy(userController.verifyUser));
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  passport.serializeUser(function (user: any, done) {
+    done(null, user.userId);
+  });
+  passport.deserializeUser(async function (user: any, done) {
+    try {
+      let usr = await userModel.getUserName(user);
+      done(null, usr[0].userId);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  app.use(bodyParser.json());
+  app.use(bodyParser.text());
+  app.use(express.static(path.join(__dirname, 'public')));
+
+  // processes user admin page routes
+  app.use('/:clientname?/edit', userRouter);
+
+  // http://server.com/admin -- admin all clients
+
+  // http://server.com/shpp/p2p-entry-exam
+  // http://........../:clientname/:meetingtype
+  app.use('/user', visitor.router);
+
+  app.listen(process.env.PORT, () => {
     console.log('wat up');
-});
+  });
+}
+

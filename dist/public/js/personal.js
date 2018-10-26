@@ -65,14 +65,14 @@ function logOut() {
     console.log('logout');
     $.ajax({
         type: "get",
-        url: '/logout',
+        url: '/edit/logout',
         success: function (data, textStatus, request) {
             $.ajax({
                 type: "get",
-                url: "/",
+                url: "/edit",
                 dataType: "html",
                 success: function (data, textStatus, request) {
-                    window.location = "/";
+                    window.location = "/edit";
                 }
             })
         }
@@ -82,11 +82,8 @@ function logOut() {
 function getVisitors() {
     $.ajax({
         type: 'get',
-        url: '/scheduled',
+        url: '/edit/scheduled',
         dataType: 'json',
-        headers: {
-            "Authorization": "Basic " + btoa('user' + ':' + 'passw')
-        },
         data: {},
         response: 'json',
         beforeSend: function (xhr) {
@@ -103,7 +100,7 @@ function cancelVisitor(data) {
     console.log(data);
     $.ajax({
         type: "delete",
-        url: '/cancel',
+        url: '/edit/cancel',
         dataType: 'json',
         data: JSON.stringify(data),
         contentType: 'application/json',
@@ -264,7 +261,7 @@ function fillModalEventForm(data) {
 function getEvents() {
     $.ajax({
         type: 'get',
-        url: '/events',
+        url: '/edit/events',
         dataType: 'json',
         headers: {
             "Authorization": "Basic " + btoa('user' + ':' + 'passw')
@@ -360,7 +357,7 @@ function putEvent(events) {
     console.log(events);
     $.ajax({
         type: "POST",
-        url: '/events',
+        url: '/edit/events',
         dataType: 'json',
         data: JSON.stringify(events),
         contentType: 'application/json',
@@ -378,7 +375,7 @@ function deleteEvent(id, description) {
     console.log(description);
     $.ajax({
         type: "delete",
-        url: '/events/' + id,
+        url: '/edit/events/' + id,
         dataType: 'json',
         data: JSON.stringify({'Reason': description}),
         contentType: 'application/json',
@@ -414,7 +411,7 @@ function newEvent() {
 function getPatterns() {
     $.ajax({
         type: 'get',
-        url: '/pattern',
+        url: '/edit/pattern',
         dataType: 'json',
         // username: 'ub',
         // password: 'ps',
@@ -507,7 +504,7 @@ function putPattern() {
     console.log(pattern);
     $.ajax({
         type: (pattern.patternId === "0") ? "POST" : "PUT",
-        url: '/pattern',
+        url: '/edit/pattern',
         dataType: 'json',
         data: JSON.stringify(pattern),
         contentType: 'application/json',
@@ -534,7 +531,7 @@ function deletePattern(id, description) {
     console.log(description);
     $.ajax({
         type: "delete",
-        url: '/pattern/' + id,
+        url: '/edit/pattern/' + id,
         dataType: 'json',
         data: JSON.stringify({'Reason': description}),
         contentType: 'application/json',
