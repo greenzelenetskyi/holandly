@@ -34,7 +34,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "npm run compile && npm run copy-assets &&  npm run serve",
+    "start": " npm run compile && npm run copy-assets && npm run serve",
     "serve": "node -r dotenv/config dist/server",
     "copy-assets": "ts-node copyAssets.ts",
     "compile": "tsc"
