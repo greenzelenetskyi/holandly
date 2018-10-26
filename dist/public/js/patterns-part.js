@@ -78,28 +78,59 @@ function newPattern() {
     // putPattern();
 }
 
+var patternColors = [
+    'aqua',
+    'black',
+    'blue',
+    'fuchsia',
+    'gray',
+    'green',
+    'lime',
+    'maroon',
+    'navy',
+    'olive',
+    'purple',
+    'red',
+    'silver',
+    'teal',
+    'white',
+    'yellow',
+];
+
 function appendPattern(data) {
+
     var patternList = document.getElementById('external-events');
     patternList.innerHTML = '<h4>Шаблоны событий</h4>';
+    var colorIndex = 0;
     data.forEach(function (pattern, index, data) {
         var patternElement = document.createElement('div');
         patternElement.classList.add('fc-event');
-        patternElement.dataPattern = pattern;
+        patternElement.patternData = pattern;
         patternElement.innerText = pattern.type;
         patternList.appendChild(patternElement);
+        patternElement.id = 'patternId' + pattern.patternId;
+        patternElement.style.backgroundColor = patternColors[colorIndex];
+        patternElement.setAttribute('data-color', patternColors[colorIndex]);
+        pattern.color = patternColors[colorIndex];
+        colorIndex++;
+        if (colorIndex >= patternColors.length) {
+            colorIndex = 0;
+        }
     });
 
     $('#external-events .fc-event').each(function () {
         $(this).data('event', {
             title: $.trim($(this).text()), // use the element's text as the event title
             stick: true,// maintain when user navigates (see docs on the renderEvent method)
-            dataP: this.dataPattern
+            patternData: this.patternData,
+            description: this.patternData.description,
+            color: $(this).data('color')
         });
+
         $(this).draggable({
             zIndex: 999,
             revert: true,      // will cause the event to go back to its
             revertDuration: 0  //  original position after the drag
         });
-
     });
 }

@@ -111,17 +111,18 @@ function newEvent() {
 
 function appendEvents(data) {
     var eventD = [];
-    data.forEach(function (ev, i, data) {
+    data.forEach(function (event, i, data) {
+        var pattern = $('#patternId' + event.patternId)[0];
         eventD.push({
-            title: ev.type,
-            start: moment(ev.date).format('YYYY-MM-DD') + 'T' + ev.time,
-            data: ev,
-            color: 'red',
-            // description:'description'
+            title: event.type,
+            start: moment(event.date).format('YYYY-MM-DD') + 'T' + event.time,
+            eventData: event,
+            patternData: pattern,
+            color: pattern.patternData.color,
+            description: pattern.patternData.description
         });
     });
     var calendar = $('#calendar');
     calendar.fullCalendar('removeEvents');
     calendar.fullCalendar('addEventSource', eventD);
-
 }
