@@ -63,6 +63,7 @@
 
 .date-bar li.active{
     border-color: #4CAF50;
+    background-color: rgba(27, 174, 60, 0.3);
 }
 
 .date-bar li:hover{
@@ -443,9 +444,9 @@ i.fa.fa-exclamation.warning{
 }
 
 .submission-failed{
-    display: none;
     color: orange;
     flex-direction: column;
+    display: none;
 }
 
 .message#error{

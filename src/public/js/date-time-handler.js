@@ -1,9 +1,14 @@
+$(document).ready(function (){
+    currHref = $(location).attr('href');
+});
+
 $('ul').on('click', '.active', function () {
     updateDays();
     $(this).css('background-color', "#27AE60");
     $(this).css('color', "white");
     $('.time-container ul').html('');
-    date = $(this).children($('.list-full-date')).html();
+    var currEl = $(this).index()/2;
+    date = window.days[currEl].date;
     getTimeline(formatDate(date));
     $('.time-container').css('display', 'block');
 });
@@ -12,9 +17,8 @@ $('.forward').on("click", function () {
     updateDays();
     $('.time-container').css('display', 'none');
     $('.time-container ul').html('');
-    let last_date = $('.date-bar li').last().children($('.list-full-date')).html();
-    let gottenDate = formatDate(last_date, true);
-    console.log(gottenDate);
+    var last_date = window.days[6].date;
+    var gottenDate = formatDate(last_date, true);
     getWeek(gottenDate);
 });
 
@@ -22,8 +26,8 @@ $('.backward').on("click", function () {
     updateDays();
     $('.time-container').css('display', 'none');
     $('.time-container ul').html('');
-    let first_date = $('.date-bar li').first().children($('.list-full-date')).html();
-    let gottenDate = formatDate(first_date, false);
+    var first_date = window.days[0].date;
+    var gottenDate = formatDate(first_date, false);
     getWeek(gottenDate);
 });
 
@@ -34,10 +38,10 @@ function getTimeline(date) {
         dataType: 'json',
         contentType: "application/json",
         success: function (data) {
-            let events = data.events;
-            for (let i = 0; i < events.length; i++){
+            var events = data.events;
+            for (var i = 0; i < events.length; i++){
                 if (events[i].availability) {
-                    let item = addTimeNode(events[i]);
+                    var item = addTimeNode(events[i]);
                     $('.time-container ul').append(item);
                 }
             }
@@ -49,11 +53,11 @@ function getTimeline(date) {
 $('.time-container ul').on('click', '.pick', function () {
     eventId = $(this).children('.event-id').text();
     $('.submit-modal').css('display', 'flex');
-    let startTime = $(this).parent().children('.time').text();
+    var startTime = $(this).parent().children('.time').text();
     $('#modal-start').html("Начало: "  +startTime.slice(0, 5));
-    let modalDate = new Date(formatDate(date));
-    let arr = [weekArray[modalDate.getDay()].full, modalDate.getDate()];
-    let dateMssg = arr.join(', ');
+    var modalDate = new Date(formatDate(date));
+    var arr = [weekArray[modalDate.getDay()].full, modalDate.getDate()];
+    var dateMssg = arr.join(', ');
     dateMssg += " " + monthArray[modalDate.getMonth()].full;
     $('#modal-date').html(dateMssg);
 });
@@ -78,29 +82,39 @@ $('.submit-modal').on('click', 'i.fa.fa-times.error#close-modal', function (e) {
 });
 
 $('#visitorName').on('keydown keyup focusout', function () {
-   checkName();
+    checkName();
 });
 
 $('#visitorEmail').on('keydown keyup focusout', function () {
-   checkEmail(); 
+    checkEmail();
 });
 
 $('.modal-confirm').on('click', function () {
     if (!error_name && !error_email) {
-        let vName = $('#visitorName').val();
-        let vEmail = $('#visitorEmail').val();
+        var vName = $('#visitorName').val();
+        var vEmail = $('#visitorEmail').val();
         sendVisitor({name: vName, email: vEmail, event: eventId});
     }
 });
 
 $('.submission-failed#2').on('click', 'p', function () {
-    let currHref = $(location).attr('href');
     currHref = currHref.slice(0, currHref.lastIndexOf('/'));
     $(location).attr('href', currHref);
 });
 
 $('.submission-failed#1').on('click', 'p', function () {
     location.reload(true);
+});
+
+$('p#reschedule').on('click', function () {
+    currHref = currHref.substr(0, currHref.lastIndexOf('user')+5);
+    var appendData = ['reschedule', patternId, reschedule_data.evId, reschedule_data.mail];
+    $(location).attr('href', (currHref + appendData.join('/')));
+});
+
+$('p#cancel').on('click', function () {
+    currHref = currHref.substr(0, currHref.lastIndexOf('user')+5);
+    $(location).attr('href', currHref+'/'+window.user+'/');
 });
 
 function getWeek(date) {
@@ -110,33 +124,28 @@ function getWeek(date) {
         dataType: 'json',
         contentType: "application/json",
         success: function (data) {
-            let days = data.days;
-            for (let i = 0; i < days.length; i++) {
-                let iDate = new Date(days[i].date);
-                let currLi = $('.date-bar li').eq(i);
+            var days = window.days = data.days;
+            for (var i = 0; i < days.length; i++) {
+                var iDate = new Date(days[i].date);
+                var currLi = $('.date-bar li').eq(i);
                 currLi.children('.list-full-date').html(iDate.getDate() + '/'+ (iDate.getMonth()+1) + '/' +iDate.getFullYear());
                 currLi.children('.list-day').html(weekArray[iDate.getDay()].short);
                 currLi.children('.list-date').html(iDate.getDate());
                 currLi.children('.list-month').html(monthArray[iDate.getMonth()].short);
-                if (days[i].available) {
-                    $('.date-bar li').eq(i).attr('class', 'active');
-                }
-                else {
-                    $('.date-bar li').eq(i).attr('class', '');
-                }
+                $('.date-bar li').eq(i).attr('class', days[i].available ? 'active' : '');
             }
         }
     })
 }
 
 function formatDate(date, increase){
-    let dateArray = date.split('/');
-    let gottenDate = new Date(dateArray[2] + "-" + dateArray[1] + '-' + dateArray[0]);
+    var dateArray = date.split('/');
+    var gottenDate = new Date(dateArray[2] + "-" + dateArray[0] + '-' + dateArray[1]);
     if (increase) {
-        gottenDate.getDate() >= 10 ? gottenDate.setDate(gottenDate.getDate() + 1) : gottenDate.setDate(gottenDate.getDate() +2);
+        gottenDate.setDate(gottenDate.getDate()+1);
     }
     else if (increase === false) {
-        gottenDate.getDate() >= 10? gottenDate.setDate(gottenDate.getDate()-7) : gottenDate.setDate(gottenDate.getDate()-6);
+        gottenDate.setDate(gottenDate.getDate()-7);
     }
     gottenDate = gottenDate.toISOString().slice(0, 10);
     return gottenDate;
@@ -148,28 +157,28 @@ function updateDays(){
 }
 
 function addTimeNode(data){
-    let timelineTime = formatTimelineTime(data.date, data.time);
-    let li = $('<li>');
+    var timelineTime = formatTimelineTime(data.date, data.time);
+    var li = $('<li>');
     li.append('<span>');
-    let id = $('<div>');
+    var id = $('<div>');
     id.addClass('event-id');
     id.html(data.eventId);
-    let pick = $('<div>');
+    var pick = $('<div>');
     pick.addClass('pick');
     pick.html('Записаться');
-    let remain = $('<div>');
+    var remain = $('<div>');
     remain.addClass('remain');
     remain.html('Осталось мест: ' + data.remain);
     pick.append(id);
     pick.append(remain);
     li.append(pick);
-    let time = $('<div>');
+    var time = $('<div>');
     time.addClass('time');
-    let startSpan = $('<span>').html(timelineTime.getHours() + ":" +
+    var startSpan = $('<span>').html(timelineTime.getHours() + ":" +
         ('0'+timelineTime.getMinutes()).slice(-2));
     time.append(startSpan);
     timelineTime.setMinutes(timelineTime.getMinutes() + duration);
-    let endSpan = $('<span>').html(timelineTime.getHours() + ":" +
+    var endSpan = $('<span>').html(timelineTime.getHours() + ":" +
         ('0'+timelineTime.getMinutes()).slice(-2));
     time.append(endSpan);
     li.append(time);
@@ -177,8 +186,8 @@ function addTimeNode(data){
 }
 
 function formatTimelineTime(date, time){
-    let timeArr = time.split(':');
-    let timelineTime = new Date(date);
+    var timeArr = time.split(':');
+    var timelineTime = new Date(date);
     timelineTime.setHours(timeArr[0]);
     timelineTime.setMinutes(timeArr[1]);
     timelineTime.setSeconds(timeArr[2]);
@@ -193,7 +202,7 @@ function sendVisitor(inputData){
         dataType: 'json',
         contentType: "application/json",
         success: function (data) {
-            let success = data.success;
+            var success = data.success;
             $('.timeline').css('display', 'none');
             $('.submit-modal').css('display', 'none');
             $('.submission-content').css('display', 'flex');
@@ -209,6 +218,7 @@ function sendVisitor(inputData){
                     break;
                 case 3:
                     $('.submission-failed#3').css('display', 'flex');
+                    reschedule_data = {mail: data.email, evId: data.eventId};
                     break;
             }
         }
@@ -216,9 +226,9 @@ function sendVisitor(inputData){
 }
 
 function checkName() {
-    let pattern = /^[A-Za-zА-Яа-яёЁ]*$/;
-    let currItem = $('#visitorName');
-    let name = currItem.val().trim();
+    var pattern = /^[A-Za-zА-Яа-яёЁ]*$/;
+    var currItem = $('#visitorName');
+    var name = currItem.val().trim();
     clearWarnings(currItem);
     if (pattern.test(name) && name !== ''){
         currItem.css('border-bottom', '2px solid #34F458');
@@ -226,40 +236,30 @@ function checkName() {
         error_name = false;
     }
     else {
-        if (name === '') {
-            currItem.parent().children('i.fa.fa-exclamation.warning').css('display', 'inline');
-            currItem.parent().children('span.spanEmpty').css('display', 'inline');
-            currItem.css('border-bottom', '2px solid orange');
-        } else {
-            currItem.parent().children('i.fa.fa-times.error').css('display', 'inline');
-            currItem.parent().children('span.spanInvalid').css('display', 'inline');
-            currItem.css('border-bottom', '2px solid #f90a0a');
-        }
+        var bool= name==='';
+        currItem.parent().children(bool ? 'i.fa.fa-exclamation.warning' : 'i.fa.fa-times.error').css('display', 'inline');
+        currItem.parent().children(bool ? 'span.spanEmpty' : 'span.spanInvalid').css('display', 'inline');
+        currItem.css('border-bottom', bool ? '2px solid orange': '2px solid #f90a0a');
         error_name = true;
     }
 }
 
 function checkEmail() {
-    let pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    let currItem = $('#visitorEmail');
+    // regExp to check if user did a correct e-mail input. Example = example@example.com, example@x.com.ua, example@y.x.com.gb
+    var pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    var currItem = $('#visitorEmail');
     clearWarnings(currItem);
-    let mail = currItem.val().trim();
+    var mail = currItem.val().trim();
     if (pattern.test(mail) && mail !== ''){
         currItem.css('border-bottom', '2px solid #34F458');
         currItem.parent().children('i.fa.fa-check.success').css('display', 'inline');
         error_email = false;
     }
     else {
-        if (mail === '') {
-            currItem.parent().children('i.fa.fa-exclamation.warning').css('display', 'inline');
-            currItem.parent().children('span.spanEmpty').css('display', 'inline');
-            currItem.css('border-bottom', '2px solid orange');
-
-        } else {
-            currItem.parent().children('i.fa.fa-times.error').css('display', 'inline');
-            currItem.parent().children('span.spanInvalid').css('display', 'inline');
-            currItem.css('border-bottom', '2px solid #f90a0a');
-        }
+        var checkMl = mail === '';
+        currItem.parent().children(checkMl ? 'i.fa.fa-exclamation.warning' : 'i.fa.fa-times.error').css('display', 'inline');
+        currItem.parent().children(checkMl ? 'span.spanEmpty' : 'span.spanInvalid').css('display', 'inline');
+        currItem.css('border-bottom', checkMl ? '2px solid orange' : '2px solid #f90a0a');
         error_email = true;    }
 }
 
@@ -276,11 +276,13 @@ function clearWarnings(item){
 var error_name = false;
 var error_email = false;
 
-var duration = $('#eventDuration').html();
+var duration = window.duration;
 duration = parseInt(duration);
-var patternId = $('#patternId').html();
+var patternId = window.patternId;
 
 var eventId;
+
+var reschedule_data = {evId: 21, mail: 'v@v.com'};
 
 
 var weekArray = [{short: 'ВС', full: 'Воскресенье'},
@@ -304,3 +306,4 @@ var monthArray = [{short: 'Янв', full: "Января"},
     {short: 'Дек', full: "Декабря"}];
 
 var date;
+var currHref;

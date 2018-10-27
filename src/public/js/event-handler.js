@@ -2,9 +2,9 @@ var eventType = '';
 var patternId = '';
 
 $('ul').on('click', 'li', function () {
-    var event_owner = $(this).children(".event-owner").html();
-    eventType = $(this).children(".event-header").html();
-    patternId = $(this).children('.patternId').html();
+    var event_owner = window.eventsOwner;
+    eventType = window.eventsList[$(this).index()].event;
+    patternId = window.eventsList[$(this).index()].patternId;
     $('.bg-modal').css('display', 'flex');
     $('#modal-owner').text(event_owner);
     $('#modal-desc').text("Вы уверены что хотите посетить событие " + eventType + "?");

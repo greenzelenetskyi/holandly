@@ -81,7 +81,7 @@ body{
     background-color: white;
     border-radius: 10px;
     text-align: center;
-    padding: 20px;
+    padding: 20px 20px 5px;
     display: flex;
     flex-direction: column;
 }
@@ -104,6 +104,7 @@ body{
 
 .modal-content form{
     margin: auto;
+    min-width: 30%;
     width: 80%;
     display: flex;
     justify-content: space-between;
@@ -111,8 +112,8 @@ body{
 
 form p.modal-button{
     color: black;
-    width: 20%;
-    padding: 14px 25px;
+    width: 17%;
+    padding: 12px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;

@@ -1,0 +1,39 @@
+extends layout
+
+block content
+    #event-header
+        .top_container
+            #event-name= type
+            #event-duarion= '⌚   ' + duration + ' min'
+        #event-description= description
+        #visitor-mail= email
+    .current-evs
+        #remain
+        ul
+            - list = events;
+            each item in list
+                li
+                    if item.isRecord
+                        .checker.checked
+                            i.fas.fa-check-square
+                    else
+                        .checker
+                            i.fas.fa-square
+                    .event-id= item.eventId
+                    - var itemDate = new Date(item.date)
+                    - var dateArr = ["Воскресенье", "Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"];
+                    - var monthArr = ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Ноя', 'Дек'];
+                    - itemDate = dateArr[itemDate.getDay()] + ", " + itemDate.getDate() + " " + monthArr[itemDate.getMonth()];
+                    .date= itemDate
+                    - var itemTime = item.time;
+                    - itemTime = itemTime.slice(0, -3);
+                    .time= itemTime
+        p#confirm Подтвердить изменения
+        p#cancel Отмена
+    script(src="/js/lib/jquery-3.3.1.js")
+    script(src='/js/rescheduler.js')
+    script.
+        window.user= !{JSON.stringify(username)}
+        window.visEmail= !{JSON.stringify(email)};
+        window.visEvents= !{JSON.stringify(events)};
+        window.access= !{JSON.stringify(access)};
