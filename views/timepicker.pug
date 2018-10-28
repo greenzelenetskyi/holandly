@@ -21,6 +21,8 @@ block content
         .submission-failed#3
             i.fa.fa-exclamation.warning
             .message= 'Внимание! Вы уже записаны на это событие в другой день или время. Выберите более подходящий вариант.'
+            p#reschedule Перепланировать
+            p#cancel Оставить как было
     .timeline
         #event-header
             .top_container
@@ -35,35 +37,20 @@ block content
                 - var currDate = 0
                 - list = days
                 - for (var i = 0; i < list.length-1; i++) {
-                    - currDate = new Date(list[i].date);
-                    if list[i].available
-                        li.active
-                            .list-full-date= currDate.getDate() + '/'+ (currDate.getMonth()+1) + '/' +currDate.getFullYear()
-                            .list-day= weekArray[currDate.getDay()]
-                            .list-date= currDate.getDate()
-                            .list-month= monthArray[currDate.getMonth()]
-                        .divider
-                    else
-                        li
-                            .list-full-date= currDate.getDate() + '/'+ (currDate.getMonth()+1) + '/' +currDate.getFullYear()
-                            .list-day= weekArray[currDate.getDay()]
-                            .list-date= currDate.getDate()
-                            .list-month= monthArray[currDate.getMonth()]
-                        .divider
+                - currDate = new Date(list[i].date);
+                    li(class= list[i].available ? "active" : '')
+                        .list-full-date= currDate.getDate() + '/'+ (currDate.getMonth()+1) + '/' +currDate.getFullYear()
+                        .list-day= weekArray[currDate.getDay()]
+                        .list-date= currDate.getDate()
+                        .list-month= monthArray[currDate.getMonth()]
+                    .divider
                 - }
                 - currDate = new Date(list[list.length-1].date)
-                    if list[list.length-1].available
-                        li.active
-                            .list-full-date= currDate.getDate() + '/'+ (currDate.getMonth()+1) + '/' +currDate.getFullYear()
-                            .list-day= weekArray[currDate.getDay()]
-                            .list-date= currDate.getDate()
-                            .list-month= monthArray[currDate.getMonth()]
-                    else
-                        li
-                            .list-full-date= currDate.getDate() + '/'+ (currDate.getMonth()+1) + '/' +currDate.getFullYear()
-                            .list-day= weekArray[currDate.getDay()]
-                            .list-date= currDate.getDate()
-                            .list-month= monthArray[currDate.getMonth()]
+                li(class= list[list.length-1].available ? "active" : '')
+                    .list-full-date= currDate.getDate() + '/'+ (currDate.getMonth()+1) + '/' +currDate.getFullYear()
+                    .list-day= weekArray[currDate.getDay()]
+                    .list-date= currDate.getDate()
+                    .list-month= monthArray[currDate.getMonth()]
             span.forward ❯
         .time-container
             ul
@@ -110,5 +97,12 @@ block content
                             span.spanEmpty Поле не может быть пустым
                             span.spanInvalid Введите корректный адрес почты
                         p.modal-confirm Записаться
-    script(src="/js/lib/jquery-3.3.1.min.js")
+    script(src="/js/lib/jquery-3.3.1.js")
     script(src='/js/date-time-handler.js')
+    script.
+        window.user= !{JSON.stringify(username)};
+        window.duration= !{JSON.stringify(duration)};
+        window.evType= !{JSON.stringify(eventType)};
+        window.evDesc= !{JSON.stringify(description)};
+        window.days= !{JSON.stringify(days)};
+        window.patternId= !{JSON.stringify(patternId)};
