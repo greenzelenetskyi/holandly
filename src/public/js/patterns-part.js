@@ -1,5 +1,5 @@
 function makePatternCard(data) {
-    appendPattern(data);
+    // appendPattern(data);
     let patternField = document.getElementById('pattern-row');
     patternField.innerHTML = '';
     let patternAmount = '';
@@ -29,7 +29,7 @@ function makePatternCard(data) {
             patternField.appendChild(patternCard);
         }
     }
-    document.getElementById('patterns-amount').innerText = patternAmount;
+    // document.getElementById('patterns-amount').innerText = patternAmount;
 
     $(document).ready(function () {
         $('[data-tooltip="tooltip"]').tooltip();

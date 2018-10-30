@@ -91,7 +91,7 @@ function makeVisitorsList(signedVisitorsList) {
         signedVisitorsList.forEach(function (dateEvent, index, signedVisitorsList) {
             visitorsField.appendChild(createDateEvent(dateEvent, index));
         });
-        document.getElementById('visitors-amount').innerText = getVisitorEventsAmount(signedVisitorsList);
+        // document.getElementById('visitors-amount').innerText = getVisitorEventsAmount(signedVisitorsList);
         addHandlerRemoveScheduledEvent('.removeScheduledEvents');
         addHandlerCancelVisitor('.cancelVisitor');
         addHandlerEditEvent('.reScheduledEvents');

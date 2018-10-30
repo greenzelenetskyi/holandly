@@ -41,7 +41,23 @@ window.onload = function () {
     });
 };
 
+function setMenuVisible() {
+    $elMenu = $('#menuLogo');
+    if ($(window).width() < 800) {
+        $elMenu.hide();
+    }
+    else {
+        $elMenu.show();
+    }
+}
+
 $(document).ready(function () {
+
+
+    $(window).resize(function () {
+        setMenuVisible();
+    });
+    setMenuVisible();
     // $.ajaxSetup({
     //     headers: {
     //         'Authorization': "Basic " + btoa('user' + ':' + 'passw')
@@ -73,21 +89,21 @@ $(document).ready(function () {
         updateAll();
     });
 
-    $(".logOut").click(function () {
+    $("#logOut").click(function () {
         logOut();
     });
 
     updateAll();
 
 
-
 });
+
 
 var remove;
 
 function updateAll() {
     getPatterns();
-    getEvents();
+    //getEvents();
     getVisitors();
 }
 

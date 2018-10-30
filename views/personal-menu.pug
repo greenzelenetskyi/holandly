@@ -1,0 +1,26 @@
+extends personal-layout
+
+block tab_menu
+    nav
+        #nav-tab.nav.nav-tabs.justify-content-center
+            a#menuLogo.nav-item.nav-link.flex-grow-1.disabled
+                img(src='img/logoH4.png')
+            a#nav-visitors-tab.nav-item.nav-link.active(data-toggle='tab', href='#nav-visitors', role='tab', aria-controls='nav-visitors', aria-selected='true')
+                | События
+            a#nav-patterns-tab.nav-item.nav-link(data-toggle='tab', href='#nav-patterns', role='tab', aria-controls='nav-patterns', aria-selected='false')
+                | Шаблоны
+            a.nav-item.dropdown
+                a.nav-link.dropdown-toggle(data-toggle='dropdown', href='#', role='button', aria-haspopup='true', aria-expanded='false')
+                    img(src='img/admin.png' height='24')
+                    |  user/andrey
+                .dropdown-menu
+                    a.dropdown-item(href='#') Получить ссылку
+                    a.dropdown-item(href='user/andrey') Перейти по ссылке
+                    //a.dropdown-item(href='#') ---
+                    .dropdown-divider
+                    a#logOut.dropdown-item(href='#') Выход
+    #nav-tabContent.tab-content
+        #nav-visitors.tab-pane.fade.show.active(role='tabpanel', aria-labelledby='nav-visitors-tab')
+            block block_visitors
+        #nav-patterns.tab-pane.fade(role='tabpanel', aria-labelledby='nav-patterns-tab')
+            block block_patterns

@@ -38,6 +38,7 @@ function getEvents() {
             console.log('getEvents');
             console.log(data);
             makeEventsPoint(data);
+
         }
     });
 }
@@ -142,6 +143,22 @@ function logOut() {
                     window.location = "/edit";
                 }
             })
+        }
+    });
+}
+
+function getVisitorsList() {
+    console.log('getVisitorsList');
+    $.ajax({
+        type: 'get',
+        url: '/edit/pattern',
+        dataType: 'json',
+        data: {},
+        response: 'json',
+        success: function (data) {
+            console.log('getVisitorsList');
+            console.log(data);
+            return (data);
         }
     });
 }
