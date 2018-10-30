@@ -94,6 +94,7 @@ function getPatterns() {
 function putPattern() {
     let pattern = {};
     pattern.patternId = $("input#modalPattern_patternId").val();
+    pattern.patternId = pattern.patternId < 1 ? 0 : pattern.patternId;
     pattern.type = $("input#inputPatternType").val();
     pattern.description = $("#inputDescription").val();
     pattern.number = $("input#inputNumber").val();
@@ -101,7 +102,7 @@ function putPattern() {
     console.log('putPattern>>>');
     console.log(pattern);
     $.ajax({
-        type: (pattern.patternId === "0") ? "POST" : "PUT",
+        type: (pattern.patternId === 0) ? "POST" : "PUT",
         url: '/edit/pattern',
         data: JSON.stringify(pattern),
         contentType: 'application/json',

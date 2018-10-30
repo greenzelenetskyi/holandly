@@ -1,12 +1,23 @@
 extends personal-visitors
 block block_patterns
-    .tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
+    script.
+        $(document).ready(function () {
+            $('#tst').click(function () {
+                console.log('tst1');
+                $('#patternEdit')[0].hidden = false;
+               // $('#patternsView')[0].hidden = true;
+            });
+        })
+    #patternsView.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
         .input-group
+            a Запланированные события -
             a(href='user/andrey')
                 |user/andrey
             a.form-control.invisible
             .input-group-append
                 button.btn.btn-outline-secondary(type='button').invisible
-                button.btn.btn-outline-secondary(type='button') Создать шаблон
+                button.btn.btn-primary(type='button', data-toggle='modal', data-target='#pattern-modal-form')
+                    | + Создать новый шаблон
         hr
         #pattern-row.row
+    #patternEdit1.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded(hidden)
