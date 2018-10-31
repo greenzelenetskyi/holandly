@@ -2,17 +2,17 @@ extends personal-visitors
 block block_patterns
     script.
         $(document).ready(function () {
-            $('#tst').click(function () {
-                console.log('tst1');
-                $('#patternEdit')[0].hidden = false;
-               // $('#patternsView')[0].hidden = true;
+            $('#closeCalendar').click(function () {
+                console.log('closeCalendar');
+                $('#patternEdit')[0].hidden = true;
+                $('#patternsView')[0].hidden = false;
+
             });
         })
     #patternsView.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
         .input-group
-            a Запланированные события -
-            a(href='user/andrey')
-                |user/andrey
+            a.card-link(href='user/andrey')
+                | user/andrey
             a.form-control.invisible
             .input-group-append
                 button.btn.btn-outline-secondary(type='button').invisible
@@ -20,4 +20,74 @@ block block_patterns
                     | + Создать новый шаблон
         hr
         #pattern-row.row
-    #patternEdit1.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded(hidden)
+    #patternEdit.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded(hidden)
+        .card
+            .card-header
+                h5#editPatternType editPatternType
+            .card-body
+                a(href='#' data-toggle="modal" data-target="#event-wizard-form") Заплпнировать повторяющееся событие
+                hr
+                #calendar
+                hr
+                .text-right
+                    .btn-group
+                        button#closeCalendar.btn.btn-outline-secondary(type='button')
+                            | Отмена
+                        button#saveCalendar.btn.btn-primary(type='button')
+                            | Сохранить и закрыть
+    // Modal event wizard
+    #event-wizard-form.modal.fade(tabindex='-1', role='dialog', aria-labelledby='eventWizardLabel', aria-hidden='true')
+        form
+            .modal-dialog(role='document')
+                .modal-content
+                    .modal-header
+                        h5#removeModalLabel.modal-title Мастер повторяющихся событий
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') ×
+                    .modal-body
+                        .input-group.mb-3
+                            .input-group-prepend
+                                span#inputGroup-sizing-default.input-group-text Default
+                            input.form-control(type='text', aria-label='Sizing example input', aria-describedby='inputGroup-sizing-default')
+
+                        input#removePatternId(type='text', hidden='куецуке')
+                        input#removeEventId(type='text', hidden='')
+                        .form-group.row
+                            label.col-sm-2.col-form-label(for='removeDescription') Причина
+                            .col-sm-10
+                                textarea#removeDescription.form-control(aria-label='With textarea')
+                        .modal-footer
+                            button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
+                            input.btn.btn-primary(type='submit', value='Создать')
+    //Modal new pattern
+    #pattern-modal-form.modal.fade(tabindex='-1', role='dialog', aria-labelledby='newPatternModalLabel', aria-hidden='true')
+        form#test
+            .modal-dialog.modal-lg(role='document')
+                .modal-content
+                    .modal-header
+                        h5#newPatternModalLabel.modal-title Шаблон события
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') ×
+                    .modal-body
+                        input#modalPattern_patternId(type='text', hidden='')
+                        .form-group.row
+                            label.col-sm-4.col-form-label(for='inputPatternType') Тип
+                            .col-sm-8
+                                input#inputPatternType.form-control(type='text', placeholder='Type', minlength='5')
+                            label.col-sm-4.col-form-label(for='inputNumber') Количество
+                            .col-sm-8
+                                input#inputNumber.form-control(type='number', min='1')
+                            label.col-sm-4.col-form-label(for='inputDuration') Продолжительность
+                            .col-sm-8
+                                input#inputDuration.form-control(type='number', min='1')
+                            label.col-sm-4.col-form-label(for='inputDescription') Описание
+                            .col-sm-8
+                                textarea#inputDescription.form-control(aria-label='With textarea')
+                            label.col-sm-10.col-form-label(for='inputMultiAccess')
+                                | Зпрет
+                                | многократной подписки на событие
+                            .col-sm-2
+                                input#inputMultiAccess.form-control(type='checkbox')
+                    .modal-footer
+                        button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
+                        input.btn.btn-primary(type='submit', value='Создать')

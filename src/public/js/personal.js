@@ -66,7 +66,14 @@ $(document).ready(function () {
 
     var patternModalForm = $("#pattern-modal-form");
     patternModalForm.submit(function (event) {
+        console.log(event);
         event.preventDefault();
+        var form = document.getElementById("test");
+        console.log('form');
+        console.log(form);
+        var FD = new FormData(form);
+        console.log('formData');
+        console.log(FD);
         putPattern();
         patternModalForm.modal('hide');
     });
