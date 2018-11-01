@@ -140,10 +140,10 @@ function addHandlerRemoveScheduledEvent(element) {
 function addHandlerCancelVisitor(element) {
     $(element).click(
         function () {
-            let data = {};
-            data.email = this.getAttribute('email');
-            data.eventId = this.getAttribute('eventId');
-            console.log(data);
+            var data = {
+                email : this.getAttribute('email'),
+                eventId : this.getAttribute('eventId')
+            };
             remove = function () {
                 data.reason = $("#removeDescription").val();
                 cancelVisitor(data);
