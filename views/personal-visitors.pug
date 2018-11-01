@@ -20,8 +20,8 @@ block block_visitors
         }
         function createVisitorElement(timeId, visitorData) {
             var visitor = document.getElementById('templateVisitor').cloneNode(true).innerHTML;
-            visitor = visitor.replace(/headingTimeEvent/gi, 'headingTimeEvent' + accordionId + time);
-            visitor = visitor.replace(/collapseTimeEvent/gi, 'collapseTimeEvent' + accordionId + time);
+            visitor = visitor.replace(/visitor-name/gi, 'headingTimeEvent' + accordionId + time);
+            visitor = visitor.replace(/visitor-email/gi, 'collapseTimeEvent' + accordionId + time);
             visitor = visitor.replace(/accordionDate/gi, accordionId);
             visitor = visitor.replace(/templateTimeEvent/gi, 'templateTimeEvent' + accordionId + time);
             document.getElementById(timeId).innerHTML += visitor;
@@ -34,68 +34,16 @@ block block_visitors
 
                 var dateEvent = createDateElement(index);
                 var timeEvent2 = createTimeElement(dateEvent.id, indexT);
-                // document.getElementById('templateDateEvent').cloneNode(true).innerHTML;
-                // dateEvent = dateEvent.replace(/date-event/gi, 'dtat 171717' + index);
-                // dateEvent = dateEvent.replace(/accordionDate/gi, 'accordionDate' + index);
-                // document.getElementById('div-dashboard').innerHTML += dateEvent;
-                // dateEvent = document.getElementById('accordionDate' + index);
 
-
-                var timeEvent = document.getElementById('templateTimeEvent').cloneNode(true).innerHTML;
-                timeEvent = timeEvent.replace(/headingTimeEvent/gi, 'headingTimeEvent' + indexT);
-                timeEvent = timeEvent.replace(/collapseTimeEvent/gi, 'collapseTimeEvent' + indexT);
-                timeEvent = timeEvent.replace(/accordionDate/gi, 'accordionId' + index);
-                timeEvent = timeEvent.replace(/templateTimeEvent/gi, 'templateTimeEvent' + indexT);
-
-                dateEvent.innerHTML += timeEvent;
-                indexT++
-                timeEvent = document.getElementById('templateTimeEvent').cloneNode(true).innerHTML;
-                timeEvent = timeEvent.replace(/headingTimeEvent/gi, 'headingTimeEvent' + indexT);
-                timeEvent = timeEvent.replace(/collapseTimeEvent/gi, 'collapseTimeEvent' + indexT);
-                timeEvent = timeEvent.replace(/accordionDate/gi, 'accordionId' + index);
-                timeEvent = timeEvent.replace(/templateTimeEvent/gi, 'templateTimeEvent' + indexT);
-                dateEvent.innerHTML += timeEvent;
                 indexT++;
                 index++;
-                // document.getElementById('div-dashboard').innerHTML += timeEvent;
-                // timeEvent = document.getElementById('templateTimeEvent' + index);
 
-
-                //
-                // // var timeCard = document.getElementById('tmpCard');
-                // var accCard = document.getElementById('accordionExample');
-                //
-                // var didv = document.getElementById("tmpCard");
-                // // console.log(didv.outerHTML);
-                //
-                // // var copy = $.extend(true, {}, didv);
-                // //
-                // // accCard.appendChild(copy);
-                // var target = didv.cloneNode(true).outerHTML;
-                // ;
-                // //
-                // target = target.replace(/tmpCard/gi, 'card' + index);
-                // target = target.replace(/collapseOne/gi, 'collapse' + index);
-                // target = target.replace(/headingOne/gi, 'headingOne' + index);
-                // // target = target.replace('collapseOne','collapse1');
-                // index++;
-                // // target = target.replace('collapseOne','collapse1');
-                // accCard.innerHTML += target;
-
-                // accCard.appendChild(didv.cloneNode(true));
-                // timeCard = timeCard.replace('collapseOne','collapse1');
-                // var e1 = timeCard.replace('collapseOne','collapse1');;
-                // var e2 = timeCard.replace('collapseOne','collapse2');;
-                // // $("#tmpCard").clone().appendTo("#accordionExample");
-                // accCard.innerHTML+=e1;
-                //
-                // accCard.innerHTML+=e2;
-                // accCard.innerHTML+=timeCard;
-                // accCard.innerHTML+=timeCard;
-                // accCard.innerHTML+=timeCard;
 
 
                 // console.log(timeCard);
+                $('.cancel-visitor').click(function () {
+                    console.log(this);
+                })
             });
         })
 
@@ -118,10 +66,10 @@ block block_visitors
                 .card
                     #headingTimeEvent.card-header( data-toggle='collapse', data-target='#collapseTimeEvent', aria-controls='collapseTimeEvent')
                         .d-flex.bd-highlight
-                            .p-2.flex-fill 11:00-12:32
+                            .p-2.flex-fill time-event
                             .p-2.flex-fill
-                                strong Rfzrbyкуещцлзукщегзпцукепu
-                            .p-2.flex-fill Участников 5 из 10
+                                strong type-event
+                            .p-2.flex-fill visitors
                             .p-2.navbar.navbar-light
                                 .navbar-toggler-icon
                     #collapseTimeEvent.collapse(aria-labelledby='headingTimeEvent', data-parent='#accordionDate')
@@ -135,6 +83,12 @@ block block_visitors
                                             | Отменить
                                 .p-2.w-100
                                     ul.visitors.list-group.list-group-flush
+                                        li.list-group-item.d-flex.justify-content-between.align-items-center
+                                            span visitor-name
+                                            span visitor-email
+                                            a.cancel-visitor.btn.btn-outline-danger.badge(data-visitor='visitor-name', data-email='visitor-email' ) Х
+                            //.card-footer
+
                                         //li.list-group-item.d-flex.justify-content-between.align-items-center
                                         //    span Cras justo odio
                                         //    span Cras justo odio
@@ -153,214 +107,59 @@ block block_visitors
                 li.list-group-item.d-flex.justify-content-between.align-items-center
                     span visitor-name
                     span visitor-email
-                    a.btn.btn-outline-danger.badge Х
+                    a.cancel-visitor.btn.btn-outline-danger.badge(data-eventid='eventid', data-email='visitor-email' ) Х
 
 
-    .tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
-        #templateDateEvent1
-            .tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
-                strong date-event
-                hr
-                #accordionExample.accordion
-
-                    .card#tmpCard
-                        #headingOne.card-header( data-toggle='collapse', data-target='#collapseOne', aria-controls='collapseOne')
-                            .d-flex.bd-highlight
-                                .p-2.flex-fill 11:00-12:32
-                                .p-2.flex-fill
-                                    strong Rfzrbyкуещцлзукщегзпцукепu
-                                .p-2.flex-fill Участников 5 из 10
-                                .p-2.navbar.navbar-light
-                                    .navbar-toggler-icon
-                        #collapseOne.collapse(aria-labelledby='headingOne', data-parent='#accordionExample')
-                            .card-body
-                                .d-flex.bd-highlight
-                                    .p-2.flex-shrink-1.align-self-center
-                                        .btn-group-vertical
-                                            a.btn.btn-outline-info
-                                                | Перепланировать
-                                            a.btn.btn-outline-danger
-                                                | Отменить
-                                    .p-2.w-100
-                                        ul.list-group.list-group-flush
-                                            li.list-group-item.d-flex.justify-content-between.align-items-center
-                                                span Cras justo odio
-                                                span Cras justo odio
-                                                a.btn.btn-outline-danger.badge Х
-                                            li.list-group-item.d-flex.justify-content-between.align-items-center
-                                                span Cras justo odio
-                                                span Cras justo odio
-                                                a.btn.btn-outline-danger.badge Х
-                                            li.list-group-item.d-flex.justify-content-between.align-items-center
-                                                span Cras justo odio
-                                                span Cras justo odio
-                                                a.btn.btn-outline-danger.badge Х
-                                    //ul.list-group.list-group-flush
-                                    //    li.list-group-item.d-flex.justify-content-between.align-items-center
-                                    //        span Cras justo odio
-                                    //        span Cras justo odio
-                                    //        a.btn.btn-outline-danger.badge Х
-                                    //    li.list-group-item.d-flex.justify-content-between.align-items-center
-                                    //        span Cras justo odio
-                                    //        span Cras justo odio
-                                    //        a.btn.btn-outline-danger.badge Х
-                                    //    li.list-group-item.d-flex.justify-content-between.align-items-center
-                                    //        span Cras justo odio
-                                    //        span Cras justo odio
-                                    //        a.btn.btn-outline-danger.badge Х
-            //    .card
-            //        #headingTwo.card-header
-            //            h5.mb-0
-            //                button.btn.btn-link.collapsed(type='button', data-toggle='collapse', data-target='#collapseTwo', aria-expanded='false', aria-controls='collapseTwo')
-            //                    | Collapsible Group Item #2
-            //        #collapseTwo.collapse(aria-labelledby='headingTwo', data-parent='#accordionExample')
-            //            .card-body
-            //                | Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-            //    .card
-            //        #headingThree.card-header
-            //            h5.mb-0
-            //                button.btn.btn-link.collapsed(type='button', data-toggle='collapse', data-target='#collapseThree', aria-expanded='false', aria-controls='collapseThree')
-            //                    | Collapsible Group Item #3
-            //        #collapseThree.collapse(aria-labelledby='headingThree', data-parent='#accordionExample')
-            //            .card-body
-            //                | Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-            //
-            //    .card
-            //        #headingOne1.card-header
-            //            h5.mb-0
-            //                button.btn.btn-link(type='button', data-toggle='collapse', data-target='#collapseOne1',  aria-controls='collapseOne1')
-            //                    | Collapsible Group Item #1
-            //        #collapseOne1.collapse(aria-labelledby='headingOne1', data-parent='#accordionExample')
-            //            .card-body
-            //                | Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-            //    .card
-            //        #headingTwo2.card-header
-            //            h5.mb-0
-            //                button.btn.btn-link.collapsed(type='button', data-toggle='collapse', data-target='#collapseTwo2',  aria-controls='collapseTwo2')
-            //                    | Collapsible Group Item #2
-            //        #collapseTwo2.collapse(aria-labelledby='headingTwo2', data-parent='#accordionExample')
-            //            .card-body
-            //                | Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-            //    .card
-            //        #headingThree3.card-header
-            //            h5.mb-0
-            //                button.btn.btn-link.collapsed(type='button', data-toggle='collapse', data-target='#collapseThree3', aria-expanded='false', aria-controls='collapseThree3')
-            //                    | Collapsible Group Item #3
-            //        #collapseThree3.collapse(aria-labelledby='headingThree3', data-parent='#accordionExample')
-            //            .card-body
-            //                | Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-            //
-            //.tab-content.rounded-0
-            //    .card
-            //        .card-header
-            //            .d-flex.bd-highlight
-            //                .p-2.bd-highlight 11:00-12:32
-            //                .p-2.bd-highlight Rfzrbyu
-            //                .p-2.flex-grow-1.bd-highlight Участников 5 из 10
-            //                .p-2.bd-highlight.btn-link(data-toggle='collapse', href='#collapseExample', role='button', aria-expanded='false', aria-controls='collapseExample') Дополнительно
-            //        #collapseExample.collapse
-            //            .d-flex.bd-highlight
-            //                .p-2.flex-shrink-1.align-self-center
-            //                    .btn-group-vertical
-            //                        a.btn.btn-outline-info
-            //                            | Перепланировать
-            //                        a.btn.btn-outline-danger
-            //                            | Отменить
-            //                .p-2.w-100
-            //                    ul.list-group.list-group-flush
-            //                        li.list-group-item.d-flex.justify-content-between.align-items-center
-            //                            span Cras justo odio
-            //                            span Cras justo odio
-            //                            a.btn.btn-outline-danger.badge Х
-            //                        li.list-group-item.d-flex.justify-content-between.align-items-center
-            //                            span Cras justo odio
-            //                            span Cras justo odio
-            //                            a.btn.btn-outline-danger.badge Х
-            //                        li.list-group-item.d-flex.justify-content-between.align-items-center
-            //                            span Cras justo odio
-            //                            span Cras justo odio
-            //                            a.btn.btn-outline-danger.badge Х
-            //                    //table.table
-            //                    //    thead
-            //                    //        tr
-            //                    //            th Имя
-            //                    //            th E-mail
-            //                    //            th Отмена участия
-            //                    //    tbody
-            //                    //        tr
-            //                    //            td
-            //                    //                a Mark
-            //                    //                a Mark
-            //                    //            td Ottrtyuhrtyurtyuhjrtyurtyurtyo
-            //                    //            td
-            //                    //                a.btn.btn-sm.btn-outline-danger
-            //                    //                    | GTHT
-            //                    //        tr
-            //                    //            td Jacoburtyujrtyurtyurty
-            //                    //            td Thornton
-            //                    //            td
-            //                    //                a.btn.btn-sm.btn-outline-danger
-            //                    //                    | ttyur,yuio
-            //                    //        tr
-            //                    //            td Larry
-            //                    //            td the Bird
-            //                    //            td
-            //                    //                a.btn.btn-outline-danger
-            //                    //                    | GTHT
-            //.tab-content.rounded-0
-            //.card
-            //    .card-header
-            //        .d-flex.bd-highlight
-            //            .p-2.flex-fill 11:00-12:32
-            //            .p-2.flex-fill Rfzrbyкуещцлзукщегзпцукепu
-            //            .p-2.flex-fill Участников 5 из 10
-            //            .p-2.bd-highlight.btn-link(data-toggle='collapse', href='#collapseExample', role='button', aria-expanded='false', aria-controls='collapseExample') Дополнительно
-            //    #collapseExample.collapse
-            //        .d-flex.bd-highlight
-            //            .p-2.flex-shrink-1.align-self-center
-            //                .btn-group-vertical
-            //                    a.btn.btn-outline-info
-            //                        | Перепланировать
-            //                    a.btn.btn-outline-danger
-            //                        | Отменить
-            //            .p-2.w-100
-            //                ul.list-group.list-group-flush
-            //                    li.list-group-item.d-flex.justify-content-between.align-items-center
-            //                        span Cras justo odio
-            //                        span Cras justo odio
-            //                        a.btn.btn-outline-danger.badge Х
-            //                    li.list-group-item.d-flex.justify-content-between.align-items-center
-            //                        span Cras justo odio
-            //                        span Cras justo odio
-            //                        a.btn.btn-outline-danger.badge Х
-            //                    li.list-group-item.d-flex.justify-content-between.align-items-center
-            //                        span Cras justo odio
-            //                        span Cras justo odio
-            //                        a.btn.btn-outline-danger.badge Х
-                            //table.table
-                            //    thead
-                            //        tr
-                            //            th Имя
-                            //            th E-mail
-                            //            th Отмена участия
-                            //    tbody
-                            //        tr
-                            //            td
-                            //                a Mark
-                            //                a Mark
-                            //            td Ottrtyuhrtyurtyuhjrtyurtyurtyo
-                            //            td
-                            //                a.btn.btn-sm.btn-outline-danger
-                            //                    | GTHT
-                            //        tr
-                            //            td Jacoburtyujrtyurtyurty
-                            //            td Thornton
-                            //            td
-                            //                a.btn.btn-sm.btn-outline-danger
-                            //                    | ttyur,yuio
-                            //        tr
-                            //            td Larry
-                            //            td the Bird
-                            //            td
-                            //                a.btn.btn-outline-danger
-                            //                    | GTHT
+    //.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
+    //    #templateDateEvent1
+    //        .tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
+    //            strong date-event
+    //            hr
+    //            #accordionExample.accordion
+    //
+    //                .card#tmpCard
+    //                    #headingOne.card-header( data-toggle='collapse', data-target='#collapseOne', aria-controls='collapseOne')
+    //                        .d-flex.bd-highlight
+    //                            .p-2.flex-fill 11:00-12:32
+    //                            .p-2.flex-fill
+    //                                strong Rfzrbyкуещцлзукщегзпцукепu
+    //                            .p-2.flex-fill Участников 5 из 10
+    //                            .p-2.navbar.navbar-light
+    //                                .navbar-toggler-icon
+    //                    #collapseOne.collapse(aria-labelledby='headingOne', data-parent='#accordionExample')
+    //                        .card-body
+    //                            .d-flex.bd-highlight
+    //                                .p-2.flex-shrink-1.align-self-center
+    //                                    .btn-group-vertical
+    //                                        a.btn.btn-outline-info
+    //                                            | Перепланировать
+    //                                        a.btn.btn-outline-danger
+    //                                            | Отменить
+    //                                .p-2.w-100
+    //                                    ul.list-group.list-group-flush
+    //                                        li.list-group-item.d-flex.justify-content-between.align-items-center
+    //                                            span Cras justo odio
+    //                                            span Cras justo odio
+    //                                            a.btn.btn-outline-danger.badge Х
+    //                                        li.list-group-item.d-flex.justify-content-between.align-items-center
+    //                                            span Cras justo odio
+    //                                            span Cras justo odio
+    //                                            a.btn.btn-outline-danger.badge Х
+    //                                        li.list-group-item.d-flex.justify-content-between.align-items-center
+    //                                            span Cras justo odio
+    //                                            span Cras justo odio
+    //                                            a.btn.btn-outline-danger.badge Х
+    //                                //ul.list-group.list-group-flush
+    //                                //    li.list-group-item.d-flex.justify-content-between.align-items-center
+    //                                //        span Cras justo odio
+    //                                //        span Cras justo odio
+    //                                //        a.btn.btn-outline-danger.badge Х
+    //                                //    li.list-group-item.d-flex.justify-content-between.align-items-center
+    //                                //        span Cras justo odio
+    //                                //        span Cras justo odio
+    //                                //        a.btn.btn-outline-danger.badge Х
+    //                                //    li.list-group-item.d-flex.justify-content-between.align-items-center
+    //                                //        span Cras justo odio
+    //                                //        span Cras justo odio
+    //                                //        a.btn.btn-outline-danger.badge Х
+    //
