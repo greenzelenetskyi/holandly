@@ -4,26 +4,29 @@ block block_visitors
     script.
         function createDateElement(date) {
             var dateEvent = document.getElementById('templateDateEvent').cloneNode(true).innerHTML;
-            dateEvent = dateEvent.replace(/date-event/gi, date.date);
-            dateEvent = dateEvent.replace(/accordionDate/gi, 'accordionId' + date.date);
+            var elementId = moment(date.date).format('DD/MM/YYYY')
+            dateEvent = dateEvent.replace(/date-event/gi, elementId);
+            dateEvent = dateEvent.replace(/accordionDate/gi, 'accordionID' + elementId);
             document.getElementById('div-dashboard').innerHTML += dateEvent;
-            return document.getElementById('accordionId' + date.date);
+            return document.getElementById('accordionID' + elementId);
         }
         function createTimeElement(accordionId, timeData) {
             var timeEvent = document.getElementById('templateTimeEvent').cloneNode(true).innerHTML;
-            timeEvent = timeEvent.replace(/headingTimeEvent/gi, 'headingTimeEvent' + accordionId + timeData);
-            timeEvent = timeEvent.replace(/collapseTimeEvent/gi, 'collapseTimeEvent' + accordionId + timeData);
+            var elementId = accordionId + timeData.time;
+            timeEvent = timeEvent.replace(/headingTimeEvent/gi, 'headID' + elementId);
+            timeEvent = timeEvent.replace(/collapseTimeEvent/gi, 'collapseID' + elementId);
             timeEvent = timeEvent.replace(/accordionDate/gi, accordionId);
-            timeEvent = timeEvent.replace(/templateTimeEvent/gi, 'templateTimeEvent' + accordionId + timeData);
-            timeEvent = timeEvent.replace(/visitorsList/gi, 'visitorsList' + accordionId + timeData);
-            timeEvent = timeEvent.replace(/JSONEvent/gi, 'visitorsList' + accordionId + timeData);
+            timeEvent = timeEvent.replace(/templateTimeEvent/gi, 'templateTimeEvent' + elementId);
+            timeEvent = timeEvent.replace(/UlvisitorsList/gi, 'visitorsList' + elementId);
+            timeEvent = timeEvent.replace(/JSONEvent/gi, 'visitorsList' + elementId);
 
-            timeEvent = timeEvent.replace(/time-event/gi, timeData.time);
-            timeEvent = timeEvent.replace(/type-event/gi, timeData.type);
-            timeEvent = timeEvent.replace(/visitors/gi, timeData.number);
+            // timeEvent = timeEvent.replace(/time-event/gi, timeData.time);
+            // timeEvent = timeEvent.replace(/type-event/gi, timeData.type);
+            // timeEvent = timeEvent.replace(/visitors/gi, timeData.number);
 
             document.getElementById(accordionId).innerHTML += timeEvent;
-            return document.getElementById('visitorsList' + accordionId + timeData);
+            console.log('visitorsList' + elementId)
+            return document.getElementById('visitorsList' + elementId);
         }
         function createVisitorElement(visitorsListId, visitorData) {
             var visitor = document.getElementById('templateVisitor').cloneNode(true).innerHTML;
@@ -41,10 +44,15 @@ block block_visitors
                     var dateElement = createDateElement(dateEvent);
                     dateEvent.appointments.forEach(function (timeEvent, index, dateEvent) {
                         var timeElement = createTimeElement(dateElement.id, timeEvent);
+                        console.log(timeElement);
+                        var id=timeEvent.eventId;
+                        timeEvent.visitors.forEach(function (visitor, index, time) {
+                            console.log(visitor);
+                            console.log(timeElement);
+                            createVisitorElement(timeElement.id,
+                                {name: visitor.name, email: visitor.email, eventId: id})
+                        });
                     });
-
-
-                    //visitorsField.appendChild(createDateEvent(dateEvent, index));
                 });
             }
             $('.cancel-visitor').click(function () {
@@ -117,7 +125,7 @@ block block_visitors
                                     a.removeEvent.btn.btn-outline-danger(data-event='JSONEvent')
                                         | Отменить
                             .p-2.w-100
-                                ul#visitorsList.visitors.list-group.list-group-flush
+                                ul#UlvisitorsList.list-group.list-group-flush
     //--- template visitor -----------------------------
     span(hidden) template
         #templateVisitor
