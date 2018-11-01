@@ -84,7 +84,7 @@ function createDateEvent(dateEvent, dateIndex) {
     return dateElement;
 }
 
-function makeVisitorsList(signedVisitorsList) {
+function makeVisitorsList2(signedVisitorsList) {
     var visitorsField = document.getElementById('div-dashboard');
     visitorsField.innerHTML = '';
     if (typeof signedVisitorsList === "object") {
