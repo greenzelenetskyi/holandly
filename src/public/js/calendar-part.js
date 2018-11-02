@@ -1,44 +1,26 @@
 $(document).ready(function () {
     $('#calendar').fullCalendar({
         header: {
-            // center: 'addRepeatEvent',
             right: 'today,month,listYear, prev,next ',
         },
         defaultView: 'month',
         locale: 'ru',
         eventLimit: true,
         selectable: true,
+        selectHelper: true,
         views: {
             listYear: {buttonText: 'Список'},
         },
 
-
-        // customButtons: {
-        //     addRepeatEvent: {
-        //         text: 'Заплпнировать повторяющееся событие',
-        //         click: function () {
-        //             var dateStr = prompt('Enter a date in YYYY-MM-DD format');
-        //             var date = moment(dateStr);
-        //
-        //             if (date.isValid()) {
-        //                 $('#calendar').fullCalendar('renderEvent', {
-        //                     title: 'dynamic event',
-        //                     start: date,
-        //                     allDay: true
-        //                 });
-        //                 alert('Great. Now, update your database...');
-        //             } else {
-        //                 alert('Invalid date.');
-        //             }
-        //         }
-        //     }
-        // },
-        //     dayClick: function (date) {
-        //         console.log('clicked ' + date.format());
-        //     },
-        //     select: function (startDate, endDate) {
-        //         console.log('selected ' + startDate.format() + ' to ' + endDate.format());
-        //     },
+            dayClick: function (date) {
+                console.log('clicked ' + date.format());
+            },
+        select: function (startDate, endDate) {
+            console.log('selected ' + startDate.format() + ' to ' + endDate.format());
+            var view = $('#calendar').fullCalendar('getView');
+            console.log(view);
+            console.log("The view's title is " + view.title);
+        },
         //     // drop: function (event) {
         //     //     console.log(this);
         //     //     console.log(event);
@@ -103,3 +85,22 @@ $(document).ready(function () {
         //         });
     });
 });
+
+function appentEvetntsToCalendar(events) {
+    var dataEvents = [];
+    Object.keys(events).forEach(function (event, i, data) {
+        var pattern = $('#patternId' + event.patternId)[0];
+        dataEvents.push({
+            title: event.type,
+            start: moment(event.date).format('YYYY-MM-DD') + 'T' + event.time,
+            eventData: event,
+            patternData: pattern,
+            // color: pattern.patternData.color,
+            description: pattern.patternData.description
+        });
+    });
+    var calendar = $('#calendar');
+    calendar.fullCalendar('removeEvents');
+    calendar.fullCalendar('addEventSource', dataEvents);
+
+}

@@ -42,6 +42,7 @@ function getEvents() {
                 tempEvents[event.eventId] = event;
             });
             events = tempEvents;
+            //appentEvetntsToCalendar(events);
            //makeEventsPoint(data);
         }
     });

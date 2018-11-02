@@ -43,11 +43,8 @@ block block_visitors
                     var dateElement = createDateElement(visitorsField.id, dateEvent);
                     dateEvent.appointments.forEach(function (timeEvent, index, dateEvent) {
                         var timeElement = createTimeElement(dateElement.id, timeEvent);
-                        console.log(timeElement);
                         var id = timeEvent.eventId;
                         timeEvent.visitors.forEach(function (visitor, index, time) {
-                            console.log(visitor);
-                            console.log(timeElement);
                             createVisitorElement(timeElement.id,
                                 {name: visitor.name, email: visitor.email, eventId: id})
                         });
