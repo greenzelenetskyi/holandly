@@ -42,7 +42,7 @@ function getEvents() {
                 tempEvents[event.eventId] = event;
             });
             events = tempEvents;
-            //appentEvetntsToCalendar(events);
+            appentEvetntsToCalendar(events);
            //makeEventsPoint(data);
         }
     });
