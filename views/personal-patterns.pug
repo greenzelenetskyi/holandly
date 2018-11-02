@@ -9,6 +9,7 @@ block block_patterns
 
             });
         })
+
     #patternsView.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
         .input-group
             a.card-link(href='user/andrey')
@@ -25,8 +26,8 @@ block block_patterns
             .card-header
                 h5#editPatternType editPatternType
             .card-body
-                a(href='#' data-toggle="modal" data-target="#event-wizard-form") Заплпнировать повторяющееся событие
-                hr
+                //a(href='#' data-toggle="modal" data-target="#event-wizard-form") Заплпнировать повторяющееся событие
+                //hr
                 #calendar
                 hr
                 .text-right
@@ -35,30 +36,30 @@ block block_patterns
                             | Закрыть
                         //button#saveCalendar.btn.btn-primary(type='button')
                         //    | Сохранить и закрыть
-    // Modal event wizard
-    #event-wizard-form.modal.fade(tabindex='-1', role='dialog', aria-labelledby='eventWizardLabel', aria-hidden='true')
-        form
-            .modal-dialog(role='document')
-                .modal-content
-                    .modal-header
-                        h5#removeModalLabel.modal-title Мастер повторяющихся событий
-                        button.close(type='button', data-dismiss='modal', aria-label='Close')
-                            span(aria-hidden='true') ×
-                    .modal-body
-                        .input-group.mb-3
-                            .input-group-prepend
-                                span#inputGroup-sizing-default.input-group-text Default
-                            input.form-control(type='text', aria-label='Sizing example input', aria-describedby='inputGroup-sizing-default')
-
-                        input#removePatternId(type='text', hidden='куецуке')
-                        input#removeEventId(type='text', hidden='')
-                        .form-group.row
-                            label.col-sm-2.col-form-label(for='removeDescription') Причина
-                            .col-sm-10
-                                textarea#removeDescription.form-control(aria-label='With textarea')
-                        .modal-footer
-                            button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
-                            input.btn.btn-primary(type='submit', value='Создать')
+    //// Modal event wizard
+    //#event-wizard-form.modal.fade(tabindex='-1', role='dialog', aria-labelledby='eventWizardLabel', aria-hidden='true')
+    //    form
+    //        .modal-dialog(role='document')
+    //            .modal-content
+    //                .modal-header
+    //                    h5#removeModalLabel.modal-title Мастер повторяющихся событий
+    //                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+    //                        span(aria-hidden='true') ×
+    //                .modal-body
+    //                    .input-group.mb-3
+    //                        .input-group-prepend
+    //                            span#inputGroup-sizing-default.input-group-text Default
+    //                        input.form-control(type='text', aria-label='Sizing example input', aria-describedby='inputGroup-sizing-default')
+    //
+    //                    input#removePatternId(type='text', hidden='куецуке')
+    //                    input#removeEventId(type='text', hidden='')
+    //                    .form-group.row
+    //                        label.col-sm-2.col-form-label(for='removeDescription') Причина
+    //                        .col-sm-10
+    //                            textarea#removeDescription.form-control(aria-label='With textarea')
+    //                    .modal-footer
+    //                        button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
+    //                        input.btn.btn-primary(type='submit', value='Создать')
     //Modal new pattern
     #pattern-modal-form.modal.fade(tabindex='-1', role='dialog', aria-labelledby='newPatternModalLabel', aria-hidden='true')
         form#test
@@ -130,12 +131,23 @@ block block_patterns
     script.
         $(document).ready(function () {
             $('#eventScheduler .tab-content').hide();
-            $('#select-repeat').change(function () {
+            $('#select-repeat').change(function sr() {
                 $('#eventScheduler .tab-content').hide();
                 dropdown = $('#select-repeat').val();
                 $('#' + "tab-" + dropdown).show();
             })
         })
+
+        function appendScheduled(events) {
+
+        }
+
+        function showEventScheduler(events) {
+            $('#select-repeat').val(1);
+            $('#eventScheduler .tab-content').hide();
+            appendScheduled(events);
+            $('#editEvents-modal-form').modal();
+        }
 
         $(document).ready(function () {
             var select = [];
@@ -144,23 +156,15 @@ block block_patterns
                 defaultView: 'month',
                 locale: 'ru',
                 selectable: true,
-                // views: {listYear: {buttonText: 'Список'}},
-                // dayClick: function (date) {
-                //     console.log('clicked ' + date.format());
-                // },
                 select: function (startDate, endDate) {
                     console.log('selertwert');
                     console.log(select);
                     var selectDates = getDates(startDate, endDate);
                     select = select.concat(selectDates);
                     $('#calendarScheduler').fullCalendar('renderEvents', select);
-                    if (selectDates.length === 1) {
-                    }
-                    else {
-                    }
                     console.log(getDates(startDate, endDate));
                 },
-                viewRender: function (view, element) {
+                viewRender: function () {
                     $('#calendarScheduler').fullCalendar('renderEvents', select);
                 }
             });

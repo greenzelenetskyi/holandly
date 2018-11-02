@@ -17,7 +17,8 @@ $(document).ready(function () {
         select: function (startDate, endDate) {
             var selectDates = getDates(startDate, endDate);
             // removeModalForm.modal('hide');
-            $('#editEvents-modal-form').modal();
+            showEventScheduler();
+
             if (selectDates.length === 1) {
 
             }
