@@ -66,12 +66,14 @@ block tab_menu
                         button.close(type='button', data-dismiss='modal', aria-label='Close')
                             span(aria-hidden='true') ×
                     .modal-body
+                        .alert.alert-danger#descriptionText
+                            | A simple danger alert—check it out!
                         input#removePatternId(type='text', hidden='')
                         input#removeEventId(type='text', hidden='')
                         .form-group.row
-                            label.col-sm-2.col-form-label(for='removeDescription') Причина
+                            label.col-sm-2.col-form-label(for='reason') Причина
                             .col-sm-10
-                                textarea#removeDescription.form-control(aria-label='With textarea')
+                                textarea#reason.form-control(aria-label='With textarea')
                     .modal-footer
                         button.btn.btn-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Удалить')

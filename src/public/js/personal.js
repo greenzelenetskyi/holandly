@@ -99,17 +99,19 @@ $(document).ready(function () {
 
 
 var remove;
+var events = {};
+var patterns = {};
 
 function updateAll() {
     getPatterns();
-    //getEvents();
+    getEvents();
     getVisitors();
 }
 
 function addHandlerEditEvent(element) {
     $(element).click(
         function (event) {
-            var data = JSON.parse(this.getAttribute('data'));
+            data = events[this.getAttribute('data-eventId')];
             console.log(data);
             data.reason = false;
             data.label = 'Изменить событие';
@@ -120,11 +122,15 @@ function addHandlerEditEvent(element) {
 
 function addHandlerRemoveScheduledEvent(element) {
     $(element).click(
-        function (event) {
-            var data = JSON.parse(this.getAttribute('data'));
-            console.log(data);
+        function (handlerEvent) {
+            var event = events[this.getAttribute('data-eventId')];
+            // console.log(event);
+            $('#descriptionText')[0].innerText =
+                'Удаление события [' + event.type + '] заплпнированого на [' +
+                moment(event.time, 'hh:mm:ss').format("HH:mm") + '  ' +
+                moment(event.date).format('DD/MM/YYYY') + ']';
             remove = function () {
-                deleteEvent(data.eventId, $("#removeDescription").val());
+                deleteEvent(event.eventId, $("#removeDescription").val());
             };
         });
 }
@@ -132,12 +138,16 @@ function addHandlerRemoveScheduledEvent(element) {
 function addHandlerCancelVisitor(element) {
     $(element).click(
         function () {
+            console.log(this);
             var data = {
-                email : this.getAttribute('email'),
-                eventId : this.getAttribute('eventId')
+                email: this.getAttribute('data-email'),
+                eventId: this.getAttribute('data-eventId')
             };
+            $('#descriptionText')[0].innerText =
+                'Отмена участия: ' + this.getAttribute('data-visitor') + ' [' + data.email + ']';
+            console.log(data);
             remove = function () {
-                data.reason = $("#removeDescription").val();
+                data.reason = $("#reason").val();
                 cancelVisitor(data);
             };
         })

@@ -91,3 +91,11 @@ block block_patterns
                     .modal-footer
                         button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Создать')
+    //--- template visitor -----------------------------
+    span(hidden) template
+        #templatePattern
+            li.list-group-item.d-flex.justify-content-between.align-items-center
+                span dataVisitorName
+                span dataEmail
+                a.cancel-visitor.btn.btn-outline-danger.badge(data-eventId='dataEventID',data-visitor='dataVisitorName',
+                data-email='dataEmail' data-toggle="modal" data-target="#remove-modal-form" data-tooltip="tooltip" title="Отменить участие") Х

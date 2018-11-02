@@ -35,10 +35,14 @@ function getEvents() {
         data: {},
         response: 'json',
         success: function (data) {
-            console.log('getEvents');
+            console.log('received events');
             console.log(data);
-            makeEventsPoint(data);
-
+            var tempEvents = {};
+            data.forEach(function (event, index, data) {
+                tempEvents[event.eventId] = event;
+            });
+            events = tempEvents;
+           //makeEventsPoint(data);
         }
     });
 }
@@ -84,8 +88,13 @@ function getPatterns() {
         data: {},
         response: 'json',
         success: function (data) {
-            console.log('getPatterns');
+            console.log('received patterns');
             console.log(data);
+            var tempPatterns = {};
+            data.forEach(function (pattern, index, data) {
+                tempPatterns[pattern.patternId] = pattern;
+            });
+            patterns = tempPatterns;
             makePatternCard(data);
         }
     });

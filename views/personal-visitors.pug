@@ -2,31 +2,30 @@ extends personal-menu
 
 block block_visitors
     script.
-        function createDateElement(date) {
-            var dateEvent = document.getElementById('templateDateEvent').cloneNode(true).innerHTML;
-            var elementId = moment(date.date).format('DD/MM/YYYY')
-            dateEvent = dateEvent.replace(/date-event/gi, elementId);
-            dateEvent = dateEvent.replace(/accordionDate/gi, 'accordionID' + elementId);
-            document.getElementById('div-dashboard').innerHTML += dateEvent;
+        function createDateElement(targetid, date) {
+            var dateEvent = document.getElementById('templateDate').cloneNode(true).innerHTML;
+            var elementId = date.appointments[0].patternId;
+            dateEvent = dateEvent.replace(/templateTitle/gi, moment(date.date).format('DD/MM/YYYY'));
+            dateEvent = dateEvent.replace(/accordionID/gi, 'accordionID' + elementId);
+            document.getElementById(targetid).innerHTML += dateEvent;
             return document.getElementById('accordionID' + elementId);
         }
         function createTimeElement(accordionId, timeData) {
             var timeEvent = document.getElementById('templateTimeEvent').cloneNode(true).innerHTML;
-            var elementId = accordionId + timeData.time;
-            timeEvent = timeEvent.replace(/headingTimeEvent/gi, 'headID' + elementId);
-            timeEvent = timeEvent.replace(/collapseTimeEvent/gi, 'collapseID' + elementId);
-            timeEvent = timeEvent.replace(/accordionDate/gi, accordionId);
-            timeEvent = timeEvent.replace(/templateTimeEvent/gi, 'templateTimeEvent' + elementId);
-            timeEvent = timeEvent.replace(/UlvisitorsList/gi, 'visitorsList' + elementId);
-            timeEvent = timeEvent.replace(/JSONEvent/gi, 'visitorsList' + elementId);
-
-            // timeEvent = timeEvent.replace(/time-event/gi, timeData.time);
-            // timeEvent = timeEvent.replace(/type-event/gi, timeData.type);
-            // timeEvent = timeEvent.replace(/visitors/gi, timeData.number);
-
+            var elementId = accordionId + '-' + timeData.eventId;
+            var timeEnd = moment(timeData.time, 'hh:mm:ss');
+            timeEnd.add(timeData.duration, 'minutes')
+            timeEvent = timeEvent.replace(/headTimeCardID/gi, 'headID' + elementId);
+            timeEvent = timeEvent.replace(/collapseCardID/gi, 'collapseID' + elementId);
+            timeEvent = timeEvent.replace(/parentAccordionID/gi, 'accordionGlobal');
+            timeEvent = timeEvent.replace(/visitorsListID/gi, 'visitorsListID' + elementId);
+            timeEvent = timeEvent.replace(/cardDataEventId/gi, timeData.eventId);
+            timeEvent = timeEvent.replace(/timeEventText/gi, moment(timeData.time, 'hh:mm:ss').format("HH:mm") + '-' +
+                moment(timeEnd, 'mm').format("HH:mm"));
+            timeEvent = timeEvent.replace(/typeEventText/gi, timeData.type);
+            timeEvent = timeEvent.replace(/visitorsNumberText/gi, 'Участников ' + timeData.occupied + ' из ' + timeData.number);
             document.getElementById(accordionId).innerHTML += timeEvent;
-            console.log('visitorsList' + elementId)
-            return document.getElementById('visitorsList' + elementId);
+            return document.getElementById('visitorsListID' + elementId);
         }
         function createVisitorElement(visitorsListId, visitorData) {
             var visitor = document.getElementById('templateVisitor').cloneNode(true).innerHTML;
@@ -37,15 +36,15 @@ block block_visitors
         }
 
         function makeVisitorsList(signedVisitorsList) {
-            var visitorsField = document.getElementById('div-dashboard');
+            var visitorsField = document.getElementById('appointmentVisitorsDashboard');
             visitorsField.innerHTML = '';
             if (typeof signedVisitorsList === "object") {
                 signedVisitorsList.forEach(function (dateEvent, index, signedVisitorsList) {
-                    var dateElement = createDateElement(dateEvent);
+                    var dateElement = createDateElement(visitorsField.id, dateEvent);
                     dateEvent.appointments.forEach(function (timeEvent, index, dateEvent) {
                         var timeElement = createTimeElement(dateElement.id, timeEvent);
                         console.log(timeElement);
-                        var id=timeEvent.eventId;
+                        var id = timeEvent.eventId;
                         timeEvent.visitors.forEach(function (visitor, index, time) {
                             console.log(visitor);
                             console.log(timeElement);
@@ -55,136 +54,51 @@ block block_visitors
                     });
                 });
             }
-            $('.cancel-visitor').click(function () {
-                console.log(this);
-            })
-            $('.removeEvent').click(function () {
-                console.log(this);
-            })
-            $('.rescheduleEvent').click(function () {
-                console.log(this);
-            })
+            addHandlerRemoveScheduledEvent('.removeEvent');
+            addHandlerCancelVisitor('.cancel-visitor');
+            addHandlerEditEvent('.rescheduleEvent');
+            $('[data-tooltip="tooltip"]').tooltip();
         }
-        $(document).ready(function () {
-            var index = 0;
-            var indexT = 0;
-            $('#tst').click(function () {
-
-                var dateEvent = createDateElement(index);
-                var timeEvent2 = createTimeElement(dateEvent.id, indexT);
-                createVisitorElement(timeEvent2.id, {name: 'vasya', email: 'vp@gdfg.df', eventId: 1});
-                createVisitorElement(timeEvent2.id, {name: 'vasy22a', email: '22vp@gdfg.df', eventId: 22});
-
-                indexT++;
-                index++;
-
-
-                // console.log(timeCard);
-                $('.cancel-visitor').click(function () {
-                    console.log(this);
-                })
-                $('.removeEvent').click(function () {
-                    console.log(this);
-                })
-                $('.rescheduleEvent').click(function () {
-                    console.log(this);
-                })
-            });
-        })
-
 
     .tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
-        #div-dashboard
+        .accordion#accordionGlobal
+            #appointmentVisitorsDashboard
     //================== visitors page templates =========================
     //--- template date -----------------------------
     span(hidden) template
-        #templateDateEvent
+        #templateDate
             .shadow-lg.p-3.mb-5.bg-white.rounded
-                strong date-event
+                strong templateTitle
                 hr
-                #accordionDate.accordion
+                #accordionID.accordion
     //--- template time -----------------------------
     span(hidden) template
         #templateTimeEvent
             .card
-                #headingTimeEvent.card-header( data-toggle='collapse', data-target='#collapseTimeEvent', aria-controls='collapseTimeEvent')
+                #headTimeCardID.card-header( data-toggle='collapse', data-target='#collapseCardID', aria-controls='collapseCardID')
                     .d-flex.bd-highlight
-                        .p-2.flex-fill time-event
+                        .p-2.flex-fill timeEventText
                         .p-2.flex-fill
-                            strong type-event
-                        .p-2.flex-fill visitors
+                            strong typeEventText
+                        .p-2.flex-fill visitorsNumberText
                         .p-2.navbar.navbar-light
                             .navbar-toggler-icon
-                #collapseTimeEvent.collapse(aria-labelledby='headingTimeEvent', data-parent='#accordionDate')
+                #collapseCardID.collapse(aria-labelledby='headTimeCardID', data-parent='#parentAccordionID')
                     .card-body
                         .d-flex.bd-highlight
                             .p-2.flex-shrink-1.align-self-center
                                 .btn-group-vertical
-                                    a.rescheduleEvent.btn.btn-outline-info(data-event='JSONEvent')
+                                    a.rescheduleEvent.btn.btn-outline-info(data-eventId='cardDataEventId' data-toggle="modal" data-target="#event-modal-form")
                                         | Перепланировать
-                                    a.removeEvent.btn.btn-outline-danger(data-event='JSONEvent')
+                                    a.removeEvent.btn.btn-outline-danger(data-eventId='cardDataEventId' data-toggle="modal" data-target="#remove-modal-form")
                                         | Отменить
                             .p-2.w-100
-                                ul#UlvisitorsList.list-group.list-group-flush
+                                ul#visitorsListID.list-group.list-group-flush
     //--- template visitor -----------------------------
     span(hidden) template
         #templateVisitor
             li.list-group-item.d-flex.justify-content-between.align-items-center
                 span dataVisitorName
                 span dataEmail
-                a.cancel-visitor.btn.btn-outline-danger.badge(data-eventId='dataEventID',data-visitor='dataVisitorName', data-email='dataEmail' ) Х
-
-
-    //.tab-content.s     hadow-lg.p-3.mb-5.bg-white.rounded
-    //    #templateDateEvent1
-    //        .tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
-    //            strong date-event
-    //            hr
-    //            #accordionExample.accordion
-    //
-    //                .card#tmpCard
-    //                    #headingOne.card-header( data-toggle='collapse', data-target='#collapseOne', aria-controls='collapseOne')
-    //                        .d-flex.bd-highlight
-    //                            .p-2.flex-fill 11:00-12:32
-    //                            .p-2.flex-fill
-    //                                strong Rfzrbyкуещцлзукщегзпцукепu
-    //                            .p-2.flex-fill Участников 5 из 10
-    //                            .p-2.navbar.navbar-light
-    //                                .navbar-toggler-icon
-    //                    #collapseOne.collapse(aria-labelledby='headingOne', data-parent='#accordionExample')
-    //                        .card-body
-    //                            .d-flex.bd-highlight
-    //                                .p-2.flex-shrink-1.align-self-center
-    //                                    .btn-group-vertical
-    //                                        a.btn.btn-outline-info
-    //                                            | Перепланировать
-    //                                        a.btn.btn-outline-danger
-    //                                            | Отменить
-    //                                .p-2.w-100
-    //                                    ul.list-group.list-group-flush
-    //                                        li.list-group-item.d-flex.justify-content-between.align-items-center
-    //                                            span Cras justo odio
-    //                                            span Cras justo odio
-    //                                            a.btn.btn-outline-danger.badge Х
-    //                                        li.list-group-item.d-flex.justify-content-between.align-items-center
-    //                                            span Cras justo odio
-    //                                            span Cras justo odio
-    //                                            a.btn.btn-outline-danger.badge Х
-    //                                        li.list-group-item.d-flex.justify-content-between.align-items-center
-    //                                            span Cras justo odio
-    //                                            span Cras justo odio
-    //                                            a.btn.btn-outline-danger.badge Х
-    //                                //ul.list-group.list-group-flush
-    //                                //    li.list-group-item.d-flex.justify-content-between.align-items-center
-    //                                //        span Cras justo odio
-    //                                //        span Cras justo odio
-    //                                //        a.btn.btn-outline-danger.badge Х
-    //                                //    li.list-group-item.d-flex.justify-content-between.align-items-center
-    //                                //        span Cras justo odio
-    //                                //        span Cras justo odio
-    //                                //        a.btn.btn-outline-danger.badge Х
-    //                                //    li.list-group-item.d-flex.justify-content-between.align-items-center
-    //                                //        span Cras justo odio
-    //                                //        span Cras justo odio
-    //                                //        a.btn.btn-outline-danger.badge Х
-    //
+                a.cancel-visitor.btn.btn-outline-danger.badge(data-eventId='dataEventID',data-visitor='dataVisitorName',
+                data-email='dataEmail' data-toggle="modal" data-target="#remove-modal-form" data-tooltip="tooltip" title="Отменить участие") Х
