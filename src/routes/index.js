@@ -86,6 +86,7 @@ exports.router.get('/:userName', function (req, res) {
         });
 });
 
+// events of the selected pattern
 exports.router.get('/:userName/:patternId', function (req, res) {
     var usr = req.params.userName;
     var patternId = req.params.patternId;
@@ -97,13 +98,13 @@ exports.router.get('/:userName/:patternId', function (req, res) {
             con.query('select e.date, e.time, p.number, p.description, p.duration, p.type, count(v.visitorId) as amount from eventslist e ' +
                 'left join eventpattern p on p.patternId = e.patternId ' +
                 'left join eventvisitors v on v.eventId = e.eventId  ' +
-                'where p.patternId = ? and e.date >= curdate()   ' +
+                'where p.patternId = ? and e.date >= curdate()' +
                 'group by e.eventId order by e.date;',
                 conditions, function (err, rslts) { //and (datediff(e.date, curdate()) <= ?)
                     if (err) throw err;
                     var dayCur = new Date();
                     var days = weekAvailable(dayCur, rslts);
-                    console.log(rslts)
+                    console.log(rslts);
                     res.render('timepicker', {username: usr, eventType: rslts[0].type, description: rslts[0].description,
                         duration: rslts[0].duration, patternId: patternId, days: days});
                 });
@@ -111,7 +112,7 @@ exports.router.get('/:userName/:patternId', function (req, res) {
     });
 });
 
-// modelling post-queries as get-queries
+// pattern events for the specified week
 exports.router.get('/getWeek/:date/:patternId', function (req, res) {
     var conditions = [req.params.patternId, req.params.date, req.params.date, DAYS_FOR_SEARCH];
     con.query('select e.date, e.time, p.number, count(v.visitorId) as amount from eventslist e ' +
@@ -128,10 +129,10 @@ exports.router.get('/getWeek/:date/:patternId', function (req, res) {
 exports.router.get('/getTimeLine/:date/:patternId', function (req, res) {
     var conditions = [req.params.patternId, req.params.date];
     // console.log('hi');
-    con.query(`select e.date, e.time, e.eventId, p.number, count(v.visitorId) as amount from eventslist e 
-    right join eventpattern p on p.patternId = e.patternId  
-    left join eventvisitors v on v.eventId = e.eventId
-    where e.patternId = ? and e.date = ? group by e.eventId order by e.time;` ,
+    con.query('select e.date, e.time, e.eventId, p.number, count(v.visitorId) as amount from eventslist e ' +
+        'right join eventpattern p on p.patternId = e.patternId ' +
+        'left join eventvisitors v on v.eventId = e.eventId ' +
+        'where e.patternId = ? and e.date = ? group by e.eventId order by e.time;' ,
         conditions, function (err, results) {
             if (err) throw err;
             console.log(results);
@@ -152,13 +153,12 @@ exports.router.get('/getTimeLine/:date/:patternId', function (req, res) {
 });
 
 exports.router.post('/submitVisitor', function (req, res) {
-    let vname = req.body.name;
-    let vemail = req.body.email;
-    let eventId = req.body.event;
-    // console.log(eventId);
+    var vname = req.body.name;
+    var vemail = req.body.email;
+    var eventId = req.body.event;
 
-    let visitor = [vname, vemail, vname, vemail];
-    let vstrId, eventCapacity, eventPattern, access;
+    var visitor = [vemail, vname, vemail];
+    var vstrId, eventCapacity, eventPattern, access;
 
     //  checking the possibility of recording on the event
     con.query('select e.date, e.time, p.number, p.multiaccess, p.patternId, count(v.visitorId) as amount from eventslist e ' +
@@ -175,15 +175,15 @@ exports.router.post('/submitVisitor', function (req, res) {
                 eventCapacity = possibility[0].number;
                 eventPattern = possibility[0].patternId;
                 access = possibility[0].multiaccess;
-                con.query('select visitorId from visitors where name = ? and email = ?;',
+                con.query('select visitorId from visitors where email = ?;',
                     visitor, function (err, visitorid) {
                         if (err) throw err;
                         if (visitorid.length != 0) {
                             vstrId = visitorid[0].visitorId;
                         }
                         else {
-                            con.query('insert into visitors (name, email) select * from (select ?, ?) as tmp ' +
-                                'where not exists(select * from visitors where name = ? and email = ?) limit 1;',
+                            con.query('insert into visitors (email, name) select * from (select ?, ?) as tmp ' +
+                                'where not exists(select * from visitors where email = ?) limit 1;',
                                 visitor, function (err, results) {
                                     if (err) throw err;
                                     vstrId = results.insertId;
@@ -192,29 +192,33 @@ exports.router.post('/submitVisitor', function (req, res) {
 
                         // checking for duplicate entries on an event
                         con.query('select count(visitorId) as amount from eventvisitors ' +
-                        'where eventId = ? and visitorId = ?;', [eventId, vstrId], function (err, duplicate) {
+                            'where eventId = ? and visitorId = ?;', [eventId, vstrId], function (err, duplicate) {
                             if (err) throw err;
                             if (duplicate[0].amount == 0) {
 
                                 // checking for pattern restrictions
-                                if (access > 0) {  // there are restrictions on the number of pattern events that a visitor can be recorded
+                                if (access > 0) {  /* there are restrictions on the number of pattern events
+                                                    that a visitor can be recorded */
                                     var currentDay = new Date();
                                     currentDay.setHours(0, 0, 0, 0);
                                     con.query('select count(v.evId) as alreadyRecords from eventvisitors v ' +
                                         'where v.visitorId = ? and v.eventId in ' +
                                         '(select e.eventId from eventslist e where e.patternId = ? and e.date >= ?);',
                                         [vstrId, eventPattern, currentDay], function (err, isRecords) {
-                                        if (err) throw err;
-                                        if (isRecords[0].alreadyRecords < access) {  // it's still possible to record to the pattern events
-                                            eventRecording(eventId, vstrId, eventCapacity);
-                                            res.json({success: 0, name: vname, email: vemail});
-                                        }
-                                        else {  // it's impossible to be written to the pattern events, because the visitor has already been recorded to other pattern events
-                                            res.json({success: 3, name: vname, email: vemail});
-                                        }
-                                    });
+                                            if (err) throw err;
+                                            if (isRecords[0].alreadyRecords < access) {  /* it's still possible to record
+                                                to the pattern events */
+                                                eventRecording(eventId, vstrId, eventCapacity);
+                                                res.json({success: 0, name: vname, email: vemail});
+                                            }
+                                            else {  /* it's impossible to be written to the pattern events,
+                                                because the visitor has already been recorded to other pattern events */
+                                                res.json({success: 3, name: vname, email: vemail, eventId: eventId});
+                                            }
+                                        });
                                 }
-                                else {  // there are no restrictions on the number of pattern events that a visitor can be recorded
+                                else {  /* there are no restrictions on the number of pattern events
+                                        that a visitor can be recorded */
                                     eventRecording(eventId, vstrId, eventCapacity);
                                     res.json({success: 0, name: vname, email: vemail});
                                 }
@@ -227,6 +231,99 @@ exports.router.post('/submitVisitor', function (req, res) {
                     });
             }
         });
+});
+
+// information about the pattern events to which the visitor is subscribed
+exports.router.get('/reschedule/:patternId/:eventId/:email', function (req, res) {
+    var currentDay = new Date();
+    currentDay.setHours(0, 0, 0, 0);
+    var newEvent = req.params.eventId;
+    var vEmail = req.params.email;
+    var conditions = [newEvent, req.params.patternId, vEmail, currentDay];
+    con.query('select e.date, e.time, e.eventId, p.type, p.description, p.userId, p.multiaccess, p.duration, u.login ' +
+        'from eventslist e ' +
+        'left join eventpattern p on p.patternId = e.patternId ' +
+        'left join users u on u.userId = p.userId ' +
+        'where e.eventId = ? or (p.patternId = ? and e.eventId in ' +
+        '(select e.eventId from eventslist e left join eventvisitors v on v.eventId = e.eventId ' +
+        'left join visitors s on s.visitorId = v.visitorId ' +
+        'where s.email = ? and e.date >= ?));', conditions, function (err, vstrEvents) {
+        if (err) throw err;
+        var events = [], timeArray, dateTime;
+        currentDay = new Date();
+        vstrEvents.forEach(function (evnt) {
+            if (evnt.date <= currentDay) {  //  current date event
+                timeArray = evnt.time.split(':');
+                dateTime = evnt.date;
+                dateTime.setHours(timeArray[0], timeArray[1], timeArray[2]);
+                if (dateTime < currentDay) return; //  the event has passed
+            }
+            events.push({eventId: evnt.eventId, date: evnt.date, time: evnt.time, isRecord: evnt.eventId != newEvent});
+        });
+        res.render('rescheduler', {username: vstrEvents[0].login, type: vstrEvents[0].type, description: vstrEvents[0].description,
+            access: vstrEvents[0].multiaccess, duration: vstrEvents[0].duration, email: vEmail, events: events});
+    });
+});
+
+// clarification of pattern events for which the visitor is subscribed
+// json-object is received: {email: email, events: [{eventId: eventId, isRecord: isRecord}]}
+exports.router.post('/rerecording', function (req, res) {
+    var vemail = req.body.email;
+    var events = req.body.events;
+    var vvisitorId;
+    var eventsTrue = [], eventsFalse = [];
+
+    events.forEach(function (evnt) {
+        if (evnt.isRecord) eventsTrue.push(evnt.eventId);
+        else eventsFalse.push(evnt.eventId);
+    });
+    var conditionsTrue = [vemail, eventsTrue];
+    con.query('select visitorId from visitors where email = ?', [vemail], function (err, recVisitor) {
+        if (err) throw err;
+        if (recVisitor.length == 0) console.log('No visitor!');
+        else {
+            vvisitorId = recVisitor[0].visitorId;
+            con.query(
+                'select eventId from eventvisitors where visitorId = ? ;',
+                [vvisitorId], function (err, eventRecords) {
+                    if (err) throw err;
+                    eventRecords.forEach(function (evnt) {
+                        for (var i = 0; i < eventsTrue.length; i++) {
+                            if (evnt.eventId === eventsTrue[i]) {
+                                eventsTrue.splice(i, 1);
+                                break;
+                            }
+                        }
+                    });
+                    if (eventsTrue.length > 0) {
+                        var recordEvents = [];
+                        for (var i = 0; i < eventsTrue.length; i++)
+                            recordEvents.push([eventsTrue[i], vvisitorId]);
+                        con.query('insert into eventvisitors (eventId, visitorId) values ? ;',
+                            [recordEvents], function (err, recEvents) {
+                                if (err) {
+                                    res.json({success: 1});
+                                    throw err;
+                                }
+                            });
+                    }
+                    if (eventsFalse.length > 0) {
+                        var deleteEvents = [];
+                        for (var i = 0; i < eventsFalse.length; i++)
+                            deleteEvents.push([eventsFalse[i], vvisitorId]);
+                        con.query('delete from eventvisitors ' +
+                            'where visitorId = ? and eventId in (?) ;',
+                            [vvisitorId, eventsFalse], function (err, delEvents) {
+                                if (err) {
+                                    res.json({success: 2});
+                                    throw err;
+                                }
+                            });
+                    }
+                    res.json({success: 0});
+                });
+        }
+    });
 });
 
 function eventRecording(eventId, vstrId, eventCapacity) {
