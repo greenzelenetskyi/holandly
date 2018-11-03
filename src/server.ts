@@ -1,6 +1,4 @@
 import express from 'express';
-//import dotenv from 'dotenv';
-//dotenv.config({ path: '../.env' });
 import path from 'path';
 import bodyParser from 'body-parser';
 import session from 'express-session';
@@ -9,10 +7,9 @@ import passportLocal from 'passport-local';
 import * as userModel from './models/user';
 import * as userController from './controllers/user';
 import { userRouter } from './routes/user';
-import * as calendar from './models/calendar';
 import os from 'os';
 import cluster from 'cluster';
-//import mysqlStore from 'express-mysql-session';
+import compression from 'compression';
 const MySqlStore = require('express-mysql-session')(session);
 const visitor = require('./routes/index');
 
@@ -43,18 +40,20 @@ if (cluster.isMaster) {
 
   app.set('views', path.join(__dirname, '../views'));
   app.set('view engine', 'pug');
-
+  
+  app.use(compression());
   passport.use(new LocalStrategy(userController.verifyUser));
   app.use(passport.initialize());
   app.use(passport.session());
 
   passport.serializeUser(function (user: any, done) {
-    done(null, user.userId);
+    delete user.password;
+    done(null, user);
   });
   passport.deserializeUser(async function (user: any, done) {
     try {
-      let usr = await userModel.getUserName(user);
-      done(null, usr[0].userId);
+      let usr = await userModel.getUserName(user.userId);
+      done(null, usr[0]);
     } catch (err) {
       console.log(err);
     }
@@ -77,4 +76,3 @@ if (cluster.isMaster) {
     console.log('wat up');
   });
 }
-

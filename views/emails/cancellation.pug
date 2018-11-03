@@ -1,0 +1,9 @@
+extends custom-email
+block content
+  p Ваша регистрация на #{type} в #{user} #{date} #{time} отменена.
+block reason
+  if reason
+    p Причина отмены: #{reason}
+  else
+    p Причина отмены не указана
+  

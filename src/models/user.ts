@@ -1,4 +1,4 @@
-import mysql from 'mysql';
+import mysql, { MysqlError } from 'mysql';
 
 export const dbPool = mysql.createPool({
   connectionLimit: 100,
@@ -10,7 +10,7 @@ export const dbPool = mysql.createPool({
 
 const makeSqlQuery = (sqlString: string, params?: any): Promise<any> => {
   return new Promise((resolve, reject) => {
-      dbPool.query(sqlString, params, (err, result) => {
+      dbPool.query(sqlString, params, (err: MysqlError, result: Object[]) => {
         if (err) {
           return reject(err);
         }
@@ -21,16 +21,16 @@ const makeSqlQuery = (sqlString: string, params?: any): Promise<any> => {
 }
 
 export const getUserName = (userId: any) => {
-  let sqlString = `select userId from holandly.users where userId=?`;
+  let sqlString = `select userId, login from holandly.users where userId=?`;
   return makeSqlQuery(sqlString, userId);
 }
 
 export const findUser = (username: any) => {
-  let sqlString = `select * from holandly.users where login=?`;
+  let sqlString = `select userId, login, password from holandly.users where login=?`;
   return makeSqlQuery(sqlString, username);
 }
 
-export const queryScheduledEvents = () => {
+export const queryScheduledEvents = (userId: number) => {
   let sqlString = `
       select visitors.name, visitors.email, 
              eventslist.date, eventslist.time, eventslist.patternId, 
@@ -45,20 +45,20 @@ export const queryScheduledEvents = () => {
      left join (select eventId, COUNT(*) AS occupied from eventvisitors 
         group by eventId) AS visitCount on eventslist.eventId = visitCount.eventId
      order by eventslist.date, eventslist.time, eventpattern.type;`
-  return makeSqlQuery(sqlString);
+  return makeSqlQuery(sqlString, userId);
 }
 
-export const queryEventPatterns = () => {
+export const queryEventPatterns = (userId: number) => {
   let sqlString = `select * from eventpattern;`;
-  return makeSqlQuery(sqlString);
+  return makeSqlQuery(sqlString, userId);
 }
 
-export const queryCreatedEvents = () => {
+export const queryCreatedEvents = (userId: number) => {
   let sqlString = `select eventslist.*, visitCount.occupied, eventpattern.number, eventpattern.type from holandly.eventslist
                     inner join eventpattern on eventslist.patternId = eventpattern.patternId
                     left join (select eventId, COUNT(*) AS occupied from eventvisitors group by eventId) AS visitCount on eventslist.eventId = visitCount.eventId
                   order by date, time;`;
-  return makeSqlQuery(sqlString);
+  return makeSqlQuery(sqlString, userId);
 }
 
 export const insertNewPattern = (userId: number, pattern: any) => {
@@ -81,32 +81,59 @@ export const updatePattern = (attributes: any) => {
   return makeSqlQuery(sqlString, queryParams);
 }
 
-export const getPatternEvents = (patternId: any): any => {
+export const getPatternEvents = (patternId: number) => {
   let sqlString = `select eventId from eventslist where patternId = ?`;
   return makeSqlQuery(sqlString, patternId);
 }
 
-export let deletePattern = (patternId: any) => { // delete all the active events
+export const getPatternEventsNotificationData = (patternId: number) => {
+  let sqlString = `SELECT type, description, date, time, name as visitor from holandly.eventpattern
+                    inner join eventslist on eventslist.patternId = eventpattern.patternId
+                    inner join eventvisitors on eventslist.eventId = eventvisitors.eventId
+                    inner join visitors on eventvisitors.visitorId = visitors.visitorId
+                  where eventpattern.patternId = ?`;
+  return makeSqlQuery(sqlString, [patternId]);
+}
+
+export let deletePattern = (patternId: number) => { // delete all the active events
   let sqlString = `delete from eventpattern where eventpattern.patternId = ?`;
   return makeSqlQuery(sqlString, patternId);
 }
 
-export const deleteEvent = (eventId: any) => {
+export const deleteEvent = (eventId: number) => {
   let sqlString = `delete from eventslist where eventId = ?`;
   return makeSqlQuery(sqlString, eventId);
 }
 
-export const deleteEventVisitor = (event: any) => {
+export const deleteEventVisitor = (event: {eventId: number, email:  string}) => {
   let sqlString = `delete from eventvisitors where eventId = ?
                   and visitorId = (select visitors.visitorId from visitors where email=?);`;
   let queryParams = [event.eventId, event.email];
   return makeSqlQuery(sqlString, queryParams);
 }
 
-export const updateVisitorsInCalendar = (eventId: any) => {
+export const getVisitorNotificationData = (event: {eventId: number, email: string}) => {
+  let sqlString = `SELECT type, description, date, time,
+                    (select name from visitors where email = ?) as visitor from eventslist
+                  inner join eventpattern on eventslist.patternId = eventpattern.patternId
+                  where eventslist.eventId = ?`;
+  let queryParams = [event.email, event.eventId]
+  return makeSqlQuery(sqlString, queryParams);
+}
+
+export const getEventNotificationData = (eventId: number) => {
+  let sqlString = `SELECT type, description, date, time, name as visitor from holandly.eventslist
+                    inner join eventpattern on eventslist.patternId = eventpattern.patternId
+                    inner join eventvisitors on eventslist.eventId = eventvisitors.eventId
+                    inner join visitors on eventvisitors.visitorId = visitors.visitorId
+                  where eventslist.eventId = ?`
+  return makeSqlQuery(sqlString, [eventId]);
+}
+
+export const updateVisitorsInCalendar = (eventId: number) => {
   let sqlString = `select visitors.visitorId as id, visitors.email, visitors.name as displayName from eventvisitors
                    inner join visitors on visitors.visitorId = eventvisitors.visitorId
-                   where eventId=?`;
+                   where eventvisitors.eventId=?`;
   return makeSqlQuery(sqlString, eventId);
 }
 
@@ -127,13 +154,13 @@ export const scheduleNewEvent = (event: any) => {
   return makeSqlQuery(sqlString, queryParams);
 }
 
-export const getEventDuration = (patternId: any) => {
+export const getEventDuration = (patternId: number) => {
   let sqlString = `select duration from eventpattern where patternId=?`;
   return makeSqlQuery(sqlString, patternId);
 }
 
 // google calendar api insert event call
-export const getPatternData = (patternId: any) => {
+export const getPatternData = (patternId: number) => {
   let sqlString = `select description, duration, type from eventpattern where patternId=?`;
   return makeSqlQuery(sqlString, patternId);
 }

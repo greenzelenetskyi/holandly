@@ -1,0 +1,22 @@
+extends custom-email
+block content
+  p Вы зарегистрированы на #{type} в #{user} #{date} #{time}
+block buttons  
+  div(style=`margin:0;padding:0;text-align:center;`)
+    div
+      a(style=`margin:0;padding:0;
+      font-family:"Proxima Nova","proxima-nova",Helvetica,Arial sans-serif;
+      color:#4d9bd7;display:inline-block;width:220px;padding:15px 0;
+      font-size:14px;text-align:center;text-decoration:none;
+      background-color:transparent;color:#00a2ff;border:1px solid #00a2ff`
+      href=`${rescheduleLink}`, target='__blank') Перепланировать
+    div
+      a(style=`margin:0;padding:0;
+      font-family:"Proxima Nova","proxima-nova",Helvetica,Arial sans-serif;
+      color:#4d9bd7;display:inline-block;width:220px;padding:15px 0;font-size:14px;
+      text-align:center;text-decoration:none;background-color:transparent;
+      color:#a8a8a8;border:1px solid #a8a8a8`
+      href=`${cancelLink}`, target="__blank") Отменить
+  
+
+              

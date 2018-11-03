@@ -3,10 +3,15 @@ import path from 'path';
 import * as userModel from '../models/user';
 import moment from 'moment';
 import * as calendar from '../models/calendar';
+import * as mailer from '../models/mailer';
+import pug from 'pug';
 
-const DEADLINE = '30';
+const DEADLINE = '30'; //mins till start
 
-export let requireLogin = (req: Request, res: Response, next: any) => {
+const useCancelTemplate = pug.compileFile(path.join(__dirname, '../../views/emails/cancellation.pug'));
+const useConfirmTemplate = pug.compileFile(path.join(__dirname,'../../views/emails/confirmation.pug'));
+
+export let requireLogin = (req: Request, res: Response, next: Function) => {
   if (!req.isAuthenticated()) {
     res.redirect('/edit/login');
   } else {
@@ -14,7 +19,7 @@ export let requireLogin = (req: Request, res: Response, next: any) => {
   }
 }
 
-export const verifyUser = async (username: any, password: any, callback: Function) => {
+export const verifyUser = async (username: string, password: string, callback: Function) => {
   try {
     let user = await userModel.findUser(username);
     if (user.length === 0) {
@@ -42,7 +47,6 @@ export let stopSession = (req: Request, res: Response) => {
 
 export let getLoginPage = (req: Request, res: Response) => {
   res.render('signIn');
-  //res.sendFile(path.join(__dirname, '../public/login/signIn.html'));
 }
 
 const makeVisitorObject = (entry: any): any => {
@@ -63,7 +67,7 @@ const makeAppointment = (entry: any, isPrevDatePast: boolean, momentObject: any)
 /* aggregates events by common date and time */
 const makeSortedEventList = (results: any, momentObject: any) => {
   let scheduledEvents: any[] = [];
-  let prevDate: any;
+  let prevDate: string;
   let prevTime: any;
   let prevType: any;
   let isPrevDatePast: any;
@@ -93,9 +97,10 @@ const makeSortedEventList = (results: any, momentObject: any) => {
   return scheduledEvents;
 }
 
+
 export const sendScheduledEvents = async (req: Request, res: Response) => {
   try {
-    let scheduledEvents = await userModel.queryScheduledEvents();
+    let scheduledEvents = await userModel.queryScheduledEvents(req.user.userId);
     if(scheduledEvents.length > 0) {
       scheduledEvents = makeSortedEventList(scheduledEvents, moment());
     }
@@ -109,7 +114,7 @@ export const sendScheduledEvents = async (req: Request, res: Response) => {
 
 export const sendEventPatterns = async (req: Request, res: Response) => {
   try {
-    let eventPatterns = await userModel.queryEventPatterns();
+    let eventPatterns = await userModel.queryEventPatterns(req.user.userId);
     res.json(eventPatterns);
   } catch (err) {
     res.status(500).json(err);
@@ -118,7 +123,7 @@ export const sendEventPatterns = async (req: Request, res: Response) => {
 
 export const sendAvailableEvents = async (req: Request, res: Response) => {
   try {
-    let availableEvents = await userModel.queryCreatedEvents();
+    let availableEvents = await userModel.queryCreatedEvents(req.user.userId);
     if(availableEvents.length > 0) {
       availableEvents = availableEvents.map((entry: any) => {
         entry.occupied = null ? 0 : entry.occupied;
@@ -136,7 +141,7 @@ export const sendAvailableEvents = async (req: Request, res: Response) => {
 
 export let addNewEventPattern = async (req: Request, res: Response) => {
   try {
-    let insertionResult = await userModel.insertNewPattern(req.user, req.body);
+    let insertionResult = await userModel.insertNewPattern(req.user.userId, req.body);
     if(insertionResult.affectedRows === 0) {
       return res.status(409).end()
     }
@@ -170,10 +175,13 @@ export const deleteEventPattern = async (req: Request, res: Response) => { // de
   }
 
   try {
+    let notificationData = await userModel.getPatternEventsNotificationData(req.params[0]);
     let deletionResult = await userModel.deletePattern(req.params[0]);
     if(deletionResult.affectedRows === 0) {
       return res.status(409).end()
     }
+    mailer.notify(notificationData.filter((event: any) => moment().isAfter(event.date, 'day'))
+      , req.user.login, req.body.reason, 'Oтмена участия: ', useCancelTemplate);
     patternEvents.forEach((event) => {
       calendar.deleteCalendarEvent(event.eventId);
     })
@@ -183,12 +191,15 @@ export const deleteEventPattern = async (req: Request, res: Response) => { // de
   }
 }
 
-
 export let deleteEvent = async (req: Request, res: Response) => {
   try {
+    let notificationData = await userModel.getEventNotificationData(req.params[0]);
     let deletionResult = await userModel.deleteEvent(req.params[0]);
     if(deletionResult.affectedRows === 0) {
       return res.status(409).end()
+    }
+    if(moment().isAfter(notificationData[0].date, 'day')) {
+      mailer.notify(notificationData, req.user.login, req.body.reason, 'Отмена участия: ', useCancelTemplate);
     }
     calendar.deleteCalendarEvent(req.params[0])
     res.end();
@@ -201,8 +212,10 @@ export let deleteEventVisitor = async (req: Request, res: Response) => {
   try {
     let deletionResult = await userModel.deleteEventVisitor(req.body);
     if(deletionResult.affectedRows === 0) {
-      return res.status(409).end()
+      return res.status(409).end();
     }
+    let notificationData = await userModel.getVisitorNotificationData(req.body);
+    mailer.notify(notificationData, req.user.login, req.body.reason, 'Отмена участия:', useCancelTemplate);
     let visitors = await userModel.updateVisitorsInCalendar(req.body.eventId);
     calendar.updateEvent(req.body.eventId, {
       attendees: visitors.length > 0 ? JSON.parse(JSON.stringify(visitors)): []
@@ -220,6 +233,8 @@ export let scheduleEvent = async (req: Request, res: Response) => {
   try {
     let updateResult = await userModel.updateEvent(event);
     if(updateResult.affectedRows > 0) {
+      let notificationData = await userModel.getEventNotificationData(event.eventId);
+      mailer.notify(notificationData, req.user.login, req.body[0].reason, 'Изменение в ', useConfirmTemplate);
       rescheduleInCalendar(event);
       return res.end();
     }
@@ -227,7 +242,7 @@ export let scheduleEvent = async (req: Request, res: Response) => {
     let insertResult = await userModel.scheduleNewEvent(event);
     if(insertResult.affectedRows > 0) {
       event.eventId = insertResult.insertId;
-      addEventToCalendar(event)
+      addEventToCalendar(event);
     }
     res.end();
   } catch (err) {

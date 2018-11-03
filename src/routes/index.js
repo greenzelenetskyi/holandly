@@ -1,6 +1,7 @@
 //import * as userModel from "";
 var userModel = require('../models/user');
 var express = require('express');
+var mailer = require('../models/mailer');
 exports.router = express.Router();
 // var parser = require('body-parser');
  //var userModel = require('../models/user')
@@ -221,6 +222,7 @@ exports.router.post('/submitVisitor', function (req, res) {
                             }
                             else {   //  visitor has already recorded on this event earlier
                                 console.log("You've already recorded on this event.");
+                            
                                 res.json({success: 2, name: vname, email: vemail});
                             }
                         });
