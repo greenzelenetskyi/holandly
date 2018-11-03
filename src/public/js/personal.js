@@ -126,7 +126,7 @@ function addHandlerRemoveScheduledEvent(element) {
             var event = events[this.getAttribute('data-eventId')];
             // console.log(event);
             $('#descriptionText')[0].innerText =
-                'Удаление события [' + event.type + '] заплпнированого на [' +
+                'Удаление события [' + event.type + '] \n заплпнированого на [' +
                 moment(event.time, 'hh:mm:ss').format("HH:mm") + '  ' +
                 moment(event.date).format('DD/MM/YYYY') + ']';
             remove = function () {

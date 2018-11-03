@@ -48,13 +48,13 @@ function getEvents() {
     });
 }
 
-function putEvent(events) {
+function putEvent(eventsData) {
     console.log('>putEvent');
-    console.log(events);
+    console.log(eventsData);
     $.ajax({
         type: "POST",
         url: '/edit/events',
-        data: JSON.stringify(events),
+        data: JSON.stringify(eventsData),
         contentType: 'application/json',
         success: function (data) {
             console.log(data);

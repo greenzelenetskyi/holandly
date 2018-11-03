@@ -1,15 +1,5 @@
 extends personal-visitors
 block block_patterns
-    script.
-        $(document).ready(function () {
-            $('#closeCalendar').click(function () {
-                console.log('closeCalendar');
-                $('#patternEdit')[0].hidden = true;
-                $('#patternsView')[0].hidden = false;
-
-            });
-        })
-
     #patternsView.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
         .input-group
             a.card-link(href='user/andrey')
@@ -26,8 +16,6 @@ block block_patterns
             .card-header
                 h5#editPatternType editPatternType
             .card-body
-                //a(href='#' data-toggle="modal" data-target="#event-wizard-form") Заплпнировать повторяющееся событие
-                //hr
                 #calendar
                 hr
                 .text-right
@@ -36,33 +24,9 @@ block block_patterns
                             | Закрыть
                         //button#saveCalendar.btn.btn-primary(type='button')
                         //    | Сохранить и закрыть
-    //// Modal event wizard
-    //#event-wizard-form.modal.fade(tabindex='-1', role='dialog', aria-labelledby='eventWizardLabel', aria-hidden='true')
-    //    form
-    //        .modal-dialog(role='document')
-    //            .modal-content
-    //                .modal-header
-    //                    h5#removeModalLabel.modal-title Мастер повторяющихся событий
-    //                    button.close(type='button', data-dismiss='modal', aria-label='Close')
-    //                        span(aria-hidden='true') ×
-    //                .modal-body
-    //                    .input-group.mb-3
-    //                        .input-group-prepend
-    //                            span#inputGroup-sizing-default.input-group-text Default
-    //                        input.form-control(type='text', aria-label='Sizing example input', aria-describedby='inputGroup-sizing-default')
-    //
-    //                    input#removePatternId(type='text', hidden='куецуке')
-    //                    input#removeEventId(type='text', hidden='')
-    //                    .form-group.row
-    //                        label.col-sm-2.col-form-label(for='removeDescription') Причина
-    //                        .col-sm-10
-    //                            textarea#removeDescription.form-control(aria-label='With textarea')
-    //                    .modal-footer
-    //                        button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
-    //                        input.btn.btn-primary(type='submit', value='Создать')
     //Modal new pattern
     #pattern-modal-form.modal.fade(tabindex='-1', role='dialog', aria-labelledby='newPatternModalLabel', aria-hidden='true')
-        form#test
+        form
             .modal-dialog.modal-lg(role='document')
                 .modal-content
                     .modal-header
@@ -87,22 +51,27 @@ block block_patterns
                             label.col-sm-10.col-form-label(for='inputMultiAccess')
                                 | Зпрет
                                 | многократной подписки на событие
-                            .col-sm-2
-                                input#inputMultiAccess.form-control(type='checkbox')
+                                .col-sm-2
+                                    input#inputMultiAccess.form-control(type='checkbox')
                     .modal-footer
                         button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Создать')
     //--- template pattern -----------------------------
-    span(hidden) template
+    span() template
         #templatePattern
-            li.list-group-item.d-flex.justify-content-between.align-items-center
-                span dataVisitorName
-                span dataEmail
-                a.cancel-visitor.btn.btn-outline-danger.badge(data-eventId='dataEventID',data-visitor='dataVisitorName',
-                data-email='dataEmail' data-toggle="modal" data-target="#remove-modal-form" data-tooltip="tooltip" title="Отменить участие") Х
+            .col-sm-4
+                .card.border-primary.mb-4
+                    .card-header
+                        strong templatePatternType
+                        .rouded.float-right
+                            img.img-fluid.btn-outline-success.ico(src='../img/EventAdd.png')
+                            img.img-fluid.btn-outline-info.ico(src='../img/PatternEdit.png')
+                            img.img-fluid.btn-outline-danger.ico(src='../img/PatternDelete.png')
+                    .card-body
+                        label Количество учасников:
+                        label Продолжительность:
+
     //Modal edit events
-
-
     #editEvents-modal-form.modal.fade(tabindex='-1', role='dialog',  aria-hidden='true')
         form#eventScheduler
             .modal-dialog(role='document')
@@ -111,23 +80,40 @@ block block_patterns
                         h5#editEventsTitleLabel.modal-title Планировщик
                     .modal-body
                         .tab-container
+                            .form-group
+                                .card
+                                    .card-header
+                                        label Время начала
+                                    .card-body
+                                        ul#eventStartTimes.list-group.list-group-flush
+                                        button.btn.btn-link.addStartTime(type='button') + добавить
                             .tab-navigation
-                                select#select-repeat
-                                    option(value='1') Не повторять
-                                    option(value='2') Повторять по дням недели
-                                    option(value='3') Повторять по датам
-                            #tab-1.tab-content
-                            #tab-2.tab-content
-                                | This is tab 2 content.
-                                ul
-                                    li 12312
-                                    li 12312334
-                                    li 2342
-                            #tab-3.tab-content
-                                #calendarScheduler
+                                .card
+                                    .card-header
+                                        select#select-repeat
+                                            option(value='1') Не повторять
+                                            option(value='2') Повторять по дням недели
+                                            option(value='3') Повторять по датам
+                                        #tab-1.tab-content
+                                        #tab-2.tab-content
+                                            each val, index in {1:'ПН',2:'ВТ',3:'СР',4:'ЧТ',5:'ПТ',6:'СБ',7:'ВС'}
+                                                .form-check.form-check-inline
+                                                    input( id="inlineCheckbox" + index ).form-check-input(type='checkbox', value=('option' + index) )
+                                                    label.form-check-label(for= 'inlineCheckbox' + index )= val
+                                            .form-group
+                                                label(for='finalDate') Дата окончания
+                                                input#finalDate.form-control(type='date')
+                                        #tab-3.tab-content
+                                            #calendarScheduler
                     .modal-footer
                         button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Заплпнировать')
+    //--- template start time -----------------------------
+    span(hidden) template
+        #templateStarTime
+            li.list-group-item.d-flex.justify-content-between.align-items-center
+                input#testTime.form-control(type='time')
+                img.img-fluid.btn-outline-danger.ico(src='../img/trash.png', data-tooltip='tooltip', data-original-title='Удалить')
     script.
         $(document).ready(function () {
             $('#eventScheduler .tab-content').hide();
@@ -136,16 +122,60 @@ block block_patterns
                 dropdown = $('#select-repeat').val();
                 $('#' + "tab-" + dropdown).show();
             })
-        })
 
-        function appendScheduled(events) {
+            $('.addStartTime').click(function () {
+                var timeLi = document.getElementById('templateStarTime').cloneNode(true).outerHTML;
+
+                document.getElementById('eventStartTimes').innerHTML += timeLi;
+
+            })
+
+            var editPatternTimeModalForm = $("#editEvents-modal-form");
+            editPatternTimeModalForm.submit(function (event) {
+                event.preventDefault();
+                saveNewEvent(event);
+                editPatternTimeModalForm.modal('hide');
+            });
+        })
+        var editDate;
+        var editPatternId;
+        function saveNewEvent(event) {
+            console.log(event.target)
+            event.preventDefault();
+
+            var newEvent = {};
+            newEvent.eventId = null;
+            newEvent.patternId = editPatternId;
+            newEvent.date = editDate;
+            newEvent.reason = '';
+            newEvent.time = $("#testTime").val();
+            console.log(newEvent);
+            var eventArr = [];
+            eventArr.push(newEvent)
+            putEvent(eventArr);
 
         }
 
-        function showEventScheduler(events) {
+
+        function addScheduledTime() {
+            Object.values(events).forEach(function (event, i, data) {
+                var timeList = document.getElementById('eventStartTimes');
+                timeList.innerHTML = '';
+                if (event.patternId === editPatternId) {
+
+                    var timeLi = document.getElementById('templateStarTime').cloneNode(true).outerHTML;
+
+                    timeList.innerHTML += timeLi;
+                }
+            });
+            console.log(events)
+        }
+
+        function EventSchedulerShow(startDate) {
+            editDate = moment(startDate).format('YYYY-MM-DD');
             $('#select-repeat').val(1);
             $('#eventScheduler .tab-content').hide();
-            appendScheduled(events);
+            addScheduledTime(events);
             $('#editEvents-modal-form').modal();
         }
 
@@ -169,3 +199,12 @@ block block_patterns
                 }
             });
         });
+
+
+
+        $(document).ready(function () {
+            $('#closeCalendar').click(function () {
+                $('#patternEdit')[0].hidden = true;
+                $('#patternsView')[0].hidden = false;
+            });
+        })
