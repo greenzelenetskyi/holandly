@@ -3,8 +3,6 @@ import moment from 'moment';
 
 const calendId = process.env.CALENDAR_ID;
 
-let batch = google.calendar.batch;
-
 // configure a JWT auth client
 let jwtClient = new google.auth.JWT(
     process.env.API_EMAIL,
@@ -43,8 +41,20 @@ export const insertToCalendar = (newEvent: any) => {
         }
     }, (err: Error, response: any) => {
         if (err) {
-            console.log('The API returned an error: ' + err);
-            return;
+            calendar.events.get({
+                auth: jwtClient,
+                calendarId: calendId,
+                eventId: id
+            }, (err: Error, response: any) => {
+                if (err) {
+                    console.log('The API returned an error: ' + err);
+                    return;
+                } else {
+                    console.log(response);
+                }
+            })
+            //console.log('The API returned an error: ' + err);
+           // return;
         } else {
             console.log('Event created: %s', response.data.htmlLink);
         }
@@ -66,24 +76,6 @@ export const deleteCalendarEvent = (eventData: any) => {
         }
     })
 }
-
-// // adds or deletes visitor, providing new visitor list
-// export const changeVisitorList = (eventData: any) => {
-//   calendar.events.patch({
-//     auth: jwtClient,
-//     calendarId: calendId,
-//     resource: {
-//         'attendees': []
-//     }
-//   }), (err: Error, response: any) => {
-//         if (err) {
-//             console.log('The API returned an error: ' + err);
-//             return;
-//         } else {
-//             console.log('Event created: %s', response.data.htmlLink);
-//         }
-//     }
-// }
 
 export const updateEvent = (eventId: any, resourceFields: any) => {
     let id = '0000' + eventId

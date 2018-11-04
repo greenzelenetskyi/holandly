@@ -1,6 +1,7 @@
 //import * as userModel from "";
 var userModel = require('../models/user');
 var express = require('express');
+var mailer = require('../models/mailer');
 exports.router = express.Router();
 // var parser = require('body-parser');
  //var userModel = require('../models/user')
@@ -24,7 +25,13 @@ var igorDB = {
 
 //var con = mysql.createConnection(igorDB);
 //var con = mysql.createConnection(borisDB);
-var con = userModel.dbPool;
+var con = mysql.createPool({
+    connectionLimit: 100,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME
+  });
 
 // con.connect(function(err) {
 //     if (err) throw err;
@@ -225,6 +232,7 @@ exports.router.post('/submitVisitor', function (req, res) {
                             }
                             else {   //  visitor has already recorded on this event earlier
                                 console.log("You've already recorded on this event.");
+                            
                                 res.json({success: 2, name: vname, email: vemail});
                             }
                         });
