@@ -10,20 +10,18 @@ block block_patterns
                 button.btn.btn-primary(type='button', data-toggle='modal', data-target='#pattern-modal-form')
                     | + Создать новый шаблон
         hr
-        #pattern-row.row
+        #pattern-row.row()
     #patternEdit.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded(hidden)
         .card
             .card-header
-                h5#editPatternType editPatternType
+                strong#editPatternType templatePatternType
+                button#closeCalendar.float-right.btn.btn-outline-secondary(type='button') Закрыть
             .card-body
-                #calendar
-                hr
-                .text-right
-                    .btn-group
-                        button#closeCalendar.btn.btn-outline-secondary(type='button')
-                            | Закрыть
-                        //button#saveCalendar.btn.btn-primary(type='button')
-                        //    | Сохранить и закрыть
+                .row
+                    .col-sm-6
+                        #calendar
+                    .col-sm-6
+                        #calendarList
     //Modal new pattern
     #pattern-modal-form.modal.fade(tabindex='-1', role='dialog', aria-labelledby='newPatternModalLabel', aria-hidden='true')
         form
@@ -57,19 +55,25 @@ block block_patterns
                         button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Создать')
     //--- template pattern -----------------------------
-    span() template
-        #templatePattern
-            .col-sm-4
-                .card.border-primary.mb-4
-                    .card-header
-                        strong templatePatternType
-                        .rouded.float-right
-                            img.img-fluid.btn-outline-success.ico(src='../img/EventAdd.png')
-                            img.img-fluid.btn-outline-info.ico(src='../img/PatternEdit.png')
-                            img.img-fluid.btn-outline-danger.ico(src='../img/PatternDelete.png')
-                    .card-body
-                        label Количество учасников:
-                        label Продолжительность:
+    #templatePattern
+        .col-sm-4
+            .card.border-primary.mb-4
+                .card-header
+                    strong templatePatternType
+                    .rouded.float-right
+                        img.img-fluid.btn-outline-success.ico(src='../img/EventAdd.png'
+                        data-tooltip="tooltip" title="Заплпнировать событие")
+                        img.img-fluid.btn-outline-info.ico(src='../img/PatternEdit.png'
+                        data-tooltip="tooltip" title="Редактировать шаблон" data-toggle="modal" data-target="#pattern-modal-form")
+                        img.img-fluid.btn-outline-danger.ico(src='../img/PatternDelete.png'
+                        data-tooltip="tooltip" title="Удалить шаблон" data-toggle="modal" removeType="pattern" data-target="#remove-modal-form")
+                .card-body.text-success
+                    p.em.small templatePattern-description
+                    p.em.small Колличество участников: templatePattern-number
+                    p.em.small Продолжтельность: templatePattern-duration
+                    p.em.small templatePattern-condition
+                    p.em.small Заплпнировано событий: templatePattern-amount
+
 
     //Modal edit events
     #editEvents-modal-form.modal.fade(tabindex='-1', role='dialog',  aria-hidden='true')
@@ -112,9 +116,15 @@ block block_patterns
     span(hidden) template
         #templateStarTime
             li.list-group-item.d-flex.justify-content-between.align-items-center
-                input#testTime.form-control(type='time')
-                img.img-fluid.btn-outline-danger.ico(src='../img/trash.png', data-tooltip='tooltip', data-original-title='Удалить')
+                input.liTime.form-control(type='time', data-value="", data-eventId="0")
+                img.removeEvent.img-fluid.btn-outline-danger.ico(src='../img/trash.png',
+                data-eventId="0", data-tooltip='tooltip', data-original-title='Удалить')
+    //==========================================================
     script.
+        var ScheduledEvents = []
+        var userPatterns = {}
+        var editPatternEvents = {}
+
         $(document).ready(function () {
             $('#eventScheduler .tab-content').hide();
             $('#select-repeat').change(function sr() {
@@ -124,60 +134,85 @@ block block_patterns
             })
 
             $('.addStartTime').click(function () {
-                var timeLi = document.getElementById('templateStarTime').cloneNode(true).outerHTML;
-
-                document.getElementById('eventStartTimes').innerHTML += timeLi;
-
-            })
+                appendTimeToSchedule();
+            });
 
             var editPatternTimeModalForm = $("#editEvents-modal-form");
             editPatternTimeModalForm.submit(function (event) {
                 event.preventDefault();
-                saveNewEvent(event);
                 editPatternTimeModalForm.modal('hide');
+                editPatternEvents.newTimes = getScheduledTimes();
+                console.log(editPatternEvents)
+                saveEditedEvents(editPatternEvents);
             });
         })
-        var editDate;
-        var editPatternId;
-        function saveNewEvent(event) {
-            console.log(event.target)
-            event.preventDefault();
 
-            var newEvent = {};
-            newEvent.eventId = null;
-            newEvent.patternId = editPatternId;
-            newEvent.date = editDate;
-            newEvent.reason = '';
-            newEvent.time = $("#testTime").val();
-            console.log(newEvent);
-            var eventArr = [];
-            eventArr.push(newEvent)
-            putEvent(eventArr);
-
+        function getScheduledTimes() {
+            var times = []
+            $('.liTime').each(function (i, el) {
+                if (el.value !== '')
+                    times.push({time: el.value, eventId: el.getAttribute('data-eventId')})
+            })
+            return times;
         }
 
 
-        function addScheduledTime() {
-            Object.values(events).forEach(function (event, i, data) {
-                var timeList = document.getElementById('eventStartTimes');
-                timeList.innerHTML = '';
-                if (event.patternId === editPatternId) {
+        function saveEditedEvents(editPatternEvents) {
+            var events = [];
+            editPatternEvents.newTimes.forEach(function (editTime) {
+                events.push({
+                        eventId: editTime.eventId,
+                        patternId: editPatternEvents.patternId,
+                        date: editPatternEvents.startDate.format(),
+                        reason: '',
+                        time: editTime.time
+                    }
+                )
+            })
+            putEvent(events);
+        }
 
-                    var timeLi = document.getElementById('templateStarTime').cloneNode(true).outerHTML;
+        function appendTimeToSchedule(timeEvent) {
+            var elem = document.createElement('div');
+            var tempTime = document.getElementById('templateStarTime').cloneNode(true).innerHTML;
+            if (!!timeEvent) {
+                tempTime = tempTime.replace(/data-value=""/gi, 'value = \'' + timeEvent.time + '\'');
+                tempTime = tempTime.replace(/data-eventId="0"/gi, 'data-eventId= \'' + timeEvent.eventId + '\'');
+                console.log(timeEvent.time)
+            }
+            elem.innerHTML = tempTime;
+            document.getElementById('eventStartTimes').appendChild(elem);
+            addHandlerRemoveScheduledEvent('.removeEvent');
+        }
 
-                    timeList.innerHTML += timeLi;
+        function getDateEvents(date, patternID) {
+            var dateEvents = [];
+            var patternsEvents = userPatterns[patternID].scheduledEvents;
+            patternsEvents.forEach(function (event, i, data) {
+                if (moment(event.date).isSame(date, 'day')) {
+                    dateEvents.push(event);
                 }
-            });
-            console.log(events)
+            })
+            editPatternEvents.editTimes = dateEvents;
+            console.log(dateEvents)
+            return dateEvents
         }
 
-        function EventSchedulerShow(startDate) {
-            editDate = moment(startDate).format('YYYY-MM-DD');
+        function addScheduledTime(ScheduledEvents) {
+            document.getElementById('eventStartTimes').innerHTML = '';
+            Object.values(ScheduledEvents).forEach(function (event, i, data) {
+                appendTimeToSchedule(event);
+            });
+        }
+
+        function EventSchedulerShow(editDate) {
             $('#select-repeat').val(1);
             $('#eventScheduler .tab-content').hide();
-            addScheduledTime(events);
             $('#editEvents-modal-form').modal();
+            if (!!editDate)
+                addScheduledTime(getDateEvents(editDate.startDate, editDate.patternId));
         }
+
 
         $(document).ready(function () {
             var select = [];
@@ -187,12 +222,9 @@ block block_patterns
                 locale: 'ru',
                 selectable: true,
                 select: function (startDate, endDate) {
-                    console.log('selertwert');
-                    console.log(select);
-                    var selectDates = getDates(startDate, endDate);
+                    var selectDates = getDates(startDate, endDate, [1, 2]);
                     select = select.concat(selectDates);
                     $('#calendarScheduler').fullCalendar('renderEvents', select);
-                    console.log(getDates(startDate, endDate));
                 },
                 viewRender: function () {
                     $('#calendarScheduler').fullCalendar('renderEvents', select);
@@ -200,11 +232,39 @@ block block_patterns
             });
         });
 
-
-
         $(document).ready(function () {
             $('#closeCalendar').click(function () {
                 $('#patternEdit')[0].hidden = true;
                 $('#patternsView')[0].hidden = false;
             });
         })
+
+        function getDates(startDate, endDate, weekDays) {
+            var dateArray = [];
+            var currentDate = moment(startDate);
+            var stopDate = moment(endDate);
+            while (currentDate < stopDate) {
+                if (!!weekDays) {
+                    if (weekDays.indexOf(moment(currentDate).days()) !== -1)
+                        dateArray.push(currentDate);
+                }
+                else {
+                    dateArray.push(currentDate);
+                }
+                currentDate = moment(currentDate).add(1, 'days');
+            }
+            //console.log(dateArray);
+            backgroundDates(dateArray);
+            return (dateArray);
+
+        }
+
+        function backgroundDates(dates) {
+            return dates.map(function (date) {
+                return {
+                    start: date,
+                    rendering: 'background'
+                };
+            });
+        }
+

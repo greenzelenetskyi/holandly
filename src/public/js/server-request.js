@@ -21,7 +21,7 @@ function cancelVisitor(data) {
         contentType: 'application/json',
         success: function (data) {
             console.log(data);
-            getEvents();
+            // getEvents();
             getVisitors();
         }
     });
@@ -37,13 +37,20 @@ function getEvents() {
         success: function (data) {
             console.log('received events');
             console.log(data);
+            ScheduledEvents = data;
             var tempEvents = {};
+            userPatterns.events = [];
+            console.log('userPatterns');
+            console.log(userPatterns);
             data.forEach(function (event, index, data) {
                 tempEvents[event.eventId] = event;
+                userPatterns[event.patternId].scheduledEvents.push(event);
             });
+            if (!!editPatternEvents.patternId)
+                appentEvetntsToCalendar(userPatterns[editPatternEvents.patternId].scheduledEvents);
             events = tempEvents;
-            appentEvetntsToCalendar(events);
-           //makeEventsPoint(data);
+
+            console.log(userPatterns);
         }
     });
 }
@@ -58,6 +65,7 @@ function putEvent(eventsData) {
         contentType: 'application/json',
         success: function (data) {
             console.log(data);
+            userPatterns[editPatternEvents.patternId].scheduledEvents = [];
             getEvents();
             getVisitors();
         }
@@ -94,8 +102,12 @@ function getPatterns() {
             var tempPatterns = {};
             data.forEach(function (pattern, index, data) {
                 tempPatterns[pattern.patternId] = pattern;
+                tempPatterns[pattern.patternId].scheduledEvents = [];
+
             });
-            patterns = tempPatterns;
+            // patterns = tempPatterns;
+            userPatterns = tempPatterns;
+            getEvents();
             makePatternCard(data);
         }
     });
@@ -135,7 +147,6 @@ function deletePattern(id, description) {
         success: function (data) {
             console.log(data);
             getPatterns();
-            getEvents();
         }
     });
 }
@@ -154,22 +165,6 @@ function logOut() {
                     window.location = "/edit";
                 }
             })
-        }
-    });
-}
-
-function getVisitorsList() {
-    console.log('getVisitorsList');
-    $.ajax({
-        type: 'get',
-        url: '/edit/pattern',
-        dataType: 'json',
-        data: {},
-        response: 'json',
-        success: function (data) {
-            console.log('getVisitorsList');
-            console.log(data);
-            return (data);
         }
     });
 }
