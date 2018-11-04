@@ -10,10 +10,19 @@ import { userRouter } from './routes/user';
 import os from 'os';
 import cluster from 'cluster';
 import compression from 'compression';
+import mysql from 'mysql';
 const MySqlStore = require('express-mysql-session')(session);
 const visitor = require('./routes/index');
 
 const numCPUs = os.cpus().length;
+
+const dbPool = mysql.createPool({
+  connectionLimit: 100,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME
+});
 
 if (cluster.isMaster) {
   console.log('hi I am your master');
@@ -28,6 +37,9 @@ if (cluster.isMaster) {
 } else {
 
   const app = express();
+
+  app.set('dbPool', dbPool);
+
   console.log('hi i am a worker');
   const LocalStrategy = passportLocal.Strategy;
 
@@ -35,14 +47,28 @@ if (cluster.isMaster) {
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    store: new MySqlStore({}, userModel.dbPool)
+    store: new MySqlStore({}, dbPool)
   }));
 
   app.set('views', path.join(__dirname, '../views'));
   app.set('view engine', 'pug');
-  
+
   app.use(compression());
-  passport.use(new LocalStrategy(userController.verifyUser));
+  passport.use(new LocalStrategy(async (username: string, password: string, callback: Function) => {
+    try {
+      let user = await userModel.findUser(username, dbPool);
+      if (user.length === 0) {
+        return callback(null, false);
+      }
+      if (user[0].password !== password) {
+        return callback(null, false);
+      }
+      return callback(null, user[0]);
+    } catch (err) {
+      callback(err);
+    }
+  }));
+  
   app.use(passport.initialize());
   app.use(passport.session());
 
@@ -52,7 +78,7 @@ if (cluster.isMaster) {
   });
   passport.deserializeUser(async function (user: any, done) {
     try {
-      let usr = await userModel.getUserName(user.userId);
+      let usr = await userModel.getUserName(user.userId, app.get('dbPool'));
       done(null, usr[0]);
     } catch (err) {
       console.log(err);

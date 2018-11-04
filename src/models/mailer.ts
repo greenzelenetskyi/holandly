@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 import mailgun from 'nodemailer-mailgun-transport';
-import pug from 'pug';
 
 interface TemplateVars {
     visitor: string,
@@ -33,10 +32,11 @@ const mailer = nodemailer.createTransport({
 
 export const notify = async (events: TemplateVars[], name: string, explanation: string
     , emailSubject: string, useTemplate: Function) => {
+        console.log(events)
     events.forEach((event: TemplateVars) => {
         mailer.sendMail({
             from: 'greenzelenetskyi@gmail.com',
-            to: 'greenzelenetskyi@gmail.com', // An array if you have multiple recipients.
+            to: 'greenzelenetskyi@gmail.com',
             subject: emailSubject + " " + event.type + " " + event.date + " " + event.time,
             html: useTemplate({...event, user: name, reason: explanation})
         }, function (err, info) {
