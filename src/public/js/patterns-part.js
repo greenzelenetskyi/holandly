@@ -1,5 +1,5 @@
 function makePatternCard(data) {
-    appendPattern(data);
+    // appendPattern(data);
     let patternField = document.getElementById('pattern-row');
     patternField.innerHTML = '';
     let patternAmount = '';
@@ -18,7 +18,8 @@ function makePatternCard(data) {
                 // '<span class="badge badge-primary">id:' + patternCard.data.patternId + '</span></a>'+
                 '</div>' +
                 '<div class=" rounded float-right ">' +
-                '<img src="../img/EventAdd.png" class="img-fluid btn-outline-success ico newEvent" href="#" data-tooltip="tooltip" title="Заплпнировать событие" data-toggle="modal" data-target="#event-modal-form">' +
+                '<img src="../img/EventAdd.png" class="img-fluid btn-outline-success ico newEvent" href="#" data-tooltip="tooltip" title="Заплпнировать событие" >' +
+                // '<img src="../img/EventAdd.png" class="img-fluid btn-outline-success ico newEvent" href="#" data-tooltip="tooltip" title="Заплпнировать событие" data-toggle="modal" data-target="#event-modal-form">' +
                 '<img src="../img/PatternEdit.png" class="img-fluid btn-outline-info ico editPattern" href="#" data-tooltip="tooltip" title="Редактировать шаблон" data-toggle="modal" data-target="#pattern-modal-form">' +
                 '<img src="../img/PatternDelete.png" class="img-fluid btn-outline-danger ico delPater" href="#" data-tooltip="tooltip" title="Удалить шаблон" data-toggle="modal" removeType="pattern" data-target="#remove-modal-form">' +
                 '</div></div>' +
@@ -29,7 +30,7 @@ function makePatternCard(data) {
             patternField.appendChild(patternCard);
         }
     }
-    document.getElementById('patterns-amount').innerText = patternAmount;
+    // document.getElementById('patterns-amount').innerText = patternAmount;
 
     $(document).ready(function () {
         $('[data-tooltip="tooltip"]').tooltip();
@@ -39,11 +40,25 @@ function makePatternCard(data) {
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.data;
             console.log(data);
-            data.eventId = 0;
-            data.reason = true;
-            data.label = 'Запланировать событие';
-            fillModalEventForm(data);
+            $('#patternEdit')[0].hidden = false;
+            $('#patternsView')[0].hidden = true;
+            var pattern = $('#editPatternType')[0];
+            pattern.textContent = 'sdf';
+            pattern.setAttribute('patternId', data.patternId);
+            editPatternId = data.patternId;
+            // console.log(this);
         });
+
+    // $("#pattern-row .newEvent").click(
+    //     function () {
+    //         let data = this.parentNode.parentNode.parentNode.parentNode.data;
+    //         console.log(data);
+    //         data.eventId = 0;
+    //         data.reason = true;
+    //         data.label = 'Запланировать событие';
+    //         fillModalEventForm(data);
+    //     })
+
     $("#pattern-row .delPater").click(
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.data;

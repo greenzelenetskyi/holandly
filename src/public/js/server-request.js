@@ -35,20 +35,26 @@ function getEvents() {
         data: {},
         response: 'json',
         success: function (data) {
-            console.log('getEvents');
+            console.log('received events');
             console.log(data);
-            makeEventsPoint(data);
+            var tempEvents = {};
+            data.forEach(function (event, index, data) {
+                tempEvents[event.eventId] = event;
+            });
+            events = tempEvents;
+            appentEvetntsToCalendar(events);
+           //makeEventsPoint(data);
         }
     });
 }
 
-function putEvent(events) {
+function putEvent(eventsData) {
     console.log('>putEvent');
-    console.log(events);
+    console.log(eventsData);
     $.ajax({
         type: "POST",
         url: '/edit/events',
-        data: JSON.stringify(events),
+        data: JSON.stringify(eventsData),
         contentType: 'application/json',
         success: function (data) {
             console.log(data);
@@ -83,8 +89,13 @@ function getPatterns() {
         data: {},
         response: 'json',
         success: function (data) {
-            console.log('getPatterns');
+            console.log('received patterns');
             console.log(data);
+            var tempPatterns = {};
+            data.forEach(function (pattern, index, data) {
+                tempPatterns[pattern.patternId] = pattern;
+            });
+            patterns = tempPatterns;
             makePatternCard(data);
         }
     });
@@ -93,6 +104,7 @@ function getPatterns() {
 function putPattern() {
     let pattern = {};
     pattern.patternId = $("input#modalPattern_patternId").val();
+    pattern.patternId = pattern.patternId < 1 ? 0 : pattern.patternId;
     pattern.type = $("input#inputPatternType").val();
     pattern.description = $("#inputDescription").val();
     pattern.number = $("input#inputNumber").val();
@@ -100,7 +112,7 @@ function putPattern() {
     console.log('putPattern>>>');
     console.log(pattern);
     $.ajax({
-        type: (pattern.patternId === "0") ? "POST" : "PUT",
+        type: (pattern.patternId === 0) ? "POST" : "PUT",
         url: '/edit/pattern',
         data: JSON.stringify(pattern),
         contentType: 'application/json',
@@ -142,6 +154,22 @@ function logOut() {
                     window.location = "/edit";
                 }
             })
+        }
+    });
+}
+
+function getVisitorsList() {
+    console.log('getVisitorsList');
+    $.ajax({
+        type: 'get',
+        url: '/edit/pattern',
+        dataType: 'json',
+        data: {},
+        response: 'json',
+        success: function (data) {
+            console.log('getVisitorsList');
+            console.log(data);
+            return (data);
         }
     });
 }

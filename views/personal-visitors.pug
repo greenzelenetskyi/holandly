@@ -1,0 +1,101 @@
+extends personal-menu
+
+block block_visitors
+    script.
+        function createDateElement(targetid, date) {
+            var dateEvent = document.getElementById('templateDate').cloneNode(true).innerHTML;
+            var elementId = date.appointments[0].patternId;
+            dateEvent = dateEvent.replace(/templateTitle/gi, moment(date.date).format('DD/MM/YYYY'));
+            dateEvent = dateEvent.replace(/accordionID/gi, 'accordionID' + elementId);
+            document.getElementById(targetid).innerHTML += dateEvent;
+            return document.getElementById('accordionID' + elementId);
+        }
+        function createTimeElement(accordionId, timeData) {
+            var timeEvent = document.getElementById('templateTimeEvent').cloneNode(true).innerHTML;
+            var elementId = accordionId + '-' + timeData.eventId;
+            var timeEnd = moment(timeData.time, 'hh:mm:ss');
+            timeEnd.add(timeData.duration, 'minutes')
+            timeEvent = timeEvent.replace(/headTimeCardID/gi, 'headID' + elementId);
+            timeEvent = timeEvent.replace(/collapseCardID/gi, 'collapseID' + elementId);
+            timeEvent = timeEvent.replace(/parentAccordionID/gi, 'accordionGlobal');
+            timeEvent = timeEvent.replace(/visitorsListID/gi, 'visitorsListID' + elementId);
+            timeEvent = timeEvent.replace(/cardDataEventId/gi, timeData.eventId);
+            timeEvent = timeEvent.replace(/timeEventText/gi, moment(timeData.time, 'hh:mm:ss').format("HH:mm") + '-' +
+                moment(timeEnd, 'mm').format("HH:mm"));
+            timeEvent = timeEvent.replace(/typeEventText/gi, timeData.type);
+            timeEvent = timeEvent.replace(/visitorsNumberText/gi, 'Участников ' + timeData.occupied + ' из ' + timeData.number);
+            document.getElementById(accordionId).innerHTML += timeEvent;
+            return document.getElementById('visitorsListID' + elementId);
+        }
+        function createVisitorElement(visitorsListId, visitorData) {
+            var visitor = document.getElementById('templateVisitor').cloneNode(true).innerHTML;
+            visitor = visitor.replace(/dataVisitorName/gi, visitorData.name);
+            visitor = visitor.replace(/dataEmail/gi, visitorData.email);
+            visitor = visitor.replace(/dataEventID/gi, visitorData.eventId);
+            document.getElementById(visitorsListId).innerHTML += visitor;
+        }
+
+        function makeVisitorsList(signedVisitorsList) {
+            var visitorsField = document.getElementById('appointmentVisitorsDashboard');
+            visitorsField.innerHTML = '';
+            if (typeof signedVisitorsList === "object") {
+                signedVisitorsList.forEach(function (dateEvent, index, signedVisitorsList) {
+                    var dateElement = createDateElement(visitorsField.id, dateEvent);
+                    dateEvent.appointments.forEach(function (timeEvent, index, dateEvent) {
+                        var timeElement = createTimeElement(dateElement.id, timeEvent);
+                        var id = timeEvent.eventId;
+                        timeEvent.visitors.forEach(function (visitor, index, time) {
+                            createVisitorElement(timeElement.id,
+                                {name: visitor.name, email: visitor.email, eventId: id})
+                        });
+                    });
+                });
+            }
+            addHandlerRemoveScheduledEvent('.removeEvent');
+            addHandlerCancelVisitor('.cancel-visitor');
+            addHandlerEditEvent('.rescheduleEvent');
+            $('[data-tooltip="tooltip"]').tooltip();
+        }
+
+    .tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
+        .accordion#accordionGlobal
+            #appointmentVisitorsDashboard
+    //================== visitors page templates =========================
+    //--- template date -----------------------------
+    span(hidden) template
+        #templateDate
+            .shadow-lg.p-3.mb-5.bg-white.rounded
+                strong templateTitle
+                hr
+                #accordionID.accordion
+    //--- template time -----------------------------
+    span(hidden) template
+        #templateTimeEvent
+            .card
+                #headTimeCardID.card-header( data-toggle='collapse', data-target='#collapseCardID', aria-controls='collapseCardID')
+                    .d-flex.bd-highlight
+                        .p-2.flex-fill timeEventText
+                        .p-2.flex-fill
+                            strong typeEventText
+                        .p-2.flex-fill visitorsNumberText
+                        .p-2.navbar.navbar-light
+                            .navbar-toggler-icon
+                #collapseCardID.collapse(aria-labelledby='headTimeCardID', data-parent='#parentAccordionID')
+                    .card-body
+                        .d-flex.bd-highlight
+                            .p-2.flex-shrink-1.align-self-center
+                                .btn-group-vertical
+                                    a.rescheduleEvent.btn.btn-outline-info(data-eventId='cardDataEventId' data-toggle="modal" data-target="#event-modal-form")
+                                        | Перепланировать
+                                    a.removeEvent.btn.btn-outline-danger(data-eventId='cardDataEventId' data-toggle="modal" data-target="#remove-modal-form")
+                                        | Отменить
+                            .p-2.w-100
+                                ul#visitorsListID.list-group.list-group-flush
+    //--- template visitor -----------------------------
+    span(hidden) template
+        #templateVisitor
+            li.list-group-item.d-flex.justify-content-between.align-items-center
+                span dataVisitorName
+                span dataEmail
+                a.cancel-visitor.btn.btn-outline-danger.badge(data-eventId='dataEventID',data-visitor='dataVisitorName',
+                data-email='dataEmail' data-toggle="modal" data-target="#remove-modal-form" data-tooltip="tooltip" title="Отменить участие") Х

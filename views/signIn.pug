@@ -3,13 +3,16 @@ html
     head
         meta(charset = 'UTF-8')
         title= "HOLANDLY"
+        meta(name='viewport', content="initial-scale=1.0, width=device-width")
+        link(rel='icon', href='../img/icoH4.png', type='image/x-icon')
+        link(rel='shortcut icon', href='../img/icoH4.png', type='image/x-icon')
     style
         include ../dist/public/css/bootstrap.min.css
         include ../dist/public/css/signin.css
     body(class="text-center")
         form(class="form-signin" onsubmit="return false")
             div(class="h1 mb-3 font-weight-normal")
-                img(class='logo' src=("../img/logo-h4.png") height=90)
+                img(class='logo' src=("../img/logoSign.png") )
             label(for="inputLogin" class="sr-only") Enter your login
             input(type="text" id="inputLogin" class="form-control" placeholder="Enter your login" required="" autofocus=""
             value='andrey')

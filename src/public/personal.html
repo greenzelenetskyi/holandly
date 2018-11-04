@@ -11,6 +11,22 @@
     <link href='css/calendar.css' rel='stylesheet'/>
 </head>
 <body>
+<script>
+    var section = 'sdfg';
+</script>
+
+For example, <code>&lt;section&gt;</code> should be wrapped as inline.<var>section</var>
+<!-- HTML to write -->
+<a href="#" data-toggle="tooltip" title="Some tooltip text!">Hover over me</a>
+
+<!-- Generated markup by the plugin -->
+<div class="tooltip bs-tooltip-top" role="tooltip">
+    <div class="arrow"></div>
+    <div class="tooltip-inner">
+        Some tooltip text!
+    </div>
+</div>
+
 <div class="card">
     <!-- Main menu-->
     <div class="card-header">
@@ -90,7 +106,7 @@
     <!-- BODY Main menu -->
     <div class="tab-content" id="myTabContent" style="margin: 2%">
         <!-- dashboard------------------------------------->
-        <div class="tab-pane fade show active text-left" id="div-dashboard" role="tabpanel"
+        <div class=" tab-pane fade show active text-left rounded" id="div-dashboard" role="tabpanel"
              aria-labelledby="dashboard-tab">
         </div>
         <!-- event------------------------------------->

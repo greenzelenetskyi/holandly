@@ -11,7 +11,7 @@ function fillModalEventForm(data) {
 }
 
 function makeEventsPoint(data) {
-    appendEvents(data);
+    // appendEvents(data);
     let eventField = document.getElementById('div-event');
     eventField.innerHTML = '';
     let eventAmount = 0;
@@ -64,7 +64,7 @@ function makeEventsPoint(data) {
         }
     }
 
-    document.getElementById('events-amount').innerText = eventAmount;
+    // document.getElementById('events-amount').innerText = eventAmount;
 
     $("#div-event .updateEvent").click(
         function () {
