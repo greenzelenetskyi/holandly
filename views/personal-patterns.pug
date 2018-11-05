@@ -102,8 +102,9 @@ block block_patterns
                                         #tab-2.tab-content
                                             each val, index in {1:'ПН',2:'ВТ',3:'СР',4:'ЧТ',5:'ПТ',6:'СБ',7:'ВС'}
                                                 .form-check.form-check-inline
-                                                    input( id="inlineCheckbox" + index ).form-check-input(type='checkbox', value=('option' + index) )
-                                                    label.form-check-label(for= 'inlineCheckbox' + index )= val
+                                                    input.checkbox.dayOfWeek(type='checkbox')
+                                                    //input.dayOfWeek( id="inlineCheckbox" + index ).form-check-input(type='checkbox', value=('option' + index) )
+                                                    label.form-check-label(for= "inlineCheckbox" + index )= val
                                             .form-group
                                                 label(for='finalDate') Дата окончания
                                                 input#finalDate.form-control(type='date')
@@ -142,7 +143,7 @@ block block_patterns
                 event.preventDefault();
                 editPatternTimeModalForm.modal('hide');
                 editPatternEvents.newTimes = getScheduledTimes();
-                console.log(editPatternEvents)
+                editPatternEvents.newDates = getScheduledDates();
                 saveEditedEvents(editPatternEvents);
             });
         })
@@ -156,18 +157,38 @@ block block_patterns
             return times;
         }
 
+        function getScheduledDates() {
+            var dates = []
+            repeatOption = $('#select-repeat').val();
+            if (repeatOption === '3') {
+                return getDates(editPatternEvents.startDate, editPatternEvents.endDate);
+            }
+            if (repeatOption === '2') {
+                $('.dayOfWeek').each(function (i) {
+                    console.log($( this )[0].checked);
+                });
+
+
+
+                return getDates(editPatternEvents.startDate, editPatternEvents.endDate);
+            }
+            return getDates(editPatternEvents.startDate, editPatternEvents.endDate);
+        }
 
         function saveEditedEvents(editPatternEvents) {
+            console.log(editPatternEvents)
             var events = [];
             editPatternEvents.newTimes.forEach(function (editTime) {
-                events.push({
-                        eventId: editTime.eventId,
-                        patternId: editPatternEvents.patternId,
-                        date: editPatternEvents.startDate.format(),
-                        reason: '',
-                        time: editTime.time
-                    }
-                )
+                editPatternEvents.newDates.forEach(function (editDate) {
+                    events.push({
+                            eventId: editTime.eventId,
+                            patternId: editPatternEvents.patternId,
+                            date: editDate.format(),
+                            reason: '',
+                            time: editTime.time
+                        }
+                    )
+                })
             })
             putEvent(events);
         }
@@ -215,22 +236,48 @@ block block_patterns
 
 
         $(document).ready(function () {
-            var select = [];
-            $('#calendarScheduler').fullCalendar({
+            var selectedDates = [];
+            var calendarScheduler = $('#calendarScheduler');
+            calendarScheduler.fullCalendar({
                 header: {right: 'today, prev,next'},
                 defaultView: 'month',
                 locale: 'ru',
                 selectable: true,
                 select: function (startDate, endDate) {
-                    var selectDates = getDates(startDate, endDate, [1, 2]);
-                    select = select.concat(selectDates);
-                    $('#calendarScheduler').fullCalendar('renderEvents', select);
+
+
+                    selectedDates = selectedDates.concat(getDates(startDate, endDate));
+
+
+                    calendarScheduler.fullCalendar('removeEvents');
+                    calendarScheduler.fullCalendar('renderEvents', backgroundDates(selectedDates));
                 },
                 viewRender: function () {
-                    $('#calendarScheduler').fullCalendar('renderEvents', select);
+                    calendarScheduler.fullCalendar('renderEvents', backgroundDates(selectedDates));
                 }
             });
         });
+
+        // function removeDuplicate(array1, array2) {
+        //     var resultArray = [];
+        //     array2.forEach(function (e2) {
+        //         array1.forEach(function (e1) {
+        //             if (!moment(event.date).isSame(date, 'day')) {
+        //                 resultArray.push(event);
+        //             }
+        //         })
+        //         if (moment(event.date).isSame(date, 'day')) {
+        //             dateEvents.push(event);
+        //         }
+        //     })
+        //     for (var i = 0; i < array2.length; i++) {
+        //         var e2 =
+        //         for (var j = 0; j < array1.length; j++) {
+        //
+        //         }
+        //     }
+        //
+        // }
 
         $(document).ready(function () {
             $('#closeCalendar').click(function () {
@@ -253,17 +300,16 @@ block block_patterns
                 }
                 currentDate = moment(currentDate).add(1, 'days');
             }
-            //console.log(dateArray);
-            backgroundDates(dateArray);
             return (dateArray);
-
         }
 
         function backgroundDates(dates) {
             return dates.map(function (date) {
                 return {
                     start: date,
-                    rendering: 'background'
+                    rendering: 'background',
+                    overlap: false,
+                    color: '#0109ff'
                 };
             });
         }
