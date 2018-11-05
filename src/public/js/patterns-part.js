@@ -39,6 +39,7 @@ function makePatternCard(data) {
     $("#pattern-row .newEvent").click(
         function () {
             let data = this.parentNode.parentNode.parentNode.parentNode.data;
+            console.log('======> Edit pattern');
             console.log(data);
             $('#patternEdit')[0].hidden = false;
             $('#patternsView')[0].hidden = true;

@@ -19,7 +19,6 @@ $(document).ready(function () {
             var selectDates = getDates(startDate, endDate);
             editPatternEvents.startDate = startDate;
             editPatternEvents.endDate = endDate;
-            console.log(editPatternEvents);
             if (selectDates.length === 1) {
                 EventSchedulerShow(editPatternEvents);
             }
@@ -42,8 +41,6 @@ $(document).ready(function () {
 
 function appentEvetntsToCalendar(events) {
     var dataEvents = [];
-    console.log('appentEvetntsToCalendar');
-    console.log(events);
     Object.values(events).forEach(function (event, i, data) {
         dataEvents.push({
             title: '',

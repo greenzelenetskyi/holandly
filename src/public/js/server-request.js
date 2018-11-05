@@ -6,6 +6,7 @@ function getVisitors() {
         data: {},
         response: 'json',
         success: function (data) {
+            console.log('======> Visitors');
             console.log(data);
             makeVisitorsList(data);
         }
@@ -21,7 +22,6 @@ function cancelVisitor(data) {
         contentType: 'application/json',
         success: function (data) {
             console.log(data);
-            // getEvents();
             getVisitors();
         }
     });
@@ -35,13 +35,11 @@ function getEvents() {
         data: {},
         response: 'json',
         success: function (data) {
-            console.log('received events');
+            console.log('======> Events');
             console.log(data);
             ScheduledEvents = data;
             var tempEvents = {};
             userPatterns.events = [];
-            console.log('userPatterns');
-            console.log(userPatterns);
             data.forEach(function (event, index, data) {
                 tempEvents[event.eventId] = event;
                 userPatterns[event.patternId].scheduledEvents.push(event);
@@ -49,8 +47,6 @@ function getEvents() {
             if (!!editPatternEvents.patternId)
                 appentEvetntsToCalendar(userPatterns[editPatternEvents.patternId].scheduledEvents);
             events = tempEvents;
-
-            console.log(userPatterns);
         }
     });
 }
@@ -97,7 +93,7 @@ function getPatterns() {
         data: {},
         response: 'json',
         success: function (data) {
-            console.log('received patterns');
+            console.log('======> Patterns');
             console.log(data);
             var tempPatterns = {};
             data.forEach(function (pattern, index, data) {

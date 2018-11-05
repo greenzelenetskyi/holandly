@@ -100,10 +100,9 @@ block block_patterns
                                             option(value='3') Повторять по датам
                                         #tab-1.tab-content
                                         #tab-2.tab-content
-                                            each val, index in {1:'ПН',2:'ВТ',3:'СР',4:'ЧТ',5:'ПТ',6:'СБ',7:'ВС'}
+                                            each val, index in {1:'ПН',2:'ВТ',3:'СР',4:'ЧТ',5:'ПТ',6:'СБ',0:'ВС'}
                                                 .form-check.form-check-inline
-                                                    input.checkbox.dayOfWeek(type='checkbox')
-                                                    //input.dayOfWeek( id="inlineCheckbox" + index ).form-check-input(type='checkbox', value=('option' + index) )
+                                                    input.dayOfWeek( id="inlineCheckbox" + index ).form-check-input(type='checkbox', selectDayCode= index)
                                                     label.form-check-label(for= "inlineCheckbox" + index )= val
                                             .form-group
                                                 label(for='finalDate') Дата окончания
@@ -132,6 +131,7 @@ block block_patterns
                 $('#eventScheduler .tab-content').hide();
                 dropdown = $('#select-repeat').val();
                 $('#' + "tab-" + dropdown).show();
+                $('#finalDate').val(moment(editPatternEvents.endDate).format('YYYY-MM-DD'));
             })
 
             $('.addStartTime').click(function () {
@@ -164,19 +164,21 @@ block block_patterns
                 return getDates(editPatternEvents.startDate, editPatternEvents.endDate);
             }
             if (repeatOption === '2') {
+                // console.log(moment(editPatternEvents.endDate).format('YYYY-MM-DD'));
+                // $('#finalDate').val(moment(editPatternEvents.endDate).format('YYYY-MM-DD'));
+                var selectedDay = [];
                 $('.dayOfWeek').each(function (i) {
-                    console.log($( this )[0].checked);
+                    if ($(this)[0].checked) {
+                        selectedDay.push($(this)[0].getAttribute('selectDayCode') * 1);
+                    }
                 });
-
-
-
-                return getDates(editPatternEvents.startDate, editPatternEvents.endDate);
+                console.log(selectedDay);
+                return getDates(editPatternEvents.startDate, editPatternEvents.endDate, selectedDay);
             }
             return getDates(editPatternEvents.startDate, editPatternEvents.endDate);
         }
 
         function saveEditedEvents(editPatternEvents) {
-            console.log(editPatternEvents)
             var events = [];
             editPatternEvents.newTimes.forEach(function (editTime) {
                 editPatternEvents.newDates.forEach(function (editDate) {
@@ -190,7 +192,12 @@ block block_patterns
                     )
                 })
             })
-            putEvent(events);
+            if (events.length > 0) {
+                putEvent(events);
+            }
+            else {
+                alert('Событий не запланировано! \r Возможно нет задания времени события. ')
+            }
         }
 
         function appendTimeToSchedule(timeEvent) {
@@ -199,7 +206,6 @@ block block_patterns
             if (!!timeEvent) {
                 tempTime = tempTime.replace(/data-value=""/gi, 'value = \'' + timeEvent.time + '\'');
                 tempTime = tempTime.replace(/data-eventId="0"/gi, 'data-eventId= \'' + timeEvent.eventId + '\'');
-                console.log(timeEvent.time)
             }
             elem.innerHTML = tempTime;
             document.getElementById('eventStartTimes').appendChild(elem);
@@ -300,6 +306,7 @@ block block_patterns
                 }
                 currentDate = moment(currentDate).add(1, 'days');
             }
+            console.log(dateArray)
             return (dateArray);
         }
 
