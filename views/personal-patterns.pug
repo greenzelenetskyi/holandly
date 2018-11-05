@@ -54,6 +54,7 @@ block block_patterns
                     .modal-footer
                         button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Создать')
+
     //--- template pattern -----------------------------
     #templatePattern(hidden)
         .col-sm-4
@@ -161,18 +162,17 @@ block block_patterns
             var dates = []
             repeatOption = $('#select-repeat').val();
             if (repeatOption === '3') {
+                //todo: selected dates+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 return getDates(editPatternEvents.startDate, editPatternEvents.endDate);
             }
             if (repeatOption === '2') {
-                // console.log(moment(editPatternEvents.endDate).format('YYYY-MM-DD'));
-                // $('#finalDate').val(moment(editPatternEvents.endDate).format('YYYY-MM-DD'));
+                editPatternEvents.endDate = $('#finalDate').val();
                 var selectedDay = [];
                 $('.dayOfWeek').each(function (i) {
                     if ($(this)[0].checked) {
                         selectedDay.push($(this)[0].getAttribute('selectDayCode') * 1);
                     }
                 });
-                console.log(selectedDay);
                 return getDates(editPatternEvents.startDate, editPatternEvents.endDate, selectedDay);
             }
             return getDates(editPatternEvents.startDate, editPatternEvents.endDate);
@@ -319,5 +319,49 @@ block block_patterns
                     color: '#0109ff'
                 };
             });
+        }
+
+        function newPattern() {
+            console.log('>newPattern')
+            $("input#modalPattern_patternId").val('0');
+            $("input#inputPatternType").val('');
+            $("#inputDescription").val('');
+            $("input#inputNumber").val('');
+            $("input#inputDuration").val('');
+            // putPattern();
+        }
+
+        function makePatternCard2(data) {
+            // appendPattern(data);
+            let patternField = document.getElementById('pattern-row');
+            patternField.innerHTML = '';
+            let patternAmount = '';
+            if (typeof data === "object") {
+                patternAmount = data.length;
+                for (let i = 0; i < data.length; i++) {
+                    let patten = data[i];
+                    let patternCard = document.createElement('div');
+                    patternCard.id = 'pattern' + patten.id;
+                    patternCard.data = patten;
+                    patternCard.classList.add('col-sm-4');
+                    patternCard.innerHTML +=
+                        '<div class = "card border-primary mb-4">' +
+                        '<div class = "card-header">' +
+                        '<div style="float: left"><strong>' + patten.type + '</strong>' +
+                        // '<span class="badge badge-primary">id:' + patternCard.data.patternId + '</span></a>'+
+                        '</div>' +
+                        '<div class=" rounded float-right ">' +
+                        '<img src="../img/EventAdd.png" class="img-fluid btn-outline-success ico newEvent" href="#" data-tooltip="tooltip" title="Заплпнировать событие" >' +
+                        // '<img src="../img/EventAdd.png" class="img-fluid btn-outline-success ico newEvent" href="#" data-tooltip="tooltip" title="Заплпнировать событие" data-toggle="modal" data-target="#event-modal-form">' +
+                        '<img src="../img/PatternEdit.png" class="img-fluid btn-outline-info ico editPattern" href="#" data-tooltip="tooltip" title="Редактировать шаблон" data-toggle="modal" data-target="#pattern-modal-form">' +
+                        '<img src="../img/PatternDelete.png" class="img-fluid btn-outline-danger ico delPater" href="#" data-tooltip="tooltip" title="Удалить шаблон" data-toggle="modal" removeType="pattern" data-target="#remove-modal-form">' +
+                        '</div></div>' +
+                        '<div class = "card-body text-primary">' +
+                        '<p class="card-text">' + patten.description + '</p>' +
+                        '<h6 class="card-title">Количество учасников: ' + patten.number + '</h6>\n' +
+                        '<h6 class="card-title">Продолжительность: ' + patten.duration + ' мин</h6>';
+                    patternField.appendChild(patternCard);
+                }
+            }
         }
 
