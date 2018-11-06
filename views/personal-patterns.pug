@@ -57,23 +57,23 @@ block block_patterns
 
     //--- template pattern -----------------------------
     #templatePattern(hidden)
-        .col-sm-4
-            .card.border-primary.mb-4
-                .card-header
-                    strong templatePatternType
-                    .rouded.float-right
-                        img.img-fluid.btn-outline-success.ico(src='../img/EventAdd.png'
-                        data-tooltip="tooltip" title="Заплпнировать событие")
-                        img.img-fluid.btn-outline-info.ico(src='../img/PatternEdit.png'
-                        data-tooltip="tooltip" title="Редактировать шаблон" data-toggle="modal" data-target="#pattern-modal-form")
-                        img.img-fluid.btn-outline-danger.ico(src='../img/PatternDelete.png'
-                        data-tooltip="tooltip" title="Удалить шаблон" data-toggle="modal" removeType="pattern" data-target="#remove-modal-form")
-                .card-body.text-success
-                    p.em.small templatePattern-description
-                    p.em.small Колличество участников: templatePattern-number
-                    p.em.small Продолжтельность: templatePattern-duration
-                    p.em.small templatePattern-condition
-                    p.em.small Заплпнировано событий: templatePattern-amount
+        //.col-sm-4
+        .card.border-primary.mb-4
+            .card-header
+                strong templatePatternType
+                .rouded.float-right
+                    img.patternScheduler.img-fluid.btn-outline-success.ico(src='../img/EventAdd.png'
+                    data-patternID= 'templatePatternId', data-tooltip="tooltip" title="Заплпнировать событие")
+                    img.editPattern.img-fluid.btn-outline-info.ico(src='../img/PatternEdit.png'
+                    data-patternID= 'templatePatternId', data-tooltip="tooltip" title="Редактировать шаблон" data-toggle="modal" data-target="#pattern-modal-form")
+                    img.removePattern.img-fluid.btn-outline-danger.ico(src='../img/PatternDelete.png'
+                    data-patternID= 'templatePatternId', data-tooltip="tooltip" title="Удалить шаблон" data-toggle="modal" removeType="pattern" data-target="#remove-modal-form")
+            .card-body.text-primary
+                p.em.small.font-italic templatePattern-description
+                p.em.small Колличество участников: templatePattern-number
+                p.em.small Продолжтельность: templatePattern-duration
+                p.em.small templatePattern-condition
+                //p.em.small Заплпнировано событий: templatePattern-amount
 
 
     //Modal edit events
@@ -290,6 +290,10 @@ block block_patterns
                 $('#patternEdit')[0].hidden = true;
                 $('#patternsView')[0].hidden = false;
             });
+
+            $('#pattern-modal-form').on('show.bs.modal', function () {
+               console.log(this)
+            });
         })
 
         function getDates(startDate, endDate, weekDays) {
@@ -320,48 +324,38 @@ block block_patterns
                 };
             });
         }
+        //
+        // function newPattern() {
+        //     console.log('>newPattern')
+        //     $("input#modalPattern_patternId").val('0');
+        //     $("input#inputPatternType").val('');
+        //     $("#inputDescription").val('');
+        //     $("input#inputNumber").val('');
+        //     $("input#inputDuration").val('');
+        //     // putPattern();
+        // }
 
-        function newPattern() {
-            console.log('>newPattern')
-            $("input#modalPattern_patternId").val('0');
-            $("input#inputPatternType").val('');
-            $("#inputDescription").val('');
-            $("input#inputNumber").val('');
-            $("input#inputDuration").val('');
-            // putPattern();
-        }
-
-        function makePatternCard2(data) {
-            // appendPattern(data);
-            let patternField = document.getElementById('pattern-row');
-            patternField.innerHTML = '';
-            let patternAmount = '';
+        function makePatternCard(data) {
+            var patternTab = document.getElementById('pattern-row');
+            patternTab.innerHTML='';
             if (typeof data === "object") {
-                patternAmount = data.length;
-                for (let i = 0; i < data.length; i++) {
-                    let patten = data[i];
-                    let patternCard = document.createElement('div');
-                    patternCard.id = 'pattern' + patten.id;
-                    patternCard.data = patten;
-                    patternCard.classList.add('col-sm-4');
-                    patternCard.innerHTML +=
-                        '<div class = "card border-primary mb-4">' +
-                        '<div class = "card-header">' +
-                        '<div style="float: left"><strong>' + patten.type + '</strong>' +
-                        // '<span class="badge badge-primary">id:' + patternCard.data.patternId + '</span></a>'+
-                        '</div>' +
-                        '<div class=" rounded float-right ">' +
-                        '<img src="../img/EventAdd.png" class="img-fluid btn-outline-success ico newEvent" href="#" data-tooltip="tooltip" title="Заплпнировать событие" >' +
-                        // '<img src="../img/EventAdd.png" class="img-fluid btn-outline-success ico newEvent" href="#" data-tooltip="tooltip" title="Заплпнировать событие" data-toggle="modal" data-target="#event-modal-form">' +
-                        '<img src="../img/PatternEdit.png" class="img-fluid btn-outline-info ico editPattern" href="#" data-tooltip="tooltip" title="Редактировать шаблон" data-toggle="modal" data-target="#pattern-modal-form">' +
-                        '<img src="../img/PatternDelete.png" class="img-fluid btn-outline-danger ico delPater" href="#" data-tooltip="tooltip" title="Удалить шаблон" data-toggle="modal" removeType="pattern" data-target="#remove-modal-form">' +
-                        '</div></div>' +
-                        '<div class = "card-body text-primary">' +
-                        '<p class="card-text">' + patten.description + '</p>' +
-                        '<h6 class="card-title">Количество учасников: ' + patten.number + '</h6>\n' +
-                        '<h6 class="card-title">Продолжительность: ' + patten.duration + ' мин</h6>';
-                    patternField.appendChild(patternCard);
-                }
+                data.forEach(function (pattern) {
+                    newCard = document.createElement('div');
+                    newCard.classList.add('col-sm-4');
+                    tempCard = document.getElementById('templatePattern').cloneNode(true).innerHTML;
+                    tempCard = tempCard.replace(/templatePatternType/gi, pattern.type);
+                    tempCard = tempCard.replace(/templatePatternId/gi, pattern.patternId);
+                    tempCard = tempCard.replace(/templatePattern-description/gi, pattern.description);
+                    tempCard = tempCard.replace(/templatePattern-number/gi, pattern.number);
+                    tempCard = tempCard.replace(/templatePattern-duration/gi, pattern.duration);
+                    tempCard = tempCard.replace(/templatePattern-condition/gi, '');
+                    // tempCard = tempCard.replace(/templatePattern-amount/gi, pattern.duration);
+                    newCard.innerHTML = tempCard;
+                    patternTab.appendChild(newCard);
+                })
             }
+            addHandlerRemovePattern('.removePattern');
+            addHandlerEditPattern('.editPattern');
+            addHandlerPatternScheduler('.patternScheduler');
         }
 

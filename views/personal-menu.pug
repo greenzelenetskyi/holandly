@@ -77,3 +77,10 @@ block tab_menu
                     .modal-footer
                         button.btn.btn-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Удалить')
+
+    script.
+        $(document).ready(function () {
+            $('#remove-modal-form').on('show.bs.modal', function () {
+                console.log(this)
+            });
+        })
