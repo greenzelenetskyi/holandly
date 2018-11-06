@@ -2,7 +2,7 @@ extends personal-visitors
 block block_patterns
     #patternsView.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
         .input-group
-            a.card-link(href='user/andrey')
+            a.userLink.card-link(href='user/andrey')
                 | user/andrey
             a.form-control.invisible
             .input-group-append
@@ -226,7 +226,6 @@ block block_patterns
         }
 
         function addScheduledTime(ScheduledEvents) {
-            document.getElementById('eventStartTimes').innerHTML = '';
             Object.values(ScheduledEvents).forEach(function (event, i, data) {
                 appendTimeToSchedule(event);
             });
@@ -235,6 +234,7 @@ block block_patterns
         function EventSchedulerShow(editDate) {
             $('#select-repeat').val(1);
             $('#eventScheduler .tab-content').hide();
+            document.getElementById('eventStartTimes').innerHTML = '';
             $('#editEvents-modal-form').modal();
             if (!!editDate)
                 addScheduledTime(getDateEvents(editDate.startDate, editDate.patternId));

@@ -16,7 +16,7 @@ block tab_menu
                     img(src='img/admin.png' height='24')
                     |  user/andrey
                 .dropdown-menu
-                    a.dropdown-item(href='#') Получить ссылку
+                    a.copyLink.dropdown-item(href='#') Получить ссылку
                     a.dropdown-item(href='user/andrey') Перейти по ссылке
                     //a.dropdown-item(href='#') ---
                     .dropdown-divider
@@ -83,4 +83,7 @@ block tab_menu
             $('#remove-modal-form').on('show.bs.modal', function () {
                 console.log(this)
             });
+            $('.copyLink').click(function () {
+
+            })
         })
