@@ -5,7 +5,6 @@ import session from 'express-session';
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import * as userModel from './models/user';
-import * as userController from './controllers/user';
 import { userRouter } from './routes/user';
 import os from 'os';
 import cluster from 'cluster';
@@ -72,11 +71,11 @@ if (cluster.isMaster) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  passport.serializeUser(function (user: any, done) {
+  passport.serializeUser((user: any, done) => {
     delete user.password;
     done(null, user);
   });
-  passport.deserializeUser(async function (user: any, done) {
+  passport.deserializeUser(async (user: any, done) => {
     try {
       let usr = await userModel.getUserName(user.userId, app.get('dbPool'));
       done(null, usr[0]);

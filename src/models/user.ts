@@ -1,7 +1,5 @@
 import mysql, { MysqlError } from 'mysql';
 
-
-
 const makeSqlQuery = (db: any, sqlString: string, params?: any): Promise<any> => {
   return new Promise((resolve, reject) => {
       db.query(sqlString, params, (err: MysqlError, result: Object[]) => {
@@ -10,16 +8,15 @@ const makeSqlQuery = (db: any, sqlString: string, params?: any): Promise<any> =>
         }
         resolve(result);
       })
-  })
-    
+  })  
 }
 
-export const getUserName = (userId: any, db: any) => {
+export const getUserName = (userId: number, db: any) => {
   let sqlString = `select userId, login from holandly.users where userId=?`;
   return makeSqlQuery(db, sqlString, userId);
 }
 
-export const findUser = (username: any, db: any) => {
+export const findUser = (username: string, db: any) => {
   let sqlString = `select userId, login, password from holandly.users where login=?`;
   return makeSqlQuery(db, sqlString, username);
 }
@@ -120,7 +117,7 @@ export const getEventNotificationData = (eventId: number, db: any) => {
                     inner join eventpattern on eventslist.patternId = eventpattern.patternId
                     inner join eventvisitors on eventslist.eventId = eventvisitors.eventId
                     inner join visitors on eventvisitors.visitorId = visitors.visitorId
-                  where eventslist.eventId = ?`
+                  where eventslist.eventId = ?`;
   return makeSqlQuery(db, sqlString, [eventId]);
 }
 
