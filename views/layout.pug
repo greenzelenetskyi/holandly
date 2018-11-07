@@ -6,7 +6,49 @@ html
         link(rel='stylesheet', href='/css/timeline.css')
         link(rel='stylesheet', href='/css/rescheduler.css')
         link(rel="stylesheet", href="https://use.fontawesome.com/releases/v5.4.1/css/all.css", integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz", crossorigin="anonymous")
+    style.
+        .branding {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            /*background: #666A73;*/
+            background: #497808;
+        }
+
+        .branding .badge {
+            position: absolute;
+            overflow: hidden;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+        }
+
+        .branding .badge a {
+            display: block;
+            box-sizing: border-box;
+            padding: 95px 0 5px 0;
+            font-size: 12px;
+            line-height: 1.2;
+            text-align: center;
+            /*background-color: #666A73;*/
+            background-color: #497808;
+            color: #fff;
+            text-decoration: none;
+            -webkit-transform-origin: center top;
+            transform-origin: center top;
+            -webkit-transform: rotate(45deg) translate(35%, -86%);
+            transform: rotate(45deg) translate(35%, -86%);
+            transition: background-color 0.2s;
+        }
     body
+        .branding
+            .badge
+                a(href='#')
+                    div Powered
+                    div by Holateam 4
         .head
             .event-owner= username
         block content
