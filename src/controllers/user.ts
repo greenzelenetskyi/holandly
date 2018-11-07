@@ -254,7 +254,7 @@ const scheduleNewEvent = async (req: Request, res: Response) => {
   try {
     let insertResult = await userModel.scheduleNewEvent(req.body, req.app.get('dbPool'));
     if (insertResult.affectedRows > 0) {
-      event.eventId = insertResult.insertId;
+      //event.eventId = insertResult.insertId;
       addEventToCalendar(event, req); // TODO pass errors somewhere
     }
   } catch (err) {

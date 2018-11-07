@@ -8,16 +8,6 @@ function logoVisibility() {
     }
 }
 
-function setMenuVisible() {
-    $elMenu = $('#menuLogo');
-    if ($(window).width() < 800) {
-        $elMenu.hide();
-    }
-    else {
-        $elMenu.show();
-    }
-}
-
 $(document).ready(function () {
     $(window).resize(function () {
         logoVisibility();
@@ -59,8 +49,8 @@ $(document).ready(function () {
 
 
 var remove;
-var events = {};
-var patterns = {};
+// var events = {};
+// var patterns = {};
 
 function updateAll() {
     getPatterns();
@@ -93,6 +83,48 @@ function addHandlerRemoveScheduledEvent(element) {
                 deleteEvent(event.eventId, $("#removeDescription").val());
             };
             $('#remove-modal-form').modal();
+        });
+}
+
+function addHandlerRemovePattern(element) {
+    $(element).click(
+        function (handlerEvent) {
+            var pattern = userPatterns[this.getAttribute('data-patternID')];
+            $('#descriptionText')[0].innerText =
+                'Удаление шаблона [' + pattern.type + '] со всеми заплпнированими собитиями';
+            remove = function () {
+                deletePattern(pattern.patternId, $("#removeDescription").val());
+            };
+            $('#remove-modal-form').modal();
+        });
+}
+
+function addHandlerEditPattern(element) {
+    $(element).click(
+        function (handlerEvent) {
+            var pattern = userPatterns[this.getAttribute('data-patternID')];
+            console.log('======> Edit pattern');
+            console.log(pattern);
+            $("#inputPatternType").val(pattern.type);
+            $("#inputDescription").val(pattern.description);
+            $("#inputNumber").val(pattern.number);
+            $("#inputDuration").val(pattern.duration);
+            $("#modalPattern_patternId").val(pattern.patternId);
+        });
+}
+
+function addHandlerPatternScheduler(element) {
+    $(element).click(
+        function (handlerEvent) {
+            var pattern = userPatterns[this.getAttribute('data-patternID')];
+            console.log('======> Edit schedule');
+            console.log(pattern);
+            $('#patternEdit')[0].hidden = false;
+            $('#patternsView')[0].hidden = true;
+            $('#editPatternType')[0].textContent = pattern.type;
+            pattern.textContent = pattern.type;
+            editPatternEvents.patternId = pattern.patternId;
+            appentEvetntsToCalendar(pattern.scheduledEvents);
         });
 }
 
