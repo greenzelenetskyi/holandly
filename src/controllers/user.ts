@@ -21,14 +21,14 @@ export let requireLogin = (req: Request, res: Response, next: Function) => {
 
 export let getMainPage = (req: Request, res: Response) => {
   res.render('personal');
-  // res.sendFile(path.join(__dirname, '../public/personal.html'));
 }
 
 export let stopSession = (req: Request, res: Response) => {
-  req.session.destroy(function (err: Error) {
-    if (err) throw err;
+  req.session.destroy((err: Error) => {
+    if (err)
+      throw err;
     res.redirect('/edit/login');
-  })
+  });
 }
 
 export let getLoginPage = (req: Request, res: Response) => {
@@ -43,8 +43,9 @@ const makeVisitorObject = (entry: any): any => {
 }
 
 /* if the appointment is in 30 min or less, it is considered to be past*/
-const makeAppointment = (entry: any, isPrevDatePast: boolean, momentObject: any) => {
-  entry.isTimePast = isPrevDatePast ? true : momentObject.add(DEADLINE, 'm').isSameOrAfter(moment(entry.time, 'hh:mm:ss')),
+const makeAppointment = (entry: any, isPrevDatePast: boolean, momentObject: moment.Moment) => {
+  entry.isTimePast = isPrevDatePast ? true : momentObject.add(DEADLINE, 'm')
+    .isSameOrAfter(moment(entry.time, 'hh:mm:ss')),
     entry.occupied = entry.occupied === null ? 0 : entry.occupied
   entry.visitors = [makeVisitorObject(entry)]
   return entry;
@@ -54,10 +55,10 @@ const makeAppointment = (entry: any, isPrevDatePast: boolean, momentObject: any)
 const makeSortedEventList = (results: any, momentObject: any) => {
   let scheduledEvents: any[] = [];
   let prevDate: string;
-  let prevTime: any;
-  let prevType: any;
+  let prevTime: string;
+  let prevType: string;
   let isPrevDatePast: any;
-  results.forEach(function (entry: any) {
+  results.forEach((entry: any) => {
     if (+entry.date === +prevDate) {
       delete entry.date;
       if (entry.time === prevTime && entry.type === prevType) {
@@ -111,10 +112,12 @@ export const sendAvailableEvents = async (req: Request, res: Response) => {
   try {
     let availableEvents = await userModel.queryCreatedEvents(req.user.userId, req.app.get('dbPool'));
     if (availableEvents.length > 0) {
+      let now = moment();
       availableEvents = availableEvents.map((entry: any) => {
         entry.occupied = null ? 0 : entry.occupied;
-        entry.isDatePast = moment().isAfter(entry.date, 'day');
-        entry.isTimePast = entry.isDatePast ? true : moment().add(DEADLINE, 'm').isSameOrAfter(moment(entry.time, 'hh:mm:ss'));
+        entry.isDatePast = now.isAfter(entry.date, 'day');
+        entry.isTimePast = entry.isDatePast ? true : now.add(DEADLINE, 'm')
+          .isSameOrAfter(moment(entry.time, 'hh:mm:ss'));
         return entry;
       });
       res.json(availableEvents);
@@ -127,7 +130,8 @@ export const sendAvailableEvents = async (req: Request, res: Response) => {
 
 export let addNewEventPattern = async (req: Request, res: Response) => {
   try {
-    let insertionResult = await userModel.insertNewPattern(req.user.userId, req.body, req.app.get('dbPool'));
+    let insertionResult = await userModel.insertNewPattern(req.user.userId, req.body
+      , req.app.get('dbPool'));
     if (insertionResult.affectedRows === 0) {
       return res.status(409).end();
     }
@@ -153,25 +157,27 @@ export let updateEventPattern = async (req: Request, res: Response) => {
 
 export const deleteEventPattern = async (req: Request, res: Response) => { // delete all the active events
   let patternEvents: any[];
-  let apiStatus;
+  let apiErr;
   try {
-    patternEvents = await userModel.getPatternEvents(req.params[0], req.app.get('dbPool'))
+    patternEvents = await userModel.getPatternEvents(req.params[0], req.app.get('dbPool'));
   } catch (err) {
-    apiStatus = err; // TODO maybe include in the response
+    apiErr = err;// TODO maybe include in the response
   }
   try {
     let notificationData = await userModel.getPatternEventsNotificationData(req.params[0], req.app.get('dbPool'));
     let deletionResult = await userModel.deletePattern(req.params[0], req.app.get('dbPool'));
     if (deletionResult.affectedRows === 0) {
-      return res.status(409).end()
+      return res.status(409).json();
     }
+    let now = moment();
     mailer.notify(notificationData.filter((event: any) => {
-      return moment().isBefore(event.date, 'day')
-    })
-      , req.user.login, req.body.reason, 'Oтмена участия: ', useCancelTemplate);
-    patternEvents.forEach((event) => {
-      calendar.deleteCalendarEvent(event.eventId);
-    })
+      return now.isBefore(event.date, 'day')
+    }), req.user.login, req.body.reason, 'Oтмена участия: ', useCancelTemplate);
+    if (!apiErr) {
+      patternEvents.forEach((event) => {
+        calendar.deleteCalendarEvent(event.eventId);
+      })
+    }
     res.end();
   } catch (err) {
     res.status(500).json(err);
@@ -186,7 +192,8 @@ export let deleteEvent = async (req: Request, res: Response) => {
       return res.status(409).end()
     }
     if (moment().isBefore(notificationData[0].date, 'day')) {
-      mailer.notify(notificationData, req.user.login, req.body.reason, 'Отмена участия: ', useCancelTemplate);
+      mailer.notify(notificationData, req.user.login, req.body.reason
+        , 'Отмена участия: ', useCancelTemplate);
     }
     calendar.deleteCalendarEvent(req.params[0])
     res.end();
@@ -215,25 +222,43 @@ export let deleteEventVisitor = async (req: Request, res: Response) => {
 
 // schedules new or updates existing
 export let scheduleEvent = async (req: Request, res: Response) => {
-  let event: any = req.body[0];
-  delete event.reason;
+  let events: any = req.body;
   try {
-    let updateResult = await userModel.updateEvent(event, req.app.get('dbPool'));
-    if (updateResult.affectedRows > 0) {
-      let notificationData = await userModel.getEventNotificationData(event.eventId, req.app.get('dbPool'));
-      mailer.notify(notificationData, req.user.login, req.body[0].reason, 'Изменение в ', useConfirmTemplate);
-      rescheduleInCalendar(event, req);
-      return res.end();
-    }
-    event.hasCalendarEntry = 0;
-    let insertResult = await userModel.scheduleNewEvent(event, req.app.get('dbPool'));
-    if (insertResult.affectedRows > 0) {
-      event.eventId = insertResult.insertId;
-      addEventToCalendar(event, req);
-    }
+    events = events.map(async (event: any) => {
+      if (event.eventId === 0) {
+        return event;
+      }
+      let reason = event.reason;
+      delete event.reason;
+      let updateResult = await userModel.updateEvent(event, req.app.get('dbPool'));
+      if (updateResult.affectedRows > 0) {
+        let notificationData = await userModel.getEventNotificationData(event.eventId, req.app.get('dbPool'));
+        mailer.notify(notificationData, req.user.login, reason, 'Изменение в ', useConfirmTemplate);
+        rescheduleInCalendar(event, req);
+      }
+    });
+    events.forEach(async (event: any) => {
+      let insertResult = await userModel.scheduleNewEvent(event, req.app.get('dbPool'));
+      if (insertResult.affectedRows > 0) {
+        event.eventId = insertResult.insertId;
+        addEventToCalendar(event, req);
+      }
+    })
     res.end();
   } catch (err) {
     res.status(500).json(err);
+  }
+}
+
+const scheduleNewEvent = async (req: Request, res: Response) => {
+  try {
+    let insertResult = await userModel.scheduleNewEvent(req.body, req.app.get('dbPool'));
+    if (insertResult.affectedRows > 0) {
+      event.eventId = insertResult.insertId;
+      addEventToCalendar(event, req); // TODO pass errors somewhere
+    }
+  } catch (err) {
+
   }
 }
 
@@ -262,8 +287,8 @@ const addEventToCalendar = async (eventData: any, req: Request) => {
   try {
     let patternProperties = await userModel.getPatternData(eventData.patternId, req.app.get('dbPool'));
     eventData = { ...eventData, ...patternProperties[0] }
-    calendar.insertToCalendar(eventData);
+    calendar.insertToCalendar(eventData).catch((err) => console.log(err.message));
   } catch (err) {
-    console.log(err);
+    console.log('hi2');
   }
 }
