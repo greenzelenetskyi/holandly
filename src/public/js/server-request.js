@@ -6,6 +6,7 @@ function getVisitors() {
         data: {},
         response: 'json',
         success: function (data) {
+            console.log('======> Visitors');
             console.log(data);
             makeVisitorsList(data);
         }
@@ -21,7 +22,6 @@ function cancelVisitor(data) {
         contentType: 'application/json',
         success: function (data) {
             console.log(data);
-            getEvents();
             getVisitors();
         }
     });
@@ -35,15 +35,18 @@ function getEvents() {
         data: {},
         response: 'json',
         success: function (data) {
-            console.log('received events');
+            console.log('======> Events');
             console.log(data);
+            ScheduledEvents = data;
             var tempEvents = {};
+            userPatterns.events = [];
             data.forEach(function (event, index, data) {
                 tempEvents[event.eventId] = event;
+                userPatterns[event.patternId].scheduledEvents.push(event);
             });
+            if (!!editPatternEvents.patternId)
+                appentEvetntsToCalendar(userPatterns[editPatternEvents.patternId].scheduledEvents);
             events = tempEvents;
-            appentEvetntsToCalendar(events);
-           //makeEventsPoint(data);
         }
     });
 }
@@ -58,6 +61,7 @@ function putEvent(eventsData) {
         contentType: 'application/json',
         success: function (data) {
             console.log(data);
+            userPatterns[editPatternEvents.patternId].scheduledEvents = [];
             getEvents();
             getVisitors();
         }
@@ -89,13 +93,17 @@ function getPatterns() {
         data: {},
         response: 'json',
         success: function (data) {
-            console.log('received patterns');
+            console.log('======> Patterns');
             console.log(data);
             var tempPatterns = {};
             data.forEach(function (pattern, index, data) {
                 tempPatterns[pattern.patternId] = pattern;
+                tempPatterns[pattern.patternId].scheduledEvents = [];
+
             });
-            patterns = tempPatterns;
+            // patterns = tempPatterns;
+            userPatterns = tempPatterns;
+            getEvents();
             makePatternCard(data);
         }
     });
@@ -135,7 +143,6 @@ function deletePattern(id, description) {
         success: function (data) {
             console.log(data);
             getPatterns();
-            getEvents();
         }
     });
 }
@@ -154,22 +161,6 @@ function logOut() {
                     window.location = "/edit";
                 }
             })
-        }
-    });
-}
-
-function getVisitorsList() {
-    console.log('getVisitorsList');
-    $.ajax({
-        type: 'get',
-        url: '/edit/pattern',
-        dataType: 'json',
-        data: {},
-        response: 'json',
-        success: function (data) {
-            console.log('getVisitorsList');
-            console.log(data);
-            return (data);
         }
     });
 }

@@ -10,6 +10,7 @@ block block_visitors
             document.getElementById(targetid).innerHTML += dateEvent;
             return document.getElementById('accordionID' + elementId);
         }
+
         function createTimeElement(accordionId, timeData) {
             var timeEvent = document.getElementById('templateTimeEvent').cloneNode(true).innerHTML;
             var elementId = accordionId + '-' + timeData.eventId;
@@ -23,10 +24,12 @@ block block_visitors
             timeEvent = timeEvent.replace(/timeEventText/gi, moment(timeData.time, 'hh:mm:ss').format("HH:mm") + '-' +
                 moment(timeEnd, 'mm').format("HH:mm"));
             timeEvent = timeEvent.replace(/typeEventText/gi, timeData.type);
+            // timeEvent = timeEvent.replace(/typeEventDescription/gi, dateData.description);
             timeEvent = timeEvent.replace(/visitorsNumberText/gi, 'Участников ' + timeData.occupied + ' из ' + timeData.number);
             document.getElementById(accordionId).innerHTML += timeEvent;
             return document.getElementById('visitorsListID' + elementId);
         }
+
         function createVisitorElement(visitorsListId, visitorData) {
             var visitor = document.getElementById('templateVisitor').cloneNode(true).innerHTML;
             visitor = visitor.replace(/dataVisitorName/gi, visitorData.name);
@@ -41,7 +44,7 @@ block block_visitors
             if (typeof signedVisitorsList === "object") {
                 signedVisitorsList.forEach(function (dateEvent, index, signedVisitorsList) {
                     var dateElement = createDateElement(visitorsField.id, dateEvent);
-                    dateEvent.appointments.forEach(function (timeEvent, index, dateEvent) {
+                    dateEvent.appointments.forEach(function (timeEvent, index) {
                         var timeElement = createTimeElement(dateElement.id, timeEvent);
                         var id = timeEvent.eventId;
                         timeEvent.visitors.forEach(function (visitor, index, time) {
@@ -76,7 +79,7 @@ block block_visitors
                     .d-flex.bd-highlight
                         .p-2.flex-fill timeEventText
                         .p-2.flex-fill
-                            strong typeEventText
+                            strong(data-tooltip="tooltip" title="typeEventDescription") typeEventText
                         .p-2.flex-fill visitorsNumberText
                         .p-2.navbar.navbar-light
                             .navbar-toggler-icon

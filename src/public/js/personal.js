@@ -1,47 +1,4 @@
-window.onload = function () {
-    console.log('------------------>');
-    $(function () {
-        $('[data-toggle="popover"]').popover()
-    });
-
-    $(function () {
-        $('.example-popover').popover({
-            container: 'body'
-        })
-    });
-
-    $('.popover-dismiss').popover({
-        trigger: 'focus'
-    });
-
-    $("li").hover(
-        function () {
-            $(this).css({
-                fontWeight: "bolder"
-            });
-            $(this).click(function (eventObject) {
-                // console.log(eventObject);
-            });
-        },
-        function () {
-            var cssObj = {
-                fontWeight: "normal",
-            };
-            $(this).css(cssObj);
-        }
-    );
-    $(function () {
-        $('[data-toggle="popover"]').popover()
-    });
-
-    $(function () {
-        $('.example-popover').popover({
-            container: 'body'
-        })
-    });
-};
-
-function setMenuVisible() {
+function logoVisibility() {
     $elMenu = $('#menuLogo');
     if ($(window).width() < 800) {
         $elMenu.hide();
@@ -52,17 +9,10 @@ function setMenuVisible() {
 }
 
 $(document).ready(function () {
-
-
     $(window).resize(function () {
-        setMenuVisible();
+        logoVisibility();
     });
-    setMenuVisible();
-    // $.ajaxSetup({
-    //     headers: {
-    //         'Authorization': "Basic " + btoa('user' + ':' + 'passw')
-    //     }
-    // });
+    logoVisibility();
 
     var patternModalForm = $("#pattern-modal-form");
     patternModalForm.submit(function (event) {
@@ -99,12 +49,12 @@ $(document).ready(function () {
 
 
 var remove;
-var events = {};
-var patterns = {};
+// var events = {};
+// var patterns = {};
 
 function updateAll() {
     getPatterns();
-    getEvents();
+
     getVisitors();
 }
 
@@ -132,6 +82,49 @@ function addHandlerRemoveScheduledEvent(element) {
             remove = function () {
                 deleteEvent(event.eventId, $("#removeDescription").val());
             };
+            $('#remove-modal-form').modal();
+        });
+}
+
+function addHandlerRemovePattern(element) {
+    $(element).click(
+        function (handlerEvent) {
+            var pattern = userPatterns[this.getAttribute('data-patternID')];
+            $('#descriptionText')[0].innerText =
+                'Удаление шаблона [' + pattern.type + '] со всеми заплпнированими собитиями';
+            remove = function () {
+                deletePattern(pattern.patternId, $("#removeDescription").val());
+            };
+            $('#remove-modal-form').modal();
+        });
+}
+
+function addHandlerEditPattern(element) {
+    $(element).click(
+        function (handlerEvent) {
+            var pattern = userPatterns[this.getAttribute('data-patternID')];
+            console.log('======> Edit pattern');
+            console.log(pattern);
+            $("#inputPatternType").val(pattern.type);
+            $("#inputDescription").val(pattern.description);
+            $("#inputNumber").val(pattern.number);
+            $("#inputDuration").val(pattern.duration);
+            $("#modalPattern_patternId").val(pattern.patternId);
+        });
+}
+
+function addHandlerPatternScheduler(element) {
+    $(element).click(
+        function (handlerEvent) {
+            var pattern = userPatterns[this.getAttribute('data-patternID')];
+            console.log('======> Edit schedule');
+            console.log(pattern);
+            $('#patternEdit')[0].hidden = false;
+            $('#patternsView')[0].hidden = true;
+            $('#editPatternType')[0].textContent = pattern.type;
+            pattern.textContent = pattern.type;
+            editPatternEvents.patternId = pattern.patternId;
+            appentEvetntsToCalendar(pattern.scheduledEvents);
         });
 }
 

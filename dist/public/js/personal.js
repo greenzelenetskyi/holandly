@@ -1,45 +1,12 @@
-window.onload = function () {
-    console.log('------------------>');
-    $(function () {
-        $('[data-toggle="popover"]').popover()
-    });
-
-    $(function () {
-        $('.example-popover').popover({
-            container: 'body'
-        })
-    });
-
-    $('.popover-dismiss').popover({
-        trigger: 'focus'
-    });
-
-    $("li").hover(
-        function () {
-            $(this).css({
-                fontWeight: "bolder"
-            });
-            $(this).click(function (eventObject) {
-                // console.log(eventObject);
-            });
-        },
-        function () {
-            var cssObj = {
-                fontWeight: "normal",
-            };
-            $(this).css(cssObj);
-        }
-    );
-    $(function () {
-        $('[data-toggle="popover"]').popover()
-    });
-
-    $(function () {
-        $('.example-popover').popover({
-            container: 'body'
-        })
-    });
-};
+function logoVisibility() {
+    $elMenu = $('#menuLogo');
+    if ($(window).width() < 800) {
+        $elMenu.hide();
+    }
+    else {
+        $elMenu.show();
+    }
+}
 
 function setMenuVisible() {
     $elMenu = $('#menuLogo');
@@ -52,17 +19,10 @@ function setMenuVisible() {
 }
 
 $(document).ready(function () {
-
-
     $(window).resize(function () {
-        setMenuVisible();
+        logoVisibility();
     });
-    setMenuVisible();
-    // $.ajaxSetup({
-    //     headers: {
-    //         'Authorization': "Basic " + btoa('user' + ':' + 'passw')
-    //     }
-    // });
+    logoVisibility();
 
     var patternModalForm = $("#pattern-modal-form");
     patternModalForm.submit(function (event) {
@@ -104,7 +64,7 @@ var patterns = {};
 
 function updateAll() {
     getPatterns();
-    getEvents();
+
     getVisitors();
 }
 
@@ -132,6 +92,7 @@ function addHandlerRemoveScheduledEvent(element) {
             remove = function () {
                 deleteEvent(event.eventId, $("#removeDescription").val());
             };
+            $('#remove-modal-form').modal();
         });
 }
 

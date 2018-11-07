@@ -6,33 +6,26 @@ html
         title= "HOLANDLY"
         link(rel='icon', href='../img/icoH4.png', type='image/x-icon')
         link(rel='shortcut icon', href='../img/icoH4.png', type='image/x-icon')
+
     link(href='css/bootstrap.min.css', rel='stylesheet')
-    link(href='css/personal.css', rel='stylesheet')
     link(href='css/fullcalendar.min.css', rel='stylesheet')
     link(href='css/fullcalendar.print.min.css', rel='stylesheet', media='print')
-    //link(href='css/calendar.css', rel='stylesheet')
+    style
+        include ../src/public/css/personal.css
     script
         include ../src/public/js/lib/jquery-3.3.1.js
     body
         block tab_menu
         p.text-center.text-muted © 2018 Holateam 4
-    //script(src='../js/lib/jquery-3.3.1.js')
     script(src='../js/lib/moment.min.js')
     script(src='../js/lib/jquery.min.js')
     script(src='../js/lib/jquery-ui.min.js')
     script(src='../js/lib/popper.min.js')
     script(src='../js/lib/bootstrap.min.js')
-    //script(src='../js/personal.js')
-    //script(src='../js/events-part.js')
-    //script(src='../js/patterns-part.js')
-    //script(src='../js/visitors-part.js')
-    //script(src='../js/server-request.js')
-    //script(src='../js/calendar-part.js')
     script(src='../js/lib/fullcalendar.min.js')
     script(src='../js/lib/ru.js')
     script(src='../js/lib/theme-chooser.js')
     script
-        include ../src/public/js/patterns-part.js
         include ../src/public/js/personal.js
         include ../src/public/js/server-request.js
         include ../src/public/js/calendar-part.js

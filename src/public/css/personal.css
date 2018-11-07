@@ -3,16 +3,23 @@ html {
     /*min-width: 650px;*/
 
 }
-body{
+
+body {
     background-color: #d2d2d2;
     /*min-width: 500px;*/
     margin: 1%;
 }
-.ico{
+
+.ico {
     height: 2rem;
 }
 
+.tooltip .tooltip-inner {
+    background-color: #57f066;
+    color: #000787;
+}
+
 /*#calendar {*/
-    /*max-width: 900px;*/
-    /*margin: 40px auto;*/
+/*max-width: 900px;*/
+/*margin: 40px auto;*/
 /*}*/
