@@ -137,10 +137,10 @@ export const updateEvent = (event: any, db: any) => {
 
 export const scheduleNewEvent = (event: any, db: any) => {
   let sqlString = `INSERT INTO eventslist
-                   SELECT ?, ?, ?, ?, ? FROM eventslist
+                   SELECT ?, ?, ?, ? FROM eventslist
                    WHERE eventId = ? or patternId = ? and time = ? and date = ?
                    HAVING COUNT(*) = 0`;
-  let queryParams = [event.eventId, event.date, event.time, event.patternId, event.hasCalendarEntry
+  let queryParams = [event.eventId, event.date, event.time, event.patternId
                     , event.eventId, event.patternId, event.time, event.date];
   return makeSqlQuery(db, sqlString, queryParams);
 }
