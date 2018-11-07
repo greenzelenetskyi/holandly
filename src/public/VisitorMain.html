@@ -1,12 +1,9 @@
-doctype html
-html
-    head
-        title= title
-        link(rel='stylesheet', href='/css/pickercss.css')
-        link(rel='stylesheet', href='/css/timeline.css')
-        link(rel='stylesheet', href='/css/rescheduler.css')
-        link(rel="stylesheet", href="https://use.fontawesome.com/releases/v5.4.1/css/all.css", integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz", crossorigin="anonymous")
-    style.
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title> Holandly - Visitor </title>
+    <style>
         .branding {
             position: absolute;
             top: 0;
@@ -14,7 +11,7 @@ html
             width: 100%;
             height: 5px;
             /*background: #666A73;*/
-            background: #497808;
+            background: #6e6fff;
         }
 
         .branding .badge {
@@ -34,7 +31,7 @@ html
             line-height: 1.2;
             text-align: center;
             /*background-color: #666A73;*/
-            background-color: #497808;
+            background-color: #6e6fff;
             color: #fff;
             text-decoration: none;
             -webkit-transform-origin: center top;
@@ -43,12 +40,21 @@ html
             transform: rotate(45deg) translate(35%, -86%);
             transition: background-color 0.2s;
         }
-    body
-        .branding
-            .badge
-                a(href='#')
-                    div Powered
-                    div by Holateam 4
-        .head
-            .event-owner= username
-        block content
+    </style>
+</head>
+<body>
+<div id='page-region'>
+    <div class='branding'>
+        <div class='badge'>
+            <a href="#">
+                <div>Powered</div>
+                <div>by Holateam 4</div>
+            </a>
+        </div>
+    </div>
+    <div>
+        <h2 class="text-center">Andrey</h2>
+    </div>
+</div>
+</body>
+</html>
