@@ -32,25 +32,27 @@ block block_patterns
                         button.close(type='button', data-dismiss='modal', aria-label='Close')
                             span(aria-hidden='true') ×
                     .modal-body
-                        input#modalPattern_patternId(type='text', hidden='')
-                        .form-group.row
-                            label.col-sm-4.col-form-label(for='inputPatternType') Тип
-                            .col-sm-8
-                                input#inputPatternType.form-control(type='text', placeholder='Type', minlength='5')
-                            label.col-sm-4.col-form-label(for='inputNumber') Количество
-                            .col-sm-8
-                                input#inputNumber.form-control(type='number', min='1')
-                            label.col-sm-4.col-form-label(for='inputDuration') Продолжительность
-                            .col-sm-8
-                                input#inputDuration.form-control(type='number', min='1')
-                            label.col-sm-4.col-form-label(for='inputDescription') Описание
-                            .col-sm-8
-                                textarea#inputDescription.form-control(aria-label='With textarea')
-                            label.col-sm-10.col-form-label(for='inputMultiAccess')
-                                | Зпрет
-                                | многократной подписки на событие
-                                .col-sm-2
-                                    input#inputMultiAccess.form-control(type='checkbox')
+                        input#modalPattern_patternId(type='text', hidden)
+                        .form-group
+                            label(for='inputPatternType') Тип события
+                            input#inputPatternType.form-control(type='text', aria-describedby='typeHelp', minlength='5')
+                            small#typeHelp.font-italic.form-text.text-muted Краткое название типа собития
+                        .form-group
+                            label(for='inputDescription') Описание
+                            textarea#inputDescription.form-control(aria-label='With textarea', aria-describedby='descriptionHelp', minlength='5')
+                            small#descriptionHelp.font-italic.form-text.text-muted Полное описание типа собития
+                        .row
+                            .col
+                                .form-group
+                                    label(for='inputNumber') Количество участников
+                                    input#inputNumber.form-control(type='number', placeholder='1', min='1')
+                                .form-group.form-check
+                                    input#inputMultiAccess.form-check-input(type='checkbox')
+                                    label.form-check-label(for='inputMultiAccess') Однократное участие
+                            .col
+                                .form-group
+                                    label(for='inputDuration') Продолжительность, мин
+                                    input#inputDuration.form-control(type='number', placeholder='10', min='1')
                     .modal-footer
                         button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Создать')
@@ -160,10 +162,9 @@ block block_patterns
 
         function getScheduledDates() {
             var dates = []
-            repeatOption = $('#select-repeat').val();
+            var repeatOption = $('#select-repeat').val();
             if (repeatOption === '3') {
-                //todo: selected dates+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                return getDates(editPatternEvents.startDate, editPatternEvents.endDate);
+                return editPatternEvents.selectedDates;//getDates(editPatternEvents.startDate, editPatternEvents.endDate);
             }
             if (repeatOption === '2') {
                 editPatternEvents.endDate = $('#finalDate').val();
@@ -185,7 +186,7 @@ block block_patterns
                     events.push({
                             eventId: editTime.eventId,
                             patternId: editPatternEvents.patternId,
-                            date: editDate.format(),
+                            date: editDate,
                             reason: '',
                             time: editTime.time
                         }
@@ -221,7 +222,7 @@ block block_patterns
                 }
             })
             editPatternEvents.editTimes = dateEvents;
-            console.log(dateEvents)
+          //  console.log(dateEvents)
             return dateEvents
         }
 
@@ -238,11 +239,13 @@ block block_patterns
             $('#editEvents-modal-form').modal();
             if (!!editDate)
                 addScheduledTime(getDateEvents(editDate.startDate, editDate.patternId));
+            editPatternEvents.selectedDates = [];
+          //  $('#calendarScheduler').fullCalendar('renderEvents', backgroundDates(editPatternEvents.selectedDates));
         }
 
 
         $(document).ready(function () {
-            var selectedDates = [];
+            editPatternEvents.selectedDates = [];
             var calendarScheduler = $('#calendarScheduler');
             calendarScheduler.fullCalendar({
                 header: {right: 'today, prev,next'},
@@ -250,40 +253,23 @@ block block_patterns
                 locale: 'ru',
                 selectable: true,
                 select: function (startDate, endDate) {
-
-
-                    selectedDates = selectedDates.concat(getDates(startDate, endDate));
-
-
+                    getDates(startDate, endDate).forEach(function (date) {
+                        var index = editPatternEvents.selectedDates.indexOf(date);
+                        if (index === -1) {
+                            editPatternEvents.selectedDates.push(date);
+                        }
+                        else {
+                            editPatternEvents.selectedDates.splice(index, 1);
+                        }
+                    })
                     calendarScheduler.fullCalendar('removeEvents');
-                    calendarScheduler.fullCalendar('renderEvents', backgroundDates(selectedDates));
+                    calendarScheduler.fullCalendar('renderEvents', backgroundDates(editPatternEvents.selectedDates));
                 },
                 viewRender: function () {
-                    calendarScheduler.fullCalendar('renderEvents', backgroundDates(selectedDates));
+                    calendarScheduler.fullCalendar('renderEvents', backgroundDates(editPatternEvents.selectedDates));
                 }
             });
         });
-
-        // function removeDuplicate(array1, array2) {
-        //     var resultArray = [];
-        //     array2.forEach(function (e2) {
-        //         array1.forEach(function (e1) {
-        //             if (!moment(event.date).isSame(date, 'day')) {
-        //                 resultArray.push(event);
-        //             }
-        //         })
-        //         if (moment(event.date).isSame(date, 'day')) {
-        //             dateEvents.push(event);
-        //         }
-        //     })
-        //     for (var i = 0; i < array2.length; i++) {
-        //         var e2 =
-        //         for (var j = 0; j < array1.length; j++) {
-        //
-        //         }
-        //     }
-        //
-        // }
 
         $(document).ready(function () {
             $('#closeCalendar').click(function () {
@@ -292,7 +278,8 @@ block block_patterns
             });
 
             $('#pattern-modal-form').on('show.bs.modal', function () {
-               console.log(this)
+                console.log(this)
+                console.log('show')
             });
         })
 
@@ -303,14 +290,14 @@ block block_patterns
             while (currentDate < stopDate) {
                 if (!!weekDays) {
                     if (weekDays.indexOf(moment(currentDate).days()) !== -1)
-                        dateArray.push(currentDate);
+                        dateArray.push(currentDate.format());
                 }
                 else {
-                    dateArray.push(currentDate);
+                    dateArray.push(currentDate.format());
                 }
                 currentDate = moment(currentDate).add(1, 'days');
             }
-            console.log(dateArray)
+            // console.log(dateArray)
             return (dateArray);
         }
 
@@ -324,20 +311,10 @@ block block_patterns
                 };
             });
         }
-        //
-        // function newPattern() {
-        //     console.log('>newPattern')
-        //     $("input#modalPattern_patternId").val('0');
-        //     $("input#inputPatternType").val('');
-        //     $("#inputDescription").val('');
-        //     $("input#inputNumber").val('');
-        //     $("input#inputDuration").val('');
-        //     // putPattern();
-        // }
 
         function makePatternCard(data) {
             var patternTab = document.getElementById('pattern-row');
-            patternTab.innerHTML='';
+            patternTab.innerHTML = '';
             if (typeof data === "object") {
                 data.forEach(function (pattern) {
                     newCard = document.createElement('div');
