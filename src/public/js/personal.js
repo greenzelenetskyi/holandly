@@ -47,14 +47,10 @@ $(document).ready(function () {
 
 });
 
-
 var remove;
-// var events = {};
-// var patterns = {};
 
 function updateAll() {
     getPatterns();
-
     getVisitors();
 }
 
@@ -74,17 +70,22 @@ function addHandlerRemoveScheduledEvent(element) {
     $(element).click(
         function (handlerEvent) {
             var event = events[this.getAttribute('data-eventId')];
-            // console.log(event);
-            $('#descriptionText')[0].innerText =
-                'Удаление события [' + event.type + '] \n заплпнированого на [' +
-                moment(event.time, 'hh:mm:ss').format("HH:mm") + '  ' +
-                moment(event.date).format('DD/MM/YYYY') + ']';
-            remove = function () {
-                deleteEvent(event.eventId, $("#removeDescription").val());
-            };
-            $('#remove-modal-form').modal();
+            if (!!event) {
+                $('#descriptionText')[0].innerText =
+                    'Удаление события [' + event.type + '] \n заплпнированого на [' +
+                    moment(event.time, 'hh:mm:ss').format("HH:mm") + '  ' +
+                    moment(event.date).format('DD/MM/YYYY') + ']';
+                remove = function () {
+                    deleteEvent(event.eventId, $("#removeDescription").val());
+                };
+                $('#remove-modal-form').modal();
+            }
+            else {
+                this.parentNode.parentNode.removeChild(this.parentNode);
+            }
         });
 }
+
 
 function addHandlerRemovePattern(element) {
     $(element).click(
