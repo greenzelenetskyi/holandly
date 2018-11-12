@@ -13,21 +13,31 @@ let jwtClient = new google.auth.JWT(
 //authenticate request
 jwtClient.authorize((err: Error, tokens: any) => {
     if (err) {
-        console.log(err);
         return;
     } else {
         console.log('Successfully connected!');
     }
 });
 
+const callApi = (apiFunction: Function, apiObject: any) => {
+    return new Promise((resolve, reject) => {
+      apiFunction(apiObject, (err: Error, response: any) => {
+        if(err) {
+          return reject(err);
+        }
+        resolve(response);
+      })
+    })
+  }
+
 //Google Calendar API
 let calendar = google.calendar('v3');
 
 export const insertToCalendar = async (newEvent: any) => {
     let dateTime = moment(newEvent.date + ' ' + newEvent.time).format();
-    let id = '0000' + newEvent.eventId;
+    let id = '1000' + newEvent.eventId;
     try {
-        let apiResponse = await calendar.events.insert({
+        let apiResponse: any = await callApi(calendar.events.insert, {
             auth: jwtClient,
             calendarId: calendId,
             resource: {
@@ -49,9 +59,9 @@ export const insertToCalendar = async (newEvent: any) => {
 }
 
 export const deleteCalendarEvent = async (eventData: any) => {
-    let id = '0000' + eventData;
+    let id = '1000' + eventData;
     try {
-        let apiResponse = await calendar.events.delete({
+        let apiResponse = await callApi(calendar.events.delete, {
             auth: jwtClient,
             calendarId: calendId,
             eventId: id
@@ -63,9 +73,9 @@ export const deleteCalendarEvent = async (eventData: any) => {
 }
 
 export const updateEvent = async (eventId: any, resourceFields: any) => {
-    let id = '0000' + eventId
+    let id = '1000' + eventId
     try {
-      let apiResponse = await calendar.events.patch({
+      let apiResponse = await callApi(calendar.events.patch, {
         auth: jwtClient,
         calendarId: calendId,
         eventId: id,

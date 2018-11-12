@@ -5,6 +5,7 @@ import moment from 'moment';
 import * as calendar from '../models/calendar';
 import * as mailer from '../models/mailer';
 import pug from 'pug';
+import { MysqlError } from 'mysql';
 
 const DEADLINE = '30'; //mins till start
 
@@ -220,32 +221,46 @@ export let deleteEventVisitor = async (req: Request, res: Response) => {
   }
 }
 
+const getDbCon = (pool: any) => {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err: MysqlError, con: any) => {
+      if(err) {
+        return reject(err);
+      }
+      resolve(con);
+    })
+  })
+}
+
 // schedules new or updates existing
 export let scheduleEvent = async (req: Request, res: Response) => {
+  let dbPool = req.app.get('dbPool');
   let events: any = req.body;
   try {
-    events = events.map(async (event: any) => {
-      if (event.eventId === 0) {
-        return event;
+    let db: any = await getDbCon(dbPool);
+    for (let event of events) {
+      if (event.eventId == 0) {
+        delete event.reason;
+        let insertResult = await userModel.scheduleNewEvent(event, db);
+        if (insertResult.affectedRows > 0) {
+          event.eventId = insertResult.insertId;
+          addEventToCalendar(event, db);
+        }
+      } else {
+        let reason = event.reason;
+        delete event.reason;
+        let updateResult = await userModel.updateEvent(event, db);
+        if (updateResult.affectedRows > 0) {
+          let notificationData = await userModel.getEventNotificationData(event.eventId, db);
+          mailer.notify(notificationData, req.user.login, reason, 'Изменение в ', useConfirmTemplate);
+          rescheduleInCalendar(event, db);
+        }
       }
-      let reason = event.reason;
-      delete event.reason;
-      let updateResult = await userModel.updateEvent(event, req.app.get('dbPool'));
-      if (updateResult.affectedRows > 0) {
-        let notificationData = await userModel.getEventNotificationData(event.eventId, req.app.get('dbPool'));
-        mailer.notify(notificationData, req.user.login, reason, 'Изменение в ', useConfirmTemplate);
-        rescheduleInCalendar(event, req);
-      }
-    });
-    events.forEach(async (event: any) => {
-      let insertResult = await userModel.scheduleNewEvent(event, req.app.get('dbPool'));
-      if (insertResult.affectedRows > 0) {
-        event.eventId = insertResult.insertId;
-        addEventToCalendar(event, req);
-      }
-    })
+    }
+    db.release();
     res.end();
   } catch (err) {
+    console.log(err.message)
     res.status(500).json(err);
   }
 }
@@ -262,9 +277,9 @@ const scheduleNewEvent = async (req: Request, res: Response) => {
   }
 }
 
-const rescheduleInCalendar = async (event: any, req: Request) => {
+const rescheduleInCalendar = async (event: any, db: any) => {
   try {
-    let eventDuration = await userModel.getEventDuration(event.patternId, req.app.get('dbPool'));
+    let eventDuration = await userModel.getEventDuration(event.patternId, db);
     if (eventDuration.length !== 0) {
       let dateTime = moment(event.date + ' ' + event.time).format();
       //creates resources object for Calendar API
@@ -283,12 +298,12 @@ const rescheduleInCalendar = async (event: any, req: Request) => {
 }
 
 // google calendar api insert event call
-const addEventToCalendar = async (eventData: any, req: Request) => {
+const addEventToCalendar = async (eventData: any, db: any) => {
   try {
-    let patternProperties = await userModel.getPatternData(eventData.patternId, req.app.get('dbPool'));
+    let patternProperties = await userModel.getPatternData(eventData.patternId, db);
     eventData = { ...eventData, ...patternProperties[0] }
-    calendar.insertToCalendar(eventData).catch((err) => console.log(err.message));
+    calendar.insertToCalendar(eventData);
   } catch (err) {
-    console.log('hi2');
+    console.log(err.message);
   }
 }

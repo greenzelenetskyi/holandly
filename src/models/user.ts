@@ -104,8 +104,8 @@ export const deleteEventVisitor = (event: {eventId: number, email:  string}, db:
 }
 
 export const getVisitorNotificationData = (event: {eventId: number, email: string}, db: any) => {
-  let sqlString = `SELECT type, description, date, time,
-                    (select name from visitors where email = ?) as visitor from eventslist
+  let sqlString = `SELECT type, description, date, time, 
+                  (select name as visitor, email from visitors where email = ?) as visitor from eventslist
                   inner join eventpattern on eventslist.patternId = eventpattern.patternId
                   where eventslist.eventId = ?`;
   let queryParams = [event.email, event.eventId]
@@ -137,11 +137,11 @@ export const updateEvent = (event: any, db: any) => {
 
 export const scheduleNewEvent = (event: any, db: any) => {
   let sqlString = `INSERT INTO eventslist
-                   SELECT ?, ?, ?, ?, ? FROM eventslist
+                   SELECT ?, ?, ?, ? FROM eventslist
                    WHERE eventId = ? or patternId = ? and time = ? and date = ?
                    HAVING COUNT(*) = 0`;
-  let queryParams = [event.eventId, event.date, event.time, event.patternId, event.hasCalendarEntry
-                    , event.eventId, event.patternId, event.time, event.date];
+  let queryParams = [null, event.date, event.time, event.patternId
+                    , null, event.patternId, event.time, event.date];
   return makeSqlQuery(db, sqlString, queryParams);
 }
 
