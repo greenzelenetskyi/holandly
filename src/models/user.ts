@@ -55,7 +55,7 @@ export const queryCreatedEvents = (userId: number, db: any) => {
 export const insertNewPattern = (userId: number, pattern: any, db: any) => {
   let sqlString = `insert into eventpattern (type, number, duration, description, userId)
                       select ?, ?, ?, ?, ?
-                  where not exists (select * from eventpattern where (type=? and userId = ?));`
+                   where not exists (select * from eventpattern where (type=? and userId = ?));`
   let queryParams = [pattern.type, pattern.number, pattern.duration, pattern.description, userId, pattern.type, userId];
   return makeSqlQuery(db, sqlString, queryParams);
 }
@@ -78,7 +78,7 @@ export const getPatternEvents = (patternId: number, db: any) => {
 }
 
 export const getPatternEventsNotificationData = (patternId: number, db: any) => {
-  let sqlString = `SELECT type, description, date, time, name as visitor from holandly.eventpattern
+  let sqlString = `SELECT type, description, date, time, name as visitor, email from holandly.eventpattern
                     inner join eventslist on eventslist.patternId = eventpattern.patternId
                     inner join eventvisitors on eventslist.eventId = eventvisitors.eventId
                     inner join visitors on eventvisitors.visitorId = visitors.visitorId
@@ -105,15 +105,16 @@ export const deleteEventVisitor = (event: {eventId: number, email:  string}, db:
 
 export const getVisitorNotificationData = (event: {eventId: number, email: string}, db: any) => {
   let sqlString = `SELECT type, description, date, time,
-                    (select name from visitors where email = ?) as visitor from eventslist
-                  inner join eventpattern on eventslist.patternId = eventpattern.patternId
+                    (select name from visitors where email = ?) as visito,
+                    (select email from visitors where email = ?) as email from eventslist
+                    inner join eventpattern on eventslist.patternId = eventpattern.patternId
                   where eventslist.eventId = ?`;
-  let queryParams = [event.email, event.eventId]
+  let queryParams = [event.email, event.email, event.eventId]
   return makeSqlQuery(db, sqlString, queryParams);
 }
 
 export const getEventNotificationData = (eventId: number, db: any) => {
-  let sqlString = `SELECT type, description, date, time, name as visitor from holandly.eventslist
+  let sqlString = `SELECT type, description, date, time, name as visitor, email from holandly.eventslist
                     inner join eventpattern on eventslist.patternId = eventpattern.patternId
                     inner join eventvisitors on eventslist.eventId = eventvisitors.eventId
                     inner join visitors on eventvisitors.visitorId = visitors.visitorId
@@ -140,8 +141,8 @@ export const scheduleNewEvent = (event: any, db: any) => {
                    SELECT ?, ?, ?, ? FROM eventslist
                    WHERE eventId = ? or patternId = ? and time = ? and date = ?
                    HAVING COUNT(*) = 0`;
-  let queryParams = [event.eventId, event.date, event.time, event.patternId
-                    , event.eventId, event.patternId, event.time, event.date];
+  let queryParams = [null, event.date, event.time, event.patternId
+                    , null, event.patternId, event.time, event.date];
   return makeSqlQuery(db, sqlString, queryParams);
 }
 

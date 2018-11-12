@@ -8,7 +8,8 @@ interface TemplateVars {
     date: string,
     time: string,
     reason?: string,
-    description: string
+    description: string,
+    email: string
 }
 /*
 const mailgunOptions = {
@@ -36,7 +37,7 @@ export const notify = async (events: TemplateVars[], name: string, explanation: 
     events.forEach((event: TemplateVars) => {
         mailer.sendMail({
             from: 'greenzelenetskyi@gmail.com',
-            to: 'greenzelenetskyi@gmail.com',
+            to: event.email,
             subject: emailSubject + " " + event.type + " " + event.date + " " + event.time,
             html: useTemplate({...event, user: name, reason: explanation})
         }, function (err, info) {
