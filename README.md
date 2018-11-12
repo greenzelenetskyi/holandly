@@ -1,5 +1,3 @@
-PLEASE FILL ALL AREAS:
-
 ### Requirements
 
 1. typescript module installed globally (npm install typescript -g);
