@@ -83,7 +83,7 @@ function makeEventsPoint(data) {
             remove =
                 // document.getElementsByClassName('removeId')[0].onclick =
                 function () {
-                    deleteEvent(data.eventId, $("#removeDescription").val());
+                    deleteEvent(data.eventId, $("#reason").val());
                 };
         });
 }

@@ -45,14 +45,14 @@ block block_patterns
                             .col
                                 .form-group
                                     label(for='inputNumber') Количество участников
-                                    input#inputNumber.form-control(type='number', placeholder='1', min='1')
+                                    input#inputNumber.form-control(type='number', value='1', min='1')
                                 .form-group.form-check
                                     input#inputMultiAccess.form-check-input(type='checkbox')
                                     label.form-check-label(for='inputMultiAccess') Однократное участие
                             .col
                                 .form-group
                                     label(for='inputDuration') Продолжительность, мин
-                                    input#inputDuration.form-control(type='number', placeholder='10', min='1')
+                                    input#inputDuration.form-control(type='number', value='10', min='1')
                     .modal-footer
                         button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Создать')
@@ -76,7 +76,6 @@ block block_patterns
                 p.em.small Продолжтельность: templatePattern-duration
                 p.em.small templatePattern-condition
                 //p.em.small Заплпнировано событий: templatePattern-amount
-
 
     //Modal edit events
     #editEvents-modal-form.modal.fade(tabindex='-1', role='dialog',  aria-hidden='true')
@@ -114,7 +113,7 @@ block block_patterns
                                             #calendarScheduler
                     .modal-footer
                         button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
-                        input.btn.btn-primary(type='submit', value='Заплпнировать')
+                        input.btn.btn-primary(type='submit', value='Запланировать')
     //--- template start time -----------------------------
     span(hidden) template
         #templateStarTime
@@ -124,7 +123,7 @@ block block_patterns
                 data-eventId="0", data-tooltip='tooltip', data-original-title='Удалить')
     //==========================================================
     script.
-        var ScheduledEvents = []
+
         var userPatterns = {}
         var editPatternEvents = {}
 
@@ -222,7 +221,7 @@ block block_patterns
                 }
             })
             editPatternEvents.editTimes = dateEvents;
-          //  console.log(dateEvents)
+            //  console.log(dateEvents)
             return dateEvents
         }
 
@@ -240,7 +239,7 @@ block block_patterns
             if (!!editDate)
                 addScheduledTime(getDateEvents(editDate.startDate, editDate.patternId));
             editPatternEvents.selectedDates = [];
-          //  $('#calendarScheduler').fullCalendar('renderEvents', backgroundDates(editPatternEvents.selectedDates));
+            //  $('#calendarScheduler').fullCalendar('renderEvents', backgroundDates(editPatternEvents.selectedDates));
         }
 
 
@@ -277,11 +276,19 @@ block block_patterns
                 $('#patternsView')[0].hidden = false;
             });
 
-            $('#pattern-modal-form').on('show.bs.modal', function () {
-                console.log(this)
-                console.log('show')
+            $('#pattern-modal-form').on('hide.bs.modal', function () {
+                setDefaultPatternData();
             });
         })
+
+        function setDefaultPatternData() {
+            console.log('hide pattern-modal-form');
+            $("#modalPattern_patternId").val('0');
+            $("#inputPatternType").val('');
+            $("#inputDescription").val('');
+            $("input#inputNumber").val('1');
+            $("input#inputDuration").val('60');
+        }
 
         function getDates(startDate, endDate, weekDays) {
             var dateArray = [];

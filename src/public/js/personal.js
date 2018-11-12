@@ -16,6 +16,7 @@ $(document).ready(function () {
 
     var patternModalForm = $("#pattern-modal-form");
     patternModalForm.submit(function (event) {
+        event.preventDefault();
         putPattern();
         patternModalForm.modal('hide');
     });
@@ -76,7 +77,7 @@ function addHandlerRemoveScheduledEvent(element) {
                     moment(event.time, 'hh:mm:ss').format("HH:mm") + '  ' +
                     moment(event.date).format('DD/MM/YYYY') + ']';
                 remove = function () {
-                    deleteEvent(event.eventId, $("#removeDescription").val());
+                    deleteEvent(event.eventId, $("#reason").val());
                 };
                 $('#remove-modal-form').modal();
             }
@@ -94,7 +95,7 @@ function addHandlerRemovePattern(element) {
             $('#descriptionText')[0].innerText =
                 'Удаление шаблона [' + pattern.type + '] со всеми заплпнированими собитиями';
             remove = function () {
-                deletePattern(pattern.patternId, $("#removeDescription").val());
+                deletePattern(pattern.patternId, $("#reason").val());
             };
             $('#remove-modal-form').modal();
         });

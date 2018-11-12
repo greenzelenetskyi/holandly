@@ -61,9 +61,10 @@ function putEvent(eventsData) {
         contentType: 'application/json',
         success: function (data) {
             console.log(data);
-            userPatterns[editPatternEvents.patternId].scheduledEvents = [];
+
             getEvents();
             getVisitors();
+            //userPatterns[editPatternEvents.patternId].scheduledEvents = [];
         }
     });
 }
