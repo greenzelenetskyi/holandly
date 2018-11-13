@@ -21,7 +21,7 @@ export let requireLogin = (req: Request, res: Response, next: Function) => {
 }
 
 export let getMainPage = (req: Request, res: Response) => {
-  res.render('personal');
+  res.render('users/personal');
 }
 
 export let stopSession = (req: Request, res: Response) => {
@@ -33,7 +33,7 @@ export let stopSession = (req: Request, res: Response) => {
 }
 
 export let getLoginPage = (req: Request, res: Response) => {
-  res.render('signIn');
+  res.render('users/signIn');
 }
 
 const makeVisitorObject = (entry: any): any => {

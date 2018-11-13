@@ -37,17 +37,25 @@ function getEvents() {
         success: function (data) {
             console.log('======> Events');
             console.log(data);
-            ScheduledEvents = data;
-            var tempEvents = {};
-            userPatterns.events = [];
-            data.forEach(function (event, index, data) {
-                tempEvents[event.eventId] = event;
-                userPatterns[event.patternId].scheduledEvents.push(event);
-            });
+            removeEvents();
+            addEvents(data);
             if (!!editPatternEvents.patternId)
-                appentEvetntsToCalendar(userPatterns[editPatternEvents.patternId].scheduledEvents);
-            events = tempEvents;
+                viewPatternEvents(userPatterns[editPatternEvents.patternId].scheduledEvents);
         }
+    });
+}
+
+function addEvents(eventsArray) {
+    userEvents = {};
+    eventsArray.forEach(function (event, index, data) {
+        userEvents[event.eventId] = event;
+        userPatterns[event.patternId].scheduledEvents.push(event);
+    });
+}
+
+function removeEvents() {
+    Object.values(userPatterns).forEach(function (patternEvent) {
+        patternEvent.scheduledEvents = [];
     });
 }
 
@@ -61,10 +69,8 @@ function putEvent(eventsData) {
         contentType: 'application/json',
         success: function (data) {
             console.log(data);
-
             getEvents();
             getVisitors();
-            //userPatterns[editPatternEvents.patternId].scheduledEvents = [];
         }
     });
 }

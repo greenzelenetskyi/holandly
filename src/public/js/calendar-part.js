@@ -1,9 +1,6 @@
 $(document).ready(function () {
-    $('#calendar').fullCalendar({
-        header: {
-            right: 'today,prev,next ',
-            // right: 'today,month,listYear, prev,next ',
-        },
+    $('#scheduledEventCalendar').fullCalendar({
+        header: {right: 'today,prev,next '},
         defaultView: 'month',
         locale: 'ru',
         eventLimit: true,
@@ -12,34 +9,33 @@ $(document).ready(function () {
         views: {
             listYear: {buttonText: 'Список'},
         },
-        // dayClick: function (date) {
-        //     console.log('clicked ' + date.format());
-        // },
         select: function (startDate, endDate) {
-            var selectDates = getDates(startDate, endDate);
             editPatternEvents.startDate = startDate;
             editPatternEvents.endDate = endDate;
-            if (selectDates.length === 1) {
-                EventSchedulerShow(editPatternEvents);
-            }
-            else {
-                EventSchedulerShow();
-            }
+            EventSchedulerShow(editPatternEvents);
         },
+        eventRender: function (event, element) {
+            element.bind('dblclick', function () {
+                // console.log(event.title + " dblclick on " + event.start.format());
+                $('#descriptionText')[0].innerText =
+                    'Удаление события [' + event.eventData.type + '] \n заплпнированого на [' +
+                    moment(event.eventData.time, 'hh:mm:ss').format("HH:mm") + '  ' +
+                    moment(event.eventData.date).format('DD/MM/YYYY') + ']';
+                remove = function () {
+                    deleteEvent(event.eventData.eventId, $("#reason").val());
+                };
+                $("#remove-modal-form").modal();
+            });
+        }
     });
-    $('#calendarList').fullCalendar({
-        header: {
-            left: '',
-            center: '',
-            right: '',
-        },
+    $('#scheduledEventList').fullCalendar({
+        header: {left: '', center: '', right: '',},
         defaultView: 'listYear',
         locale: 'ru',
     });
 });
 
-
-function appentEvetntsToCalendar(events) {
+function viewPatternEvents(events) {
     var dataEvents = [];
     Object.values(events).forEach(function (event, i, data) {
         dataEvents.push({
@@ -48,10 +44,10 @@ function appentEvetntsToCalendar(events) {
             eventData: event,
         });
     });
-    var calendar = $('#calendar');
+    var calendar = $('#scheduledEventCalendar');
     calendar.fullCalendar('removeEvents');
     calendar.fullCalendar('addEventSource', dataEvents);
-    calendar = $('#calendarList');
+    calendar = $('#scheduledEventList');
     calendar.fullCalendar('removeEvents');
     calendar.fullCalendar('addEventSource', dataEvents);
 }
