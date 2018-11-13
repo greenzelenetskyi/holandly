@@ -1,0 +1,10 @@
+extends confirmation
+block reason
+  if reason
+    p Причина изменения: #{reason}
+  else
+    p Причина изменения времени не указана
+block before
+  p Вместо: 
+    span(style='text-decoration:line-through; color:red;') #{before}
+  

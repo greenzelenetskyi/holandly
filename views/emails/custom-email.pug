@@ -4,16 +4,18 @@ table(border='0' cellpadding='0' cellspacing='0' height='100%' width='100%')
       table(border='0' cellpadding='20' cellspacing='0' width='600')
         tr
           td
-            div(style=`margin:0;padding:0;font-family:"Proxima Nova","proxima-nova",Helvetica,Arial sans-serif"`)
+            div(style=`margin:0;padding:0;font-family:"Proxima Nova","proxima-nova",Helvetica,Arial,sans-serif"`)
               p Здравствуйте, #{visitor}!
               br
               block content
               br
-              p #{description}
+              p Описание: #{description}
               br
               if location
                 p Адрес: #{location}
                 br
-            block buttons
             block reason
+            block buttons
+            br
+            block before
             

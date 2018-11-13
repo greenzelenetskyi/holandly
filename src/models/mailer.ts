@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import mailgun from 'nodemailer-mailgun-transport';
+import moment from 'moment';
 
 interface TemplateVars {
     visitor: string,
@@ -8,6 +9,8 @@ interface TemplateVars {
     date: string,
     time: string,
     reason?: string,
+    before?: string,
+    location?: string,
     description: string,
     email: string
 }

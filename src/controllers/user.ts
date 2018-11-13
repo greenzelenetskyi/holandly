@@ -11,6 +11,7 @@ const DEADLINE = '30'; //mins till start
 
 const useCancelTemplate = pug.compileFile(path.join(__dirname, '../../views/emails/cancellation.pug'));
 const useConfirmTemplate = pug.compileFile(path.join(__dirname, '../../views/emails/confirmation.pug'));
+const useRescheduleTemplate = pug.compileFile(path.join(__dirname, '../../views/emails/reschedule.pug'));
 
 export let requireLogin = (req: Request, res: Response, next: Function) => {
   if (!req.isAuthenticated()) {
@@ -94,8 +95,7 @@ export const sendScheduledEvents = async (req: Request, res: Response) => {
     }
     res.json(scheduledEvents)
   } catch (err) {
-    console.log(err);
-    res.status(500).json(err);
+    res.status(500).json({error: err.message});
   }
 }
 
@@ -105,7 +105,7 @@ export const sendEventPatterns = async (req: Request, res: Response) => {
     let eventPatterns = await userModel.queryEventPatterns(req.user.userId, req.app.get('dbPool'));
     res.json(eventPatterns);
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({error: err.message});
   }
 }
 
@@ -125,7 +125,7 @@ export const sendAvailableEvents = async (req: Request, res: Response) => {
     }
     res.end();
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({error: err.message});
   }
 }
 
@@ -138,12 +138,12 @@ export let addNewEventPattern = async (req: Request, res: Response) => {
     }
     res.end();
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({error: err.message});
   }
 }
 
 
-//new method to update existing pattern details      and p.duration=? and p.description=? and   req.body.duration, req.body.description,
+//new method to update existing pattern details
 export let updateEventPattern = async (req: Request, res: Response) => {
   try {
     let updateResult = await userModel.updatePattern(req.body, req.app.get('dbPool'));
@@ -152,7 +152,7 @@ export let updateEventPattern = async (req: Request, res: Response) => {
     }
     res.end();
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({error: err.message});
   }
 }
 
@@ -162,7 +162,7 @@ export const deleteEventPattern = async (req: Request, res: Response) => { // de
   try {
     patternEvents = await userModel.getPatternEvents(req.params[0], req.app.get('dbPool'));
   } catch (err) {
-    apiErr = err;// TODO maybe include in the response
+    apiErr = err;
   }
   try {
     let notificationData = await userModel.getPatternEventsNotificationData(req.params[0], req.app.get('dbPool'));
@@ -177,11 +177,11 @@ export const deleteEventPattern = async (req: Request, res: Response) => { // de
     if (!apiErr) {
       patternEvents.forEach((event) => {
         calendar.deleteCalendarEvent(event.eventId);
-      })
+      });
     }
     res.end();
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({error: err.message});
   }
 }
 
@@ -199,7 +199,7 @@ export let deleteEvent = async (req: Request, res: Response) => {
     calendar.deleteCalendarEvent(req.params[0])
     res.end();
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({error: err.message});
   }
 }
 
@@ -217,7 +217,7 @@ export let deleteEventVisitor = async (req: Request, res: Response) => {
     })
     res.end();
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({error: err.message});
   }
 }
 
@@ -248,11 +248,13 @@ export let scheduleEvent = async (req: Request, res: Response) => {
         }
       } else {
         let reason = event.reason;
+        let before = event.date + ' ' + event.time;
         delete event.reason;
         let updateResult = await userModel.updateEvent(event, db);
         if (updateResult.affectedRows > 0) {
           let notificationData = await userModel.getEventNotificationData(event.eventId, db);
-          mailer.notify(notificationData, req.user.login, reason, 'Изменение в ', useConfirmTemplate);
+          notificationData[0].before = event.date + ' ' + event.time;
+          mailer.notify(notificationData, req.user.login, reason, 'Изменение в ', useRescheduleTemplate);
           rescheduleInCalendar(event, db);
         }
       }
@@ -261,19 +263,7 @@ export let scheduleEvent = async (req: Request, res: Response) => {
     res.end();
   } catch (err) {
     console.log(err.message)
-    res.status(500).json(err);
-  }
-}
-
-const scheduleNewEvent = async (req: Request, res: Response) => {
-  try {
-    let insertResult = await userModel.scheduleNewEvent(req.body, req.app.get('dbPool'));
-    if (insertResult.affectedRows > 0) {
-      //event.eventId = insertResult.insertId;
-      addEventToCalendar(event, req); // TODO pass errors somewhere
-    }
-  } catch (err) {
-
+    res.status(500).json({error: err.message});
   }
 }
 
@@ -293,8 +283,8 @@ const rescheduleInCalendar = async (event: any, db: any) => {
       })
     }
   } catch (err) {
-    console.log(err);
-  }
+    console.log({error: err.message});
+ }
 }
 
 // google calendar api insert event call

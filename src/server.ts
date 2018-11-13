@@ -12,6 +12,8 @@ import compression from 'compression';
 import mysql from 'mysql';
 const MySqlStore = require('express-mysql-session')(session);
 const visitor = require('./routes/index');
+const helmet = require('helmet');
+ 
 
 const numCPUs = os.cpus().length;
 
@@ -24,7 +26,7 @@ const dbPool = mysql.createPool({
 });
 
 if (cluster.isMaster) {
-  console.log('hi I am your master');
+  console.log('master');
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork();
   }
@@ -36,10 +38,11 @@ if (cluster.isMaster) {
 } else {
 
   const app = express();
-
+  app.use(helmet());
+  // 
   app.set('dbPool', dbPool);
 
-  console.log('hi i am a worker');
+  console.log('worker');
   const LocalStrategy = passportLocal.Strategy;
 
   app.use(session({
@@ -91,10 +94,6 @@ if (cluster.isMaster) {
   // processes user admin page routes
   app.use('/:clientname?/edit', userRouter);
 
-  // http://server.com/:clientname?/edit -- admin all clients
-
-  // http://server.com/shpp/p2p-entry-exam
-  // http://........../:clientname/:meetingtype
   app.use('/user', visitor.router);
 
   app.listen(process.env.PORT, () => {
