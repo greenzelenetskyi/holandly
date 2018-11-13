@@ -52,7 +52,7 @@ export const insertToCalendar = async (newEvent: any) => {
                 }
             }
         });
-        console.log('Event created: %s', apiResponse.data.htmlLink);
+        //console.log('Event created: %s', apiResponse.data.htmlLink);
     } catch (err) {
         console.log('The API returned an error: ' + err.message);
     }

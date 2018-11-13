@@ -13,9 +13,24 @@ $(document).ready(function () {
         logoVisibility();
     });
     logoVisibility();
+    addHandlerFormSubmit();
 
+
+    $(".updateData").click(function () {
+        updateAll();
+    });
+
+    $("#logOut").click(function () {
+        logOut();
+    });
+
+    updateAll();
+});
+
+function addHandlerFormSubmit() {
     var patternModalForm = $("#pattern-modal-form");
     patternModalForm.submit(function (event) {
+        event.preventDefault();
         putPattern();
         patternModalForm.modal('hide');
     });
@@ -30,22 +45,13 @@ $(document).ready(function () {
     var removeModalForm = $("#remove-modal-form");
     removeModalForm.submit(function (event) {
         event.preventDefault();
-        remove();
+        if (!!remove) {
+            remove();
+        }
         removeModalForm.modal('hide');
     });
+}
 
-    $(".updateData").click(function () {
-        updateAll();
-    });
-
-    $("#logOut").click(function () {
-        logOut();
-    });
-
-    updateAll();
-
-
-});
 
 var remove;
 
@@ -54,13 +60,30 @@ function updateAll() {
     getVisitors();
 }
 
+function fillModalEventForm(data) {
+    $("#modalPatternId").val(data.patternId);
+    $("#modalEventId").val(data.eventId);
+    $("input#inputDate").val(moment(data.date).format('YYYY-MM-DD'));
+    $("#inputTime").val(data.time);
+}
+
+function newEvent() {
+    var events = [];
+    events.push({
+        patternId: $("#modalPatternId").val(),
+        eventId: $("#modalEventId").val(),
+        date: $("input#inputDate").val(),
+        time: $("#inputTime").val(),
+        reason: $("#reScheduledDescription").val()
+    });
+    putEvent(events);
+}
+
 function addHandlerEditEvent(element) {
     $(element).click(
         function (event) {
-            data = events[this.getAttribute('data-eventId')];
+            data = userEvents[this.getAttribute('data-eventId')];
             console.log(data);
-            data.reason = false;
-            data.label = 'Изменить событие';
             fillModalEventForm(data);
         }
     );
@@ -69,18 +92,21 @@ function addHandlerEditEvent(element) {
 function addHandlerRemoveScheduledEvent(element) {
     $(element).click(
         function (handlerEvent) {
-            var event = events[this.getAttribute('data-eventId')];
+            console.log(this);
+            console.log(handlerEvent);
+            var event = userEvents[this.getAttribute('data-eventId')];
             if (!!event) {
                 $('#descriptionText')[0].innerText =
                     'Удаление события [' + event.type + '] \n заплпнированого на [' +
                     moment(event.time, 'hh:mm:ss').format("HH:mm") + '  ' +
                     moment(event.date).format('DD/MM/YYYY') + ']';
                 remove = function () {
-                    deleteEvent(event.eventId, $("#removeDescription").val());
+                    deleteEvent(event.eventId, $("#reason").val());
                 };
                 $('#remove-modal-form').modal();
             }
             else {
+                console.log(this);
                 this.parentNode.parentNode.removeChild(this.parentNode);
             }
         });
@@ -94,7 +120,7 @@ function addHandlerRemovePattern(element) {
             $('#descriptionText')[0].innerText =
                 'Удаление шаблона [' + pattern.type + '] со всеми заплпнированими собитиями';
             remove = function () {
-                deletePattern(pattern.patternId, $("#removeDescription").val());
+                deletePattern(pattern.patternId, $("#reason").val());
             };
             $('#remove-modal-form').modal();
         });
@@ -125,7 +151,7 @@ function addHandlerPatternScheduler(element) {
             $('#editPatternType')[0].textContent = pattern.type;
             pattern.textContent = pattern.type;
             editPatternEvents.patternId = pattern.patternId;
-            appentEvetntsToCalendar(pattern.scheduledEvents);
+            viewPatternEvents(pattern.scheduledEvents);
         });
 }
 

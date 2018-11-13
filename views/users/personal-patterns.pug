@@ -1,0 +1,148 @@
+extends personal-visitors
+block block_patterns
+    script.
+        function makePatternCard(data) {
+            var patternTab = document.getElementById('pattern-row');
+            patternTab.innerHTML = '';
+            if (typeof data === "object") {
+                data.forEach(function (pattern) {
+                    newCard = document.createElement('div');
+                    newCard.classList.add('col-sm-4');
+                    tempCard = document.getElementById('templatePattern').cloneNode(true).innerHTML;
+                    tempCard = tempCard.replace(/templatePatternType/gi, pattern.type);
+                    tempCard = tempCard.replace(/templatePatternId/gi, pattern.patternId);
+                    tempCard = tempCard.replace(/templatePattern-description/gi, pattern.description);
+                    tempCard = tempCard.replace(/templatePattern-number/gi, pattern.number);
+                    tempCard = tempCard.replace(/templatePattern-duration/gi, pattern.duration);
+                    tempCard = tempCard.replace(/templatePattern-condition/gi, '');
+                    // tempCard = tempCard.replace(/templatePattern-amount/gi, pattern.duration);
+                    newCard.innerHTML = tempCard;
+                    patternTab.appendChild(newCard);
+                })
+            }
+            addHandlerRemovePattern('.removePattern');
+            addHandlerEditPattern('.editPattern');
+            addHandlerPatternScheduler('.patternScheduler');
+        }
+    //================== visitors page templates =========================
+    #patternsView.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
+        .input-group
+            a.userLink.card-link(href='user/andrey')
+                | user/andrey
+            a.form-control.invisible
+            .input-group-append
+                button.btn.btn-outline-secondary(type='button', data-toggle='modal', data-target='#editEvents-modal-form').invisible
+                button.btn.btn-primary(type='button', data-toggle='modal', data-target='#pattern-modal-form')
+                    | + Создать новый шаблон
+        hr
+        #pattern-row.row()
+    #patternEdit.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded(hidden)
+        .card
+            .card-header
+                strong#editPatternType templatePatternType
+                button#closeCalendar.float-right.btn.btn-outline-secondary(type='button') Закрыть
+            .card-body
+                .row
+                    .col-sm-6
+                        #scheduledEventCalendar
+                    .col-sm-6
+                        #scheduledEventList
+    //Modal new pattern
+    #pattern-modal-form.modal.fade(tabindex='-1', role='dialog', aria-labelledby='newPatternModalLabel', aria-hidden='true')
+        form
+            .modal-dialog.modal-lg(role='document')
+                .modal-content
+                    .modal-header
+                        h5#newPatternModalLabel.modal-title Шаблон события
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') ×
+                    .modal-body
+                        input#modalPattern_patternId(type='text', hidden)
+                        .form-group
+                            label(for='inputPatternType') Тип события
+                            input#inputPatternType.form-control(type='text', aria-describedby='typeHelp', minlength='5')
+                            small#typeHelp.font-italic.form-text.text-muted Краткое название типа собития
+                        .form-group
+                            label(for='inputDescription') Описание
+                            textarea#inputDescription.form-control(aria-label='With textarea', aria-describedby='descriptionHelp', minlength='5')
+                            small#descriptionHelp.font-italic.form-text.text-muted Полное описание типа собития
+                        .row
+                            .col
+                                .form-group
+                                    label(for='inputNumber') Количество участников
+                                    input#inputNumber.form-control(type='number', value='1', min='1')
+                                .form-group.form-check
+                                    input#inputMultiAccess.form-check-input(type='checkbox')
+                                    label.form-check-label(for='inputMultiAccess') Однократное участие
+                            .col
+                                .form-group
+                                    label(for='inputDuration') Продолжительность, мин
+                                    input#inputDuration.form-control(type='number', value='10', min='1')
+                    .modal-footer
+                        button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
+                        input.btn.btn-primary(type='submit', value='Создать')
+
+    //--- template pattern -----------------------------
+    #templatePattern(hidden)
+        //.col-sm-4
+        .card.border-primary.mb-4
+            .card-header
+                strong templatePatternType
+                .rouded.float-right
+                    img.patternScheduler.img-fluid.btn-outline-success.ico(src='../img/EventAdd.png'
+                    data-patternID= 'templatePatternId', data-tooltip="tooltip" title="Заплпнировать событие")
+                    img.editPattern.img-fluid.btn-outline-info.ico(src='../img/PatternEdit.png'
+                    data-patternID= 'templatePatternId', data-tooltip="tooltip" title="Редактировать шаблон" data-toggle="modal" data-target="#pattern-modal-form")
+                    img.removePattern.img-fluid.btn-outline-danger.ico(src='../img/PatternDelete.png'
+                    data-patternID= 'templatePatternId', data-tooltip="tooltip" title="Удалить шаблон" data-toggle="modal" removeType="pattern" data-target="#remove-modal-form")
+            .card-body.text-primary
+                p.em.small.font-italic templatePattern-description
+                p.em.small Колличество участников: templatePattern-number
+                p.em.small Продолжтельность: templatePattern-duration
+                p.em.small templatePattern-condition
+                //p.em.small Заплпнировано событий: templatePattern-amount
+
+    //Modal edit events
+    #editEvents-modal-form.modal.fade(tabindex='-1', role='dialog',  aria-hidden='true')
+        form#eventScheduler
+            .modal-dialog(role='document')
+                .modal-content
+                    .modal-header
+                        h5#editEventsTitleLabel.modal-title Планировщик
+                    .modal-body
+                        .tab-container
+                            .form-group
+                                .card
+                                    .card-header
+                                        label Время начала
+                                    .card-body
+                                        ul#eventStartTimes.list-group.list-group-flush
+                                        button.btn.btn-link.addStartTime(type='button') + добавить
+                            .tab-navigation
+                                .card
+                                    .card-header
+                                        select#select-repeat
+                                            option(value='1') Не повторять
+                                            option(value='2') Повторять по дням недели
+                                            option(value='3') Повторять по датам
+                                        #tab-1.tab-content
+                                        #tab-2.tab-content
+                                            each val, index in {1:'ПН',2:'ВТ',3:'СР',4:'ЧТ',5:'ПТ',6:'СБ',0:'ВС'}
+                                                .form-check.form-check-inline
+                                                    input.dayOfWeek( id="inlineCheckbox" + index ).form-check-input(type='checkbox', selectDayCode= index)
+                                                    label.form-check-label(for= "inlineCheckbox" + index )= val
+                                            .form-group
+                                                label(for='finalDate') Дата окончания
+                                                input#finalDate.form-control(type='date')
+                                        #tab-3.tab-content
+                                            #dateSelectorCalendar
+                    .modal-footer
+                        button.btn.btn-outline-secondary(type='button', data-dismiss='modal') Отмена
+                        input.btn.btn-primary(type='submit', value='Запланировать')
+    //--- template start time -----------------------------
+    span(hidden) template
+        #templateStarTime
+            li.list-group-item.d-flex.justify-content-between.align-items-center
+                input.liTime.form-control(type='time', data-value="", data-eventId="0")
+                img.removeEvent.img-fluid.btn-outline-danger.ico(src='../img/trash.png',
+                data-eventId="0", data-tooltip='tooltip', data-original-title='Удалить')
