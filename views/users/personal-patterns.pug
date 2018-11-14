@@ -32,12 +32,12 @@ block block_patterns
             a.form-control.invisible
             .input-group-append
                 button.btn.btn-outline-secondary(type='button', data-toggle='modal', data-target='#editEvents-modal-form').invisible
-                button.btn.btn-primary(type='button', data-toggle='modal', data-target='#pattern-modal-form')
+                button.btn.btn-outline-primary(type='button', data-toggle='modal', data-target='#pattern-modal-form')
                     | + Создать новый шаблон
         hr
         #pattern-row.row()
     #patternEdit.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded(hidden)
-        .card
+        .card.border-primary.mb-4.shadow-lg
             .card-header
                 strong#editPatternType templatePatternType
                 button#closeCalendar.float-right.btn.btn-outline-secondary(type='button') Закрыть
@@ -85,7 +85,7 @@ block block_patterns
     //--- template pattern -----------------------------
     #templatePattern(hidden)
         //.col-sm-4
-        .card.border-primary.mb-4
+        .card.border-primary.mb-4.shadow-lg
             .card-header
                 strong templatePatternType
                 .rouded.float-right
