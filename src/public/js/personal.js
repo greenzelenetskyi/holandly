@@ -45,10 +45,10 @@ function addHandlerFormSubmit() {
     var removeModalForm = $("#remove-modal-form");
     removeModalForm.submit(function (event) {
         event.preventDefault();
+        removeModalForm.modal('hide');
         if (!!remove) {
             remove();
         }
-        removeModalForm.modal('hide');
     });
 }
 
