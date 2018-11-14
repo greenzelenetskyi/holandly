@@ -4,7 +4,7 @@ block block_visitors
     script.
         function createDateElement(targetid, date) {
             var dateEvent = document.getElementById('templateDate').cloneNode(true).innerHTML;
-            var elementId = date.appointments[0].patternId;
+            var elementId = moment(date.date).format('YYYYMMDD');//date.appointments[0].patternId;
             dateEvent = dateEvent.replace(/templateTitle/gi, moment(date.date).format('DD/MM/YYYY'));
             dateEvent = dateEvent.replace(/accordionID/gi, 'accordionID' + elementId);
             document.getElementById(targetid).innerHTML += dateEvent;
@@ -88,9 +88,11 @@ block block_visitors
                         .d-flex.bd-highlight
                             .p-2.flex-shrink-1.align-self-center
                                 .btn-group-vertical
-                                    a.rescheduleEvent.btn.btn-outline-info(data-eventId='cardDataEventId' data-toggle="modal" data-target="#event-modal-form")
+                                    a.rescheduleEvent.btn.btn-outline-info(data-eventId='cardDataEventId' data-toggle="modal" data-target="#event-modal-form"
+                                    data-tooltip="tooltip" title="Перепланировать событие" data-placement="right")
                                         | Перепланировать
-                                    a.removeEvent.btn.btn-outline-danger(data-eventId='cardDataEventId' data-toggle="modal" data-target="#remove-modal-form")
+                                    a.removeEvent.btn.btn-outline-danger(data-eventId='cardDataEventId' data-toggle="modal" data-target="#remove-modal-form"
+                                    data-tooltip="tooltip" title="Отменить событие" data-placement="right")
                                         | Отменить
                             .p-2.w-100
                                 ul#visitorsListID.list-group.list-group-flush
