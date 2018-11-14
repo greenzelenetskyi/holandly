@@ -63,8 +63,10 @@ function updateAll() {
 function fillModalEventForm(data) {
     $("#modalPatternId").val(data.patternId);
     $("#modalEventId").val(data.eventId);
-    $("input#inputDate").val(moment(data.date).format('YYYY-MM-DD'));
+    $("#inputDate").val(moment(data.date).format('YYYY-MM-DD'));
     $("#inputTime").val(data.time);
+    $("#oldDate").val(moment(data.date).format('YYYY-MM-DD'));
+    $("#oldTime").val(data.time);
 }
 
 function newEvent() {
@@ -72,8 +74,10 @@ function newEvent() {
     events.push({
         patternId: $("#modalPatternId").val(),
         eventId: $("#modalEventId").val(),
-        date: $("input#inputDate").val(),
+        date: $("#inputDate").val(),
         time: $("#inputTime").val(),
+        dateOld: $("#oldDate").val(),
+        timeOld: $("#oldTime").val(),
         reason: $("#reScheduledDescription").val()
     });
     putEvent(events);

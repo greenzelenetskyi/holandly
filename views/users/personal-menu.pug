@@ -3,12 +3,10 @@ extends personal-layout
 block tab_menu
     nav
         #nav-tab.nav.nav-tabs.justify-content-center
-            a#menuLogo.nav-item.nav-link.flex-grow-1.disabled
+            a#menuLogo.nav-item.nav-link.flex-grow-1.disabled( href='#')
                 img(src='img/logoH4.png')
             a#nav-visitors-tab.updateData.nav-item.nav-link.text-success.active(data-toggle='tab', href='#nav-visitors', role='tab', aria-controls='nav-visitors', aria-selected='true')
                 | События
-            //a#nav-events-tab.nav-item.nav-link.text-secondary(data-toggle='tab', href='#nav-events', role='tab', aria-controls='nav-events', aria-selected='false')
-            //    | Расписание
             a#nav-patterns-tab.updateData.nav-item.nav-link.text-primary(data-toggle='tab', href='#nav-patterns', role='tab', aria-controls='nav-patterns', aria-selected='false')
                 | Шаблоны
             a.nav-item.dropdown
@@ -30,26 +28,26 @@ block tab_menu
     // Modal reschedule event
     #event-modal-form.modal.fade(tabindex='-1', role='dialog', aria-labelledby='newEventModalLabel', aria-hidden='true')
         form
-            .modal-dialog(role='document')
+            .modal-dialog.modal-sm(role='document')
                 .modal-content
                     .modal-header
                         h5#newEventModalLabel.modal-title Перпланировать событие
                         button.close(type='button', data-dismiss='modal', aria-label='Close')
                             span(aria-hidden='true') ×
                     .modal-body
-                        input#modalPatternId(type='text', hidden='')
-                        input#modalEventId(type='text', hidden='')
-                        .form-group.row
-                            label.col-sm-2.col-form-label(for='inputDate') Дата
-                            .col-sm-10
-                                input#inputDate.form-control(type='date')
-                            label.col-sm-2.col-form-label(for='inputTime') Время
-                            .col-sm-10
-                                input#inputTime.form-control(type='time')
-                        .form-group.row()
-                            label.col-sm-2.col-form-label(for='reScheduledDescription') Причина
-                            .col-sm-10
-                                textarea#reScheduledDescription.form-control(aria-label='With textarea')
+                        input#modalPatternId(type='text', hidden)
+                        input#modalEventId(type='text', hidden)
+                        input#oldDate(type='date', hidden)
+                        input#oldTime(type='time', hidden)
+                        .form-group
+                            label(for='inputDate') Дата
+                            input#inputDate.form-control(type='date')
+                        .form-group
+                            label(for='inputTime') Время
+                            input#inputTime.form-control(type='time')
+                        .form-group
+                            label(for='reScheduledDescription') Причина
+                            textarea#reScheduledDescription.form-control(aria-label='With textarea')
                     .modal-footer
                         button.btn.btn-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Сохранить')
