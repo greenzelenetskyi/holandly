@@ -192,14 +192,15 @@ export let deleteEvent = async (req: Request, res: Response) => {
     if (deletionResult.affectedRows === 0) {
       return res.status(409).end()
     }
-    if (moment().isBefore(notificationData[0].date, 'day')) {
+    if (notificationData.length > 0 && moment().isBefore(notificationData[0].date, 'day')) {
       mailer.notify(notificationData, req.user.login, req.body.reason
         , 'Отмена участия: ', useCancelTemplate);
     }
     calendar.deleteCalendarEvent(req.params[0])
     res.end();
   } catch (err) {
-    res.status(500).json({error: err.message});
+    console.log(err)
+    res.status(500).json(err);
   }
 }
 
@@ -248,14 +249,16 @@ export let scheduleEvent = async (req: Request, res: Response) => {
         }
       } else {
         let reason = event.reason;
-        let before = event.date + ' ' + event.time;
+        //let before = event.date + ' ' + event.time;
         delete event.reason;
         let updateResult = await userModel.updateEvent(event, db);
         if (updateResult.affectedRows > 0) {
           let notificationData = await userModel.getEventNotificationData(event.eventId, db);
-          notificationData[0].before = event.date + ' ' + event.time;
-          mailer.notify(notificationData, req.user.login, reason, 'Изменение в ', useRescheduleTemplate);
           rescheduleInCalendar(event, db);
+          if(notificationData.length > 0) {
+            notificationData[0].before = event.date + ' ' + event.time;
+            mailer.notify(notificationData, req.user.login, reason, 'Изменение в ', useRescheduleTemplate);
+          }
         }
       }
     }

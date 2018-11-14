@@ -39,7 +39,7 @@ if (cluster.isMaster) {
 
   const app = express();
   app.use(helmet());
-  // 
+  // stored to pass to other modules through req.app.get
   app.set('dbPool', dbPool);
 
   console.log('worker');
@@ -56,6 +56,7 @@ if (cluster.isMaster) {
   app.set('view engine', 'pug');
 
   app.use(compression());
+  
   passport.use(new LocalStrategy(async (username: string, password: string, callback: Function) => {
     try {
       let user = await userModel.findUser(username, dbPool);
@@ -73,7 +74,6 @@ if (cluster.isMaster) {
   
   app.use(passport.initialize());
   app.use(passport.session());
-
   passport.serializeUser((user: any, done) => {
     delete user.password;
     done(null, user);
