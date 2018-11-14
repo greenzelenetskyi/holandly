@@ -5,7 +5,7 @@ import moment from 'moment';
 import * as calendar from '../models/calendar';
 import * as mailer from '../models/mailer';
 import pug from 'pug';
-import { MysqlError } from 'mysql';
+import { MysqlError, Connection, Pool, PoolConnection } from 'mysql';
 
 const DEADLINE = '30'; //mins till start
 
@@ -222,9 +222,9 @@ export let deleteEventVisitor = async (req: Request, res: Response) => {
   }
 }
 
-const getDbCon = (pool: any) => {
+const getDbCon = (pool: Pool) => {
   return new Promise((resolve, reject) => {
-    pool.getConnection((err: MysqlError, con: any) => {
+    pool.getConnection((err: MysqlError, con: PoolConnection) => {
       if(err) {
         return reject(err);
       }
@@ -233,10 +233,17 @@ const getDbCon = (pool: any) => {
   })
 }
 
+interface EventObject {
+  eventId: number,
+  reason: string,
+  date: Date,
+  time: string
+}
+
 // schedules new or updates existing
 export let scheduleEvent = async (req: Request, res: Response) => {
-  let dbPool = req.app.get('dbPool');
-  let events: any = req.body;
+  let dbPool: Pool = req.app.get('dbPool');
+  let events: EventObject[] = req.body;
   try {
     let db: any = await getDbCon(dbPool);
     for (let event of events) {
@@ -256,7 +263,7 @@ export let scheduleEvent = async (req: Request, res: Response) => {
           let notificationData = await userModel.getEventNotificationData(event.eventId, db);
           rescheduleInCalendar(event, db);
           if(notificationData.length > 0) {
-            notificationData[0].before = event.date + ' ' + event.time;
+            notificationData[0].before = moment(event.date).format('DD.MM.YYYY') + ' в ' + event.time;
             mailer.notify(notificationData, req.user.login, reason, 'Изменение в ', useRescheduleTemplate);
           }
         }
