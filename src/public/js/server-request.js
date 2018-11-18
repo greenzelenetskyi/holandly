@@ -124,6 +124,7 @@ function putPattern() {
     pattern.description = $("#inputDescription").val();
     pattern.number = $("input#inputNumber").val();
     pattern.duration = $("input#inputDuration").val();
+    pattern.hasApiHook = $("#inputWebHookEnable").val()==="on"?1:0;
     console.log('putPattern>>>');
     console.log(pattern);
     $.ajax({
@@ -168,6 +169,53 @@ function logOut() {
                     window.location = "/edit";
                 }
             })
+        }
+    });
+}
+
+
+function getApiData() {
+    console.log('> getApiData');
+    $.ajax({
+        type: 'get',
+        url: '/edit/apiData',
+        dataType: 'json',
+        data: {},
+        response: 'json',
+        success: function (data) {
+            console.log('======> getApiData');
+            console.log(data);
+            //fillOptionsForm(data);
+        }
+    });
+}
+
+function updateEnpoint(endpointData) {
+    console.log('>updateEnpoint');
+    console.log(endpointData);
+    $.ajax({
+        type: "POST",
+        url: '/edit/apiData',
+        data: JSON.stringify({endpoints: endpointData}),
+        contentType: 'application/json',
+        success: function (data) {
+            console.log('======> updateEnpoint');
+            console.log(data);
+            generateApiKay();
+        }
+    });
+}
+
+function generateApiKay() {
+    console.log('>generateApiKay');
+    $.ajax({
+        type: "PUT",
+        url: '/edit/apiData',
+        data: {},
+        contentType: 'application/json',
+        success: function (data) {
+            console.log(data);
+
         }
     });
 }

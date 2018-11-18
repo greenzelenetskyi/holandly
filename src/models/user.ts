@@ -12,12 +12,12 @@ const makeSqlQuery = (db: any, sqlString: string, params?: any): Promise<any> =>
 }
 
 export const addApiEndpoints = (endpoints: string, userId: number,db: any) => {
-  let sqlString = `update  user set endpoints=? where userId=?`;
+  let sqlString = `update users set endpoints=? where userId=?`;
   return makeSqlQuery(db, sqlString, [endpoints, userId]);
 }
 
 export const saveTokenToDb = (token: any, userId: number, db: any) => {
-  let sqlString = `update user set apikey=? where userId=?`;
+  let sqlString = `update users set apikey=? where userId=?`;
   return makeSqlQuery(db, sqlString, [token, userId]);
 }
 

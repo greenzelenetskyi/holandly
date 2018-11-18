@@ -30,7 +30,8 @@ export const getUserApiData = (req: Request, res: Response) => {
 
 export const updateUserEndpoints = async (req: Request, res: Response) => {
   try {
-    await userModel.addApiEndpoints(req.body, req.user.userId, req.app.get('dbPool'));
+    await userModel.addApiEndpoints(req.body.endpoints, req.user.userId, req.app.get('dbPool'));
+    res.end();
   } catch (err) {
     res.status(500).json({error: err.message});
   }
@@ -39,6 +40,7 @@ export const updateUserEndpoints = async (req: Request, res: Response) => {
 
 export const generateNewApiToken = async (req: Request, res: Response) => {
   try {
+    console.log(req.user.endpoints);
     if(!req.user.endpoints) {
       return res.status(400).json({error: 'No endpoints specified'});
     }
@@ -46,6 +48,7 @@ export const generateNewApiToken = async (req: Request, res: Response) => {
     await userModel.saveTokenToDb(token, req.user.userId, req.app.get('dbPool'));
     res.json({jwt: token, endpoints: req.user.endpoints});
   } catch (err) {
+      console.log(err);
     res.status(500).json({error: err.message});
   }
 }

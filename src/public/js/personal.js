@@ -182,3 +182,18 @@ function addHandlerCancelVisitor(element) {
 }
 
 
+$(document).ready(function () {
+    $('#webhook-modal-form')
+        .on('show.bs.modal', function () {
+            console.log('webhook show');
+            getApiData();
+        })
+        .on('hide.bs.modal', function () {
+            console.log('webhook hide')
+        })
+        .on('submit.bs.modal', function (event) {
+            event.preventDefault();
+            console.log('webhook submit')
+            updateEnpoint($('#endpointData').val());
+        })
+});
