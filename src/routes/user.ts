@@ -35,3 +35,8 @@ userRouter.delete('/events/*', userController.requireLogin, userController.delet
 
 /* cancels an event for one visitor */
 userRouter.delete('/cancel', userController.requireLogin, userController.deleteEventVisitor);
+
+userRouter.route('/apiData')
+  .get(userController.requireLogin, userController.getUserApiData)
+  .post(userController.requireLogin, userController.updateUserEndpoints)
+  .put(userController.requireLogin, userController.generateNewApiToken);

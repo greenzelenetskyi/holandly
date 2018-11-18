@@ -74,6 +74,7 @@ export const deleteCalendarEvent = async (eventData: any) => {
 
 export const updateEvent = async (eventId: any, resourceFields: any) => {
     let id = '1000' + eventId
+    console.log(resourceFields)
     try {
       let apiResponse = await callApi(calendar.events.patch, {
         auth: jwtClient,

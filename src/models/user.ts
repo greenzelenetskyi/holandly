@@ -11,8 +11,18 @@ const makeSqlQuery = (db: any, sqlString: string, params?: any): Promise<any> =>
   })  
 }
 
+export const addApiEndpoints = (endpoints: string, userId: number,db: any) => {
+  let sqlString = `update  user set endpoints=? where userId=?`;
+  return makeSqlQuery(db, sqlString, [endpoints, userId]);
+}
+
+export const saveTokenToDb = (token: any, userId: number, db: any) => {
+  let sqlString = `update user set apikey=? where userId=?`;
+  return makeSqlQuery(db, sqlString, [token, userId]);
+}
+
 export const getUserName = (userId: number, db: any) => {
-  let sqlString = `select userId, login from holandly.users where userId=?`;
+  let sqlString = `select userId, login, apikey, endpoints from holandly.users where userId=?`;
   return makeSqlQuery(db, sqlString, userId);
 }
 
@@ -53,10 +63,10 @@ export const queryCreatedEvents = (userId: number, db: any) => {
 }
 
 export const insertNewPattern = (userId: number, pattern: any, db: any) => {
-  let sqlString = `insert into eventpattern (type, number, duration, description, userId)
-                      select ?, ?, ?, ?, ?
+  let sqlString = `insert into eventpattern (type, number, duration, description, userId, hasApiHook)
+                      select ?, ?, ?, ?, ?, ?
                    where not exists (select * from eventpattern where (type=? and userId = ?));`
-  let queryParams = [pattern.type, pattern.number, pattern.duration, pattern.description, userId, pattern.type, userId];
+  let queryParams = [pattern.type, pattern.number, pattern.duration, pattern.description, pattern.hasApiHook, userId, pattern.type, userId];
   return makeSqlQuery(db, sqlString, queryParams);
 }
 
@@ -114,7 +124,7 @@ export const getVisitorNotificationData = (event: {eventId: number, email: strin
 }
 
 export const getEventNotificationData = (eventId: number, db: any) => {
-  let sqlString = `SELECT type, description, date, time, name as visitor, email from holandly.eventslist
+  let sqlString = `SELECT type, description, date, time, duration, name as visitor, email from holandly.eventslist
                     inner join eventpattern on eventslist.patternId = eventpattern.patternId
                     inner join eventvisitors on eventslist.eventId = eventvisitors.eventId
                     inner join visitors on eventvisitors.visitorId = visitors.visitorId
