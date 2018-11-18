@@ -86,11 +86,28 @@ block tab_menu
                         button.close(type='button', data-dismiss='modal', aria-label='Close')
                             span(aria-hidden='true') ×
                     .modal-body
-
                         .form-group
-                            label(for='inputDescription') Список серверов
-                            textarea#endpointData.form-control(aria-label='With textarea', aria-describedby='descriptionHelp', minlength='5')
-                            small#descriptionHelp.font-italic.form-text.text-muted Список серверов по одному на строку
+                            label(for='apiKey') apiKey
+                            .input-group.mb-3
+                                input#apiKey.form-control(aria-label='text', aria-describedby='apiKeyHelp', readonly='', value='-')
+                                .input-group-append
+                                    button#apiKayGenerate.btn.btn-outline-secondary(type='button') Генерировать
+                            //small#apiKeyHelp.font-italic.form-text.text-muted apiKey help
+                        .form-group
+                            label(for='endpointData') Список серверов
+                            textarea#endpointData.form-control(aria-label='With textarea', aria-describedby='endpointDataHelp')
+                            small#endpointDataHelp.font-italic.form-text.text-muted Список серверов по одному на строку
+                        //ul.list-group.list-group-flush
+                        //    li.list-group-item.custom-control.custom-checkbox
+                        //        input#ednkkj.custom-control-input(type='checkbox')
+                        //        label.custom-control-label(for='ednkkj') Check this custom checkbox
+                        //    li.list-group-item.custom-control.custom-checkbox
+                        //        input#ednkkj.custom-control-input(type='checkbox')
+                        //        label.custom-control-label(for='ednkkj') Check this custom checkbox
+                        //    li.list-group-item.custom-control.custom-checkbox
+                        //        input#ednkkj.custom-control-input(type='checkbox')
+                        //        label.custom-control-label(for='ednkkj') Check this custom checkbox
+
                     .modal-footer
                         button.btn.btn-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Сохранить')

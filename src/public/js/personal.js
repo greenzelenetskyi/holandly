@@ -145,6 +145,8 @@ function addHandlerEditPattern(element) {
             $("#inputNumber").val(pattern.number);
             $("#inputDuration").val(pattern.duration);
             $("#modalPattern_patternId").val(pattern.patternId);
+            $("#inputMultiAccess").prop('checked', pattern.multiaccess === 1);
+            $("#inputWebHookEnable").prop('checked', pattern.hasApiHook === '1');
         });
 }
 
@@ -193,7 +195,10 @@ $(document).ready(function () {
         })
         .on('submit.bs.modal', function (event) {
             event.preventDefault();
-            console.log('webhook submit')
+            console.log('webhook submit');
             updateEnpoint($('#endpointData').val());
-        })
+        });
+    $('#apiKayGenerate').on('click', function () {
+        generateApiKey();
+    })
 });
