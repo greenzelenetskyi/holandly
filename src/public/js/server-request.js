@@ -124,8 +124,8 @@ function putPattern() {
     pattern.description = $("#inputDescription").val();
     pattern.number = $("input#inputNumber").val();
     pattern.duration = $("input#inputDuration").val();
-    pattern.multiaccess = $("#inputMultiAccess").val() === "on" ? 1 : 0;
-    pattern.hasApiHook = $("#inputWebHookEnable").val() === "on" ? 1 : 0;
+    pattern.multiaccess = $("#inputMultiAccess").is(':checked') === true ? 1 : 0;
+    pattern.hasApiHook = $("#inputWebHookEnable").is(':checked') === true ? 1 : 0;
 
     console.log('putPattern>>>');
     console.log(pattern);
