@@ -67,6 +67,7 @@ function fillModalEventForm(data) {
     $("#inputTime").val(data.time);
     $("#oldDate").val(moment(data.date).format('YYYY-MM-DD'));
     $("#oldTime").val(data.time);
+    $("#eventDuration").val(userPatterns[data.patternId].duration);
 }
 
 function newEvent() {
@@ -78,7 +79,8 @@ function newEvent() {
         time: $("#inputTime").val(),
         dateOld: $("#oldDate").val(),
         timeOld: $("#oldTime").val(),
-        reason: $("#reScheduledDescription").val()
+        reason: $("#reScheduledDescription").val(),
+        duration: $("#eventDuration").val()
     });
     putEvent(events);
 }
@@ -99,6 +101,7 @@ function addHandlerRemoveScheduledEvent(element) {
             console.log(this);
             console.log(handlerEvent);
             var event = userEvents[this.getAttribute('data-eventId')];
+            var nodeTime = this.parentNode;
             if (!!event) {
                 $('#descriptionText')[0].innerText =
                     'Удаление события [' + event.type + '] \n заплпнированого на [' +
@@ -106,12 +109,13 @@ function addHandlerRemoveScheduledEvent(element) {
                     moment(event.date).format('DD/MM/YYYY') + ']';
                 remove = function () {
                     deleteEvent(event.eventId, $("#reason").val());
+                    nodeTime.parentNode.removeChild(nodeTime);
                 };
                 $('#remove-modal-form').modal();
             }
             else {
                 console.log(this);
-                this.parentNode.parentNode.removeChild(this.parentNode);
+                nodeTime.parentNode.removeChild(nodeTime);
             }
         });
 }

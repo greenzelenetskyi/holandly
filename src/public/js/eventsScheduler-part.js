@@ -12,6 +12,7 @@ $(document).ready(function () {
 
     $('.addStartTime').click(function () {
         appendTimeToSchedule();
+        addHandlerRemoveScheduledEvent('.removeEvent');
     });
 
     var editPatternTimeModalForm = $("#editEvents-modal-form");
@@ -51,7 +52,7 @@ function appendTimeToSchedule(timeEvent) {
     }
     elem.innerHTML = tempTime;
     document.getElementById('eventStartTimes').appendChild(elem);
-    addHandlerRemoveScheduledEvent('.removeEvent');
+    //addHandlerRemoveScheduledEvent('.removeEvent');
 }
 
 function getScheduledTimes() {
@@ -121,6 +122,7 @@ function addScheduledTime(ScheduledEvents) {
     Object.values(ScheduledEvents).forEach(function (event, i, data) {
         appendTimeToSchedule(event);
     });
+    addHandlerRemoveScheduledEvent('.removeEvent');
 }
 
 function EventSchedulerShow(editDate) {
