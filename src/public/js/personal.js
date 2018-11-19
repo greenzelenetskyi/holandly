@@ -1,10 +1,10 @@
 function logoVisibility() {
-    $elMenu = $('#menuLogo');
+    var Menu = $('#menuLogo');
     if ($(window).width() < 800) {
-        $elMenu.hide();
+        Menu.hide();
     }
     else {
-        $elMenu.show();
+        Menu.show();
     }
 }
 
@@ -145,8 +145,8 @@ function addHandlerEditPattern(element) {
             $("#inputNumber").val(pattern.number);
             $("#inputDuration").val(pattern.duration);
             $("#modalPattern_patternId").val(pattern.patternId);
-            $("#inputMultiAccess").prop('checked', pattern.multiaccess === 1);
-            $("#inputWebHookEnable").prop('checked', pattern.hasApiHook === '1');
+            $("#inputMultiAccess").prop('checked', (pattern.multiaccess === '1' || pattern.multiaccess === 1));
+            $("#inputWebHookEnable").prop('checked', (pattern.hasApiHook === '1' || pattern.hasApiHook === 1));
         });
 }
 
@@ -185,8 +185,11 @@ function addHandlerCancelVisitor(element) {
 
 
 $(document).ready(function () {
-    $('#webhook-modal-form')
-        .on('show.bs.modal', function () {
+    var modalWebHook = $('#webhook-modal-form');
+    modalWebHook
+        .on('show.bs.modal', function (event) {
+            console.log(event);
+            console.log(this);
             console.log('webhook show');
             getApiData();
         })
@@ -197,8 +200,28 @@ $(document).ready(function () {
             event.preventDefault();
             console.log('webhook submit');
             updateEnpoint($('#endpointData').val());
+            modalWebHook.modal('hide');
         });
     $('#apiKayGenerate').on('click', function () {
         generateApiKey();
     })
 });
+
+//
+// $(document).ready(function () {
+//     $('#pattern-modal-form')
+//         .on('show.bs.modal', function (event) {
+//             console.log(event);
+//             console.log(this);
+//             console.log('pattern show');
+//
+//         })
+//         .on('hide.bs.modal', function () {
+//             console.log('pattern hide')
+//         })
+//         .on('submit.bs.modal', function (event) {
+//             event.preventDefault();
+//             console.log('pattern submit');
+//
+//         });
+// });

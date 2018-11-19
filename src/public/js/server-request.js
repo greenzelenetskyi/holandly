@@ -28,6 +28,7 @@ function cancelVisitor(data) {
 }
 
 function getEvents() {
+    removeEvents();
     $.ajax({
         type: 'get',
         url: '/edit/events',
@@ -37,7 +38,6 @@ function getEvents() {
         success: function (data) {
             console.log('======> Events');
             console.log(data);
-            removeEvents();
             addEvents(data);
             if (!!editPatternEvents.patternId)
                 viewPatternEvents(userPatterns[editPatternEvents.patternId].scheduledEvents);
@@ -57,6 +57,8 @@ function removeEvents() {
     Object.values(userPatterns).forEach(function (patternEvent) {
         patternEvent.scheduledEvents = [];
     });
+    if (!!editPatternEvents.patternId)
+        viewPatternEvents(userPatterns[editPatternEvents.patternId].scheduledEvents);
 }
 
 function putEvent(eventsData) {
@@ -117,16 +119,16 @@ function getPatterns() {
 }
 
 function putPattern() {
-    let pattern = {};
-    pattern.patternId = $("input#modalPattern_patternId").val();
-    pattern.patternId = pattern.patternId < 1 ? 0 : pattern.patternId;
-    pattern.type = $("input#inputPatternType").val();
-    pattern.description = $("#inputDescription").val();
-    pattern.number = $("input#inputNumber").val();
-    pattern.duration = $("input#inputDuration").val();
-    pattern.multiaccess = $("#inputMultiAccess").is(':checked') === true ? 1 : 0;
-    pattern.hasApiHook = $("#inputWebHookEnable").is(':checked') === true ? 1 : 0;
+    var pattern = {
+        patternId: $("#modalPattern_patternId").val(),
+        type: $("input#inputPatternType").val(),
+        description: $("#inputDescription").val(),
 
+        number: $("input#inputNumber").val(),
+        duration: $("input#inputDuration").val(),
+        multiaccess: $("#inputMultiAccess").is(':checked') === true ? 1 : 0,
+        hasApiHook: $("#inputWebHookEnable").is(':checked') === true ? 1 : 0,
+    };
     console.log('putPattern>>>');
     console.log(pattern);
     $.ajax({
