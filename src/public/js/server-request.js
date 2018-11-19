@@ -124,6 +124,9 @@ function putPattern() {
     pattern.description = $("#inputDescription").val();
     pattern.number = $("input#inputNumber").val();
     pattern.duration = $("input#inputDuration").val();
+    pattern.multiaccess = $("#inputMultiAccess").is(':checked') === true ? 1 : 0;
+    pattern.hasApiHook = $("#inputWebHookEnable").is(':checked') === true ? 1 : 0;
+
     console.log('putPattern>>>');
     console.log(pattern);
     $.ajax({
@@ -168,6 +171,59 @@ function logOut() {
                     window.location = "/edit";
                 }
             })
+        }
+    });
+}
+
+
+function apiDataForm(data) {
+    $('#apiKey').val(data.apikey);
+    $('#endpointData').val(data.endpoints);
+}
+
+function getApiData() {
+    console.log('> getApiData');
+    $.ajax({
+        type: 'get',
+        url: '/edit/apiData',
+        dataType: 'json',
+        data: {},
+        response: 'json',
+        success: function (data) {
+            console.log('======> getApiData');
+            console.log(data);
+            apiDataForm(data);
+        }
+    });
+}
+
+function updateEnpoint(endpointData) {
+    console.log('>updateEnpoint');
+    console.log(endpointData);
+    console.log(endpointData.split('\n'));
+    $.ajax({
+        type: "POST",
+        url: '/edit/apiData',
+        data: JSON.stringify({endpoints: endpointData}),
+        contentType: 'application/json',
+        success: function (data) {
+            console.log('======> updateEnpoint');
+            console.log(data);
+        }
+    });
+}
+
+
+function generateApiKey() {
+    console.log('>generateApiKey');
+    $.ajax({
+        type: "PUT",
+        url: '/edit/apiData',
+        data: {},
+        contentType: 'application/json',
+        success: function (data) {
+            console.log(data);
+            apiDataForm(data);
         }
     });
 }

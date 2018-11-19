@@ -13,10 +13,11 @@ block tab_menu
                 a.nav-link.dropdown-toggle(data-toggle='dropdown', href='#', role='button', aria-haspopup='true', aria-expanded='false')
                     img(src='img/admin.png' height='24')
                     |  SHPP
-                .dropdown-menu
+                .dropdown-menu.dropdown-menu-right
                     //a.copyLink.dropdown-item(href='#') Получить ссылку
                     a.dropdown-item(href='user/shpp') Перейти по ссылке
-                    //a.dropdown-item(href='#') ---
+                    .dropdown-divider
+                    a.webhookSettings.dropdown-item(href='#', data-toggle="modal", data-target="#webhook-modal-form") Настройка оповещения
                     .dropdown-divider
                     a#logOut.dropdown-item(href='#') Выход
     #nav-tabContent.tab-content
@@ -74,6 +75,42 @@ block tab_menu
                     .modal-footer
                         button.btn.btn-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Удалить')
+
+    // Modal webhook
+    #webhook-modal-form.modal.fade(tabindex='-1', role='dialog', aria-labelledby='webhookModalLabel', aria-hidden='true')
+        form
+            .modal-dialog(role='document')
+                .modal-content
+                    .modal-header
+                        h5.modal-title Настройка оповещений
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') ×
+                    .modal-body
+                        .form-group
+                            label(for='apiKey') apiKey
+                            .input-group.mb-3
+                                input#apiKey.form-control(aria-label='text', aria-describedby='apiKeyHelp', readonly='', value='-')
+                                .input-group-append
+                                    button#apiKayGenerate.btn.btn-outline-secondary(type='button') Генерировать
+                            //small#apiKeyHelp.font-italic.form-text.text-muted apiKey help
+                        .form-group
+                            label(for='endpointData') Список серверов
+                            textarea#endpointData.form-control(aria-label='With textarea', aria-describedby='endpointDataHelp')
+                            small#endpointDataHelp.font-italic.form-text.text-muted Список серверов по одному на строку
+                        //ul.list-group.list-group-flush
+                        //    li.list-group-item.custom-control.custom-checkbox
+                        //        input#ednkkj.custom-control-input(type='checkbox')
+                        //        label.custom-control-label(for='ednkkj') Check this custom checkbox
+                        //    li.list-group-item.custom-control.custom-checkbox
+                        //        input#ednkkj.custom-control-input(type='checkbox')
+                        //        label.custom-control-label(for='ednkkj') Check this custom checkbox
+                        //    li.list-group-item.custom-control.custom-checkbox
+                        //        input#ednkkj.custom-control-input(type='checkbox')
+                        //        label.custom-control-label(for='ednkkj') Check this custom checkbox
+
+                    .modal-footer
+                        button.btn.btn-secondary(type='button', data-dismiss='modal') Отмена
+                        input.btn.btn-primary(type='submit', value='Сохранить')
 
 
     //script.

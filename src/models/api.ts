@@ -28,6 +28,7 @@
    return new Promise((reject, resolve) => {
     jwt.sign({user: userName}, 'secret', (err: Error, token: string) => {
       if(err) {
+          console.log(err)
         return reject(err);
       }
       resolve(token);

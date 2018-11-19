@@ -62,6 +62,14 @@ block block_patterns
                             label(for='inputPatternType') Тип события
                             input#inputPatternType.form-control(type='text', aria-describedby='typeHelp', minlength='5')
                             small#typeHelp.font-italic.form-text.text-muted Краткое название типа собития
+                        .custom-control.custom-checkbox.my-1.mr-sm-2
+                            input#inputWebHookEnable.custom-control-input(type='checkbox')
+                            label.custom-control-label(for='inputWebHookEnable') Оповещать сервер о событиях
+                        //form.was-validated
+                        //    .custom-control.custom-checkbox.mb-3
+                        //        input#customControlValidation1.custom-control-input(type='checkbox' required='')
+                        //        label.custom-control-label(for='customControlValidation1') Check this custom checkbox
+                        //        .invalid-feedback Example invalid feedback text
                         .form-group
                             label(for='inputDescription') Описание
                             textarea#inputDescription.form-control(aria-label='With textarea', aria-describedby='descriptionHelp', minlength='5')
@@ -71,9 +79,9 @@ block block_patterns
                                 .form-group
                                     label(for='inputNumber') Количество участников
                                     input#inputNumber.form-control(type='number', value='1', min='1')
-                                .form-group.form-check
-                                    input#inputMultiAccess.form-check-input(type='checkbox')
-                                    label.form-check-label(for='inputMultiAccess') Однократное участие
+                                .custom-control.custom-checkbox.my-1.mr-sm-2
+                                    input#inputMultiAccess.custom-control-input(type='checkbox')
+                                    label.custom-control-label(for='inputMultiAccess') Однократное участие
                             .col
                                 .form-group
                                     label(for='inputDuration') Продолжительность, мин

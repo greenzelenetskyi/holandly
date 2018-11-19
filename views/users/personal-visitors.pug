@@ -24,7 +24,7 @@ block block_visitors
             timeEvent = timeEvent.replace(/timeEventText/gi, moment(timeData.time, 'hh:mm:ss').format("HH:mm") + '-' +
                 moment(timeEnd, 'mm').format("HH:mm"));
             timeEvent = timeEvent.replace(/typeEventText/gi, timeData.type);
-            // timeEvent = timeEvent.replace(/typeEventDescription/gi, dateData.description);
+            timeEvent = timeEvent.replace(/typeEventDescription/gi, userPatterns[timeData.patternId].description);
             timeEvent = timeEvent.replace(/visitorsNumberText/gi, 'Участников ' + timeData.occupied + ' из ' + timeData.number);
             document.getElementById(accordionId).innerHTML += timeEvent;
             return document.getElementById('visitorsListID' + elementId);

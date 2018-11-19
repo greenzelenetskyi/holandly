@@ -11,7 +11,7 @@ const makeSqlQuery = (db: any, sqlString: string, params?: any): Promise<any> =>
   })  
 }
 
-export const addApiEndpoints = (endpoints: string, userId: number, db: any) => {
+export const addApiEndpoints = (endpoints: string, userId: number,db: any) => {
   let sqlString = `update users set endpoints=? where userId=?`;
   return makeSqlQuery(db, sqlString, [endpoints, userId]);
 }
