@@ -292,9 +292,9 @@ export let scheduleEvent = async (req: Request, res: Response) => {
     let db: any = await getDbCon(dbPool);
     for (let event of events) {
       if (event.eventId == 0) {
-        addNewEvent(event, db);
+        await addNewEvent(event, db);
       } else {
-        rescheduleExistingEvent(event, db, req.user.login);
+        await rescheduleExistingEvent(event, db, req.user.login);
       }
     }
     db.release();
