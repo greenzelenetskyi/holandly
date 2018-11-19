@@ -30,7 +30,8 @@ export const getUserApiData = (req: Request, res: Response) => {
 
 export const updateUserEndpoints = async (req: Request, res: Response) => {
   try {
-    await userModel.addApiEndpoints(req.body, req.user.userId, req.app.get('dbPool'));
+    await userModel.addApiEndpoints(req.body.endpoint, req.user.userId, req.app.get('dbPool'));
+    res.end();
   } catch (err) {
     res.status(500).json({error: err.message});
   }
