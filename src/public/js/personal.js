@@ -171,7 +171,8 @@ function addHandlerCancelVisitor(element) {
             console.log(this);
             var data = {
                 email: this.getAttribute('data-email'),
-                eventId: this.getAttribute('data-eventId')
+                eventId: this.getAttribute('data-eventId'),
+                visitorId: this.getAttribute('data-visitorId')
             };
             $('#descriptionText')[0].innerText =
                 'Отмена участия: ' + this.getAttribute('data-visitor') + ' [' + data.email + ']';
