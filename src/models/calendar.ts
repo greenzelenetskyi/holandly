@@ -21,14 +21,14 @@ jwtClient.authorize((err: Error, tokens: any) => {
 
 const callApi = (apiFunction: Function, apiObject: any) => {
     return new Promise((resolve, reject) => {
-      apiFunction(apiObject, (err: Error, response: any) => {
-        if(err) {
-          return reject(err);
-        }
-        resolve(response);
-      })
+        apiFunction(apiObject, (err: Error, response: any) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(response);
+        })
     })
-  }
+}
 
 //Google Calendar API
 let calendar = google.calendar('v3');
@@ -76,14 +76,14 @@ export const updateEvent = async (eventId: any, resourceFields: any) => {
     let id = '1000' + eventId
     console.log(resourceFields)
     try {
-      let apiResponse = await callApi(calendar.events.patch, {
-        auth: jwtClient,
-        calendarId: calendId,
-        eventId: id,
-        resource: resourceFields
-      });
-      console.log('Event updated');
+        let apiResponse = await callApi(calendar.events.patch, {
+            auth: jwtClient,
+            calendarId: calendId,
+            eventId: id,
+            resource: resourceFields
+        });
+        console.log('Event updated');
     } catch (err) {
-      console.log('The API returned an error: ' + err.message);
+        console.log('The API returned an error: ' + err.message);
     }
 }

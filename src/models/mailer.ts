@@ -2,7 +2,6 @@ import nodemailer from 'nodemailer';
 import mailgun from 'nodemailer-mailgun-transport';
 import moment from 'moment';
 
-
 interface TemplateVars {
     visitor: string,
     user: string,
@@ -39,15 +38,15 @@ export const notify = async (events: TemplateVars[], name: string, explanation: 
     , emailSubject: string, useTemplate: Function) => {
     events.forEach((event: TemplateVars) => {
         event.date = moment(event.date).format('DD.MM.YYYY');
-        if(events[0].hasOwnProperty('before')) {
+        if (events[0].hasOwnProperty('before')) {
             event.before = events[0].before;
         }
         mailer.sendMail({
             from: 'greenzelenetskyi@gmail.com',
             to: event.email,
             subject: emailSubject + ' ' + event.type + ' ' + event.date
-                     + ' в ' + event.time,
-            html: useTemplate({...event, user: name, reason: explanation})
+                + ' в ' + event.time,
+            html: useTemplate({ ...event, user: name, reason: explanation })
         }, function (err, info) {
             if (err) {
                 console.log('Error: ' + err);

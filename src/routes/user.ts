@@ -7,7 +7,9 @@ export const userRouter = express.Router();
 
 userRouter.use(bodyParser.json());
 
-userRouter.get('/', userController.requireLogin, userController.getMainPage);
+userRouter.use(userController.requireLogin);
+
+userRouter.get('/', userController.getMainPage);
 
 userRouter.route('/login')
     .get(userController.getLoginPage)
@@ -16,27 +18,27 @@ userRouter.route('/login')
 userRouter.get('/logout', userController.stopSession);
 
 userRouter.route('/events')
-    .get(userController.requireLogin, userController.sendAvailableEvents)
-    .post(userController.requireLogin, userController.scheduleEvent);
+    .get(userController.sendAvailableEvents)
+    .post(userController.scheduleEvent);
 
 userRouter.route('/pattern')
-    .get(userController.requireLogin, userController.sendEventPatterns)
-    .post(userController.requireLogin, userController.addNewEventPattern)
-    .put(userController.requireLogin, userController.updateEventPattern);
+    .get(userController.sendEventPatterns)
+    .post(userController.addNewEventPattern)
+    .put(userController.updateEventPattern);
 
 /* Returns the events, which have visitors*/
-userRouter.get('/scheduled', userController.requireLogin, userController.sendScheduledEvents);
+userRouter.get('/scheduled', userController.sendScheduledEvents);
 
 /* deletes the pattern by id specified in params, and then deletes all the events  */
-userRouter.delete('/pattern/*', userController.requireLogin, userController.deleteEventPattern);
+userRouter.delete('/pattern/*', userController.deleteEventPattern);
 
 /* the param passed is the event id */
-userRouter.delete('/events/*', userController.requireLogin, userController.deleteEvent);
+userRouter.delete('/events/*', userController.deleteEvent);
 
 /* cancels an event for one visitor */
-userRouter.delete('/cancel', userController.requireLogin, userController.deleteEventVisitor);
+userRouter.delete('/cancel', userController.deleteEventVisitor);
 
 userRouter.route('/apiData')
-  .get(userController.requireLogin, userController.getUserApiData)
-  .post(userController.requireLogin, userController.updateUserEndpoints)
-  .put(userController.requireLogin, userController.generateNewApiToken);
+    .get(userController.getUserApiData)
+    .post(userController.updateUserEndpoints)
+    .put(userController.generateNewApiToken);

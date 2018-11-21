@@ -7,6 +7,7 @@ import * as mailer from '../models/mailer';
 import pug from 'pug';
 import { MysqlError, Connection, Pool, PoolConnection } from 'mysql';
 import * as api from '../models/api';
+import jwt from 'jsonwebtoken';
 
 const DEADLINE = '30'; //mins till start
 
@@ -14,8 +15,10 @@ const useCancelTemplate = pug.compileFile(path.join(__dirname, '../../views/emai
 const useConfirmTemplate = pug.compileFile(path.join(__dirname, '../../views/emails/confirmation.pug'));
 const useRescheduleTemplate = pug.compileFile(path.join(__dirname, '../../views/emails/reschedule.pug'));
 
-export let requireLogin = (req: Request, res: Response, next: Function) => {
-  if (!req.isAuthenticated()) {
+export const requireLogin = (req: Request, res: Response, next: Function) => {
+  if (req.path == '/login') {
+    next();
+  } else if (!req.isAuthenticated()) {
     res.redirect('/edit/login');
   } else {
     next();
@@ -23,8 +26,8 @@ export let requireLogin = (req: Request, res: Response, next: Function) => {
 }
 
 export const getUserApiData = (req: Request, res: Response) => {
-  if(req.user.apikey && req.user.endpoints) {
-    res.json({apikey: req.user.apikey, endpoints: req.user.endpoints});
+  if (req.user.apikey && req.user.endpoints) {
+    res.json({ apikey: req.user.apikey, endpoints: req.user.endpoints });
   }
 }
 
@@ -33,23 +36,23 @@ export const updateUserEndpoints = async (req: Request, res: Response) => {
     await userModel.addApiEndpoints(req.body.endpoints, req.user.userId, req.app.get('dbPool'));
     res.end();
   } catch (err) {
-    res.status(500).json({error: err.message});
+    res.status(500).json({ error: err.message });
   }
-  
+
 }
 
 export const generateNewApiToken = async (req: Request, res: Response) => {
   try {
     console.log(req.user.endpoints);
-    if(!req.user.endpoints) {
-      return res.status(400).json({error: 'No endpoints specified'});
+    if (!req.user.endpoints) {
+      return res.status(400).json({ error: 'No endpoints specified' });
     }
-    let token = await api.generateApiToken(req.user.login);
+    let token = jwt.sign({ user: req.user.login }, process.env.API_SECRET, { algorithm: process.env.API_ALGORITHM });
     await userModel.saveTokenToDb(token, req.user.userId, req.app.get('dbPool'));
-    res.json({jwt: token, endpoints: req.user.endpoints});
+    res.json({ jwt: token, endpoints: req.user.endpoints });
   } catch (err) {
-      console.log(err);
-    res.status(500).json({error: err.message});
+    console.log(err)
+    res.status(500).json({ error: err.message });
   }
 }
 
@@ -73,6 +76,7 @@ const makeVisitorObject = (entry: any): any => {
   return {
     name: entry.name,
     email: entry.email,
+    visitorId: entry.visitorId
   }
 }
 
@@ -168,7 +172,7 @@ export let addNewEventPattern = async (req: Request, res: Response) => {
     if (insertionResult.affectedRows === 0) {
       return res.status(409).end();
     }
-    if(req.body.hasApiHook) {
+    if (req.body.hasApiHook) { // TODO: remove / testing
       api.sendHookData({
         event: 'signin',
         pattern: 'random',
@@ -176,10 +180,11 @@ export let addNewEventPattern = async (req: Request, res: Response) => {
         time: 'now',
         visitorName: 'vasyl',
         visitorEmail: 'vasyl@com.com'
-       });
+      });
     }
     res.end();
   } catch (err) {
+    console.log(err)
     res.status(500).json({ error: err.message });
   }
 }
@@ -248,7 +253,14 @@ export let deleteEvent = async (req: Request, res: Response) => {
 
 export let deleteEventVisitor = async (req: Request, res: Response) => {
   try {
-    let deletionResult = await userModel.deleteEventVisitor(req.body, req.app.get('dbPool'));
+    let args;
+    if (req.body) {
+      args = req.body;
+    } else {
+      args = { eventId: req.params.eventId, visitorId: req.params.visitorId };
+    }
+
+    let deletionResult = await userModel.deleteEventVisitor(args, req.app.get('dbPool'));
     if (deletionResult.affectedRows === 0) {
       return res.status(409).end();
     }
@@ -292,9 +304,9 @@ export let scheduleEvent = async (req: Request, res: Response) => {
     let db: any = await getDbCon(dbPool);
     for (let event of events) {
       if (event.eventId == 0) {
-        addNewEvent(event, db);
+        await addNewEvent(event, db);
       } else {
-        rescheduleExistingEvent(event, db, req.user.login);
+        await rescheduleExistingEvent(event, db, req.user.login);
       }
     }
     db.release();
@@ -356,5 +368,18 @@ const addEventToCalendar = async (eventData: any, db: any) => {
     calendar.insertToCalendar(eventData);
   } catch (err) {
     console.log(err.message);
+  }
+}
+
+export const getEventData = async (req: Request, res: Response) => {
+  try {
+    let data = await userModel.getEventData(req.params.eventId, req.app.get('dbPool'));
+    if (data.length > 0) {
+      res.json(data[0]);
+    } else {
+      res.status(400).json();
+    }
+  } catch (err) {
+    console.log(err);
   }
 }

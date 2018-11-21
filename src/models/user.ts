@@ -2,16 +2,16 @@ import mysql, { MysqlError } from 'mysql';
 
 const makeSqlQuery = (db: any, sqlString: string, params?: any): Promise<any> => {
   return new Promise((resolve, reject) => {
-      db.query(sqlString, params, (err: MysqlError, result: Object[]) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve(result);
-      })
-  })  
+    db.query(sqlString, params, (err: MysqlError, result: Object[]) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(result);
+    })
+  })
 }
 
-export const addApiEndpoints = (endpoints: string, userId: number,db: any) => {
+export const addApiEndpoints = (endpoints: string, userId: number, db: any) => {
   let sqlString = `update users set endpoints=? where userId=?`;
   return makeSqlQuery(db, sqlString, [endpoints, userId]);
 }
@@ -33,7 +33,7 @@ export const findUser = (username: string, db: any) => {
 
 export const queryScheduledEvents = (userId: number, db: any) => {
   let sqlString = `
-      select visitors.name, visitors.email, 
+      select visitors.name, visitors.email, visitors.visitorId,
              eventslist.date, eventslist.time, eventslist.patternId, 
              eventvisitors.eventId, 
              eventpattern.type, eventpattern.number,
@@ -63,10 +63,11 @@ export const queryCreatedEvents = (userId: number, db: any) => {
 }
 
 export const insertNewPattern = (userId: number, pattern: any, db: any) => {
-  let sqlString = `insert into eventpattern (type, number, duration, description, userId, hasApiHook)
+  let sqlString = `insert into eventpattern (type, number, duration, description, hasApiHook, userId)
                       select ?, ?, ?, ?, ?, ?
                    where not exists (select * from eventpattern where (type=? and userId = ?));`
-  let queryParams = [pattern.type, pattern.number, pattern.duration, pattern.description, pattern.hasApiHook, userId, pattern.type, userId];
+  let queryParams = [pattern.type, pattern.number, pattern.duration, pattern.description
+    , pattern.hasApiHook, userId, pattern.type, userId];
   return makeSqlQuery(db, sqlString, queryParams);
 }
 
@@ -106,14 +107,14 @@ export const deleteEvent = (eventId: number, db: any) => {
   return makeSqlQuery(db, sqlString, eventId);
 }
 
-export const deleteEventVisitor = (event: {eventId: number, email:  string}, db: any) => {
+export const deleteEventVisitor = (event: { eventId: number, visitorId: string }, db: any) => {
   let sqlString = `delete from eventvisitors where eventId = ?
-                  and visitorId = (select visitors.visitorId from visitors where email=?);`;
-  let queryParams = [event.eventId, event.email];
+                  and visitorId = ?`;
+  let queryParams = [event.eventId, event.visitorId];
   return makeSqlQuery(db, sqlString, queryParams);
 }
 
-export const getVisitorNotificationData = (event: {eventId: number, email: string}, db: any) => {
+export const getVisitorNotificationData = (event: { eventId: number, email: string }, db: any) => {
   let sqlString = `SELECT type, description, date, time,
                     (select name from visitors where email = ?) as visito,
                     (select email from visitors where email = ?) as email from eventslist
@@ -152,7 +153,7 @@ export const scheduleNewEvent = (event: any, db: any) => {
                    WHERE eventId = ? or patternId = ? and time = ? and date = ?
                    HAVING COUNT(*) = 0`;
   let queryParams = [null, event.date, event.time, event.patternId
-                    , null, event.patternId, event.time, event.date];
+    , null, event.patternId, event.time, event.date];
   return makeSqlQuery(db, sqlString, queryParams);
 }
 
@@ -164,5 +165,10 @@ export const getEventDuration = (patternId: number, db: any) => {
 // google calendar api insert event call
 export const getPatternData = (patternId: number, db: any) => {
   let sqlString = `select description, duration, type from eventpattern where patternId=?`;
-  return makeSqlQuery(db,sqlString, patternId);
+  return makeSqlQuery(db, sqlString, patternId);
+}
+
+export const getEventData = (eventId: any, db: any) => {
+  let sqlString = `select eventId, date, time, patternId from holandly.eventslist where eventId=?`;
+  return makeSqlQuery(db, sqlString, eventId);
 }
