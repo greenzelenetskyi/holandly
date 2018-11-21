@@ -4,18 +4,18 @@ block tab_menu
     nav
         #nav-tab.nav.nav-tabs.justify-content-center
             a#menuLogo.nav-item.nav-link.flex-grow-1.disabled( href='#')
-                img(src='img/logoH4.png')
+                img(src='/img/logoH4.png')
             a#nav-visitors-tab.updateData.nav-item.nav-link.text-success.active(data-toggle='tab', href='#nav-visitors', role='tab', aria-controls='nav-visitors', aria-selected='true')
                 | События
             a#nav-patterns-tab.updateData.nav-item.nav-link.text-primary(data-toggle='tab', href='#nav-patterns', role='tab', aria-controls='nav-patterns', aria-selected='false')
                 | Шаблоны
             a.nav-item.dropdown
                 a.nav-link.dropdown-toggle(data-toggle='dropdown', href='#', role='button', aria-haspopup='true', aria-expanded='false')
-                    img(src='img/admin.png' height='24')
-                    |  SHPP
+                    img(src='/img/admin.png' height='24')
+                    |  #:LOGIN
                 .dropdown-menu.dropdown-menu-right
                     //a.copyLink.dropdown-item(href='#') Получить ссылку
-                    a.dropdown-item(href='user/shpp') Перейти по ссылке
+                    a.dropdown-item(href='#:USER') Перейти по ссылке
                     .dropdown-divider
                     a.webhookSettings.dropdown-item(href='#', data-toggle="modal", data-target="#webhook-modal-form") Настройка оповещения
                     .dropdown-divider
