@@ -50,7 +50,7 @@ exports.router.get('/', function (req, res) {
 });
 
 
-exports.router.get('/:userName', function (req, res) {
+exports.router.get('/', function (req, res) {
     var usr = req.params.userName;
     var patterns = [];
     //  collects information about possible events of user patterns
@@ -94,7 +94,7 @@ exports.router.get('/:userName', function (req, res) {
 });
 
 // events of the selected pattern
-exports.router.get('/:userName/:patternId', function (req, res) {
+exports.router.get('/:patternId', function (req, res) {
     var usr = req.params.userName;
     var patternId = req.params.patternId;
     con.query('select userId from users where login = ?', usr, function (err, results) {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import path from 'path';
 import * as userModel from '../models/user';
-import moment from 'moment';
+import moment, { relativeTimeThreshold } from 'moment';
 import * as calendar from '../models/calendar';
 import * as mailer from '../models/mailer';
 import pug from 'pug';
@@ -57,7 +57,7 @@ export const generateNewApiToken = async (req: Request, res: Response) => {
 }
 
 export let getMainPage = (req: Request, res: Response) => {
-  res.render('users/personal');
+  res.render('users/personal', { name: req.user.login});
 }
 
 export let stopSession = (req: Request, res: Response) => {
@@ -220,7 +220,7 @@ export const deleteEventPattern = async (req: Request, res: Response) => { // de
     let now = moment();
     mailer.notify(notificationData.filter((event: any) => {
       return now.isBefore(event.date, 'day')
-    }), req.user.login, req.body.reason, 'Oтмена участия: ', useCancelTemplate);
+    }), req.user.login, req.body.Reason, 'Oтмена участия: ', useCancelTemplate);
     if (!apiErr) {
       patternEvents.forEach((event) => {
         calendar.deleteCalendarEvent(event.eventId);
@@ -327,15 +327,12 @@ const addNewEvent = async (event: EventObject, db: Connection) => {
 }
 
 const rescheduleExistingEvent = async (event: any, db: Connection, login: string) => {
-  let reason = event.reason;
-  let prevDate = moment(event.dateOld).format('DD.MM.YYYY') + ' в ' + event.timeOld;
-  delete event.dateOld;
-  delete event.timeOld;
-  delete event.reason;
-  let updateResult = await userModel.updateEvent(event, db);
+  let { reason, duration, timeOld, dateOld, ...eventData } = event;
+  let prevDate = moment(dateOld).format('DD.MM.YYYY') + ' в ' + timeOld;
+  let updateResult = await userModel.updateEvent(eventData, db);
   if (updateResult.affectedRows > 0) {
-    let notificationData = await userModel.getEventNotificationData(event.eventId, db);
-    rescheduleInCalendar(event);
+    let notificationData = await userModel.getEventNotificationData(eventData.eventId, db);
+    rescheduleInCalendar(eventData, duration);
     if (notificationData.length > 0) {
       notificationData[0].before = prevDate;
       mailer.notify(notificationData, login, reason, 'Изменение в ', useRescheduleTemplate);
@@ -343,7 +340,7 @@ const rescheduleExistingEvent = async (event: any, db: Connection, login: string
   }
 }
 
-const rescheduleInCalendar = async (event: any) => {
+const rescheduleInCalendar = async (event: any, duration: number) => {
   try {
     let dateTime = moment(event.date + ' ' + event.time).format();
     //creates resources object for Calendar API
@@ -352,7 +349,7 @@ const rescheduleInCalendar = async (event: any) => {
         'dateTime': dateTime,
       },
       'end': {  // TODO get duration from the front-end if convenient
-        'dateTime': dateTime,
+        'dateTime': dateTime + duration,
       }
     });
   } catch (err) {
