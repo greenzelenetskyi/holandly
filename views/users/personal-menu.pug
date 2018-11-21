@@ -12,10 +12,10 @@ block tab_menu
             a.nav-item.dropdown
                 a.nav-link.dropdown-toggle(data-toggle='dropdown', href='#', role='button', aria-haspopup='true', aria-expanded='false')
                     img(src='/img/admin.png' height='24')
-                    |  #:LOGIN
+                    = login
                 .dropdown-menu.dropdown-menu-right
                     //a.copyLink.dropdown-item(href='#') Получить ссылку
-                    a.dropdown-item(href='#:USER') Перейти по ссылке
+                    a.dropdown-item(href='/'+ login) Перейти страницу подписки
                     .dropdown-divider
                     a.webhookSettings.dropdown-item(href='#', data-toggle="modal", data-target="#webhook-modal-form") Настройка оповещения
                     .dropdown-divider
@@ -87,6 +87,10 @@ block tab_menu
                             span(aria-hidden='true') ×
                     .modal-body
                         .form-group
+                            label(for='aboutData') Информация об организаторе
+                            textarea#aboutData.form-control(aria-label='With textarea', aria-describedby='aboutDataHelp')
+                            small#aboutDataHelp.font-italic.form-text.text-muted Информация об организаторе будет включена в сообщение оповещения
+                        .form-group
                             label(for='apiKey') apiKey
                             .input-group.mb-3
                                 input#apiKey.form-control(aria-label='text', aria-describedby='apiKeyHelp', readonly='', value='-')
@@ -97,17 +101,6 @@ block tab_menu
                             label(for='endpointData') Список серверов
                             textarea#endpointData.form-control(aria-label='With textarea', aria-describedby='endpointDataHelp')
                             small#endpointDataHelp.font-italic.form-text.text-muted Строка = URL одного сервера
-                        //ul.list-group.list-group-flush
-                        //    li.list-group-item.custom-control.custom-checkbox
-                        //        input#ednkkj.custom-control-input(type='checkbox')
-                        //        label.custom-control-label(for='ednkkj') Check this custom checkbox
-                        //    li.list-group-item.custom-control.custom-checkbox
-                        //        input#ednkkj.custom-control-input(type='checkbox')
-                        //        label.custom-control-label(for='ednkkj') Check this custom checkbox
-                        //    li.list-group-item.custom-control.custom-checkbox
-                        //        input#ednkkj.custom-control-input(type='checkbox')
-                        //        label.custom-control-label(for='ednkkj') Check this custom checkbox
-
                     .modal-footer
                         button.btn.btn-secondary(type='button', data-dismiss='modal') Отмена
                         input.btn.btn-primary(type='submit', value='Сохранить')

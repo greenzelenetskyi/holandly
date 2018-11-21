@@ -54,7 +54,7 @@ export const generateNewApiToken = async (req: Request, res: Response) => {
 }
 
 export let getMainPage = (req: Request, res: Response) => {
-  res.render('users/personal');
+  res.render('users/personal',{login:'Ш++'});
 }
 
 export let stopSession = (req: Request, res: Response) => {
