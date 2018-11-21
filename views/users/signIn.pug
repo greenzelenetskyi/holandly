@@ -22,4 +22,29 @@ html
             p(class="mt-5 mb-3 text-muted") © 2018 Holateam 4
     script
         include ../../dist/public/js/lib/jquery-3.3.1.js
-        include ../../dist/public/js/signIn.js
+    script.
+        $('.form-signin').submit(function (event) {
+            console.log('login');
+            var login = $('#inputLogin').val()
+            var data = {'username': login, 'password': $('#inputPassword').val()};
+            console.log(data);
+            // var location = '/edit';
+            var location = '/' + login + '/edit';
+            $.ajax({
+                type: "post",
+                url: '/edit/login',
+                dataType: 'html',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (data, textStatus, request) {
+                    $.ajax({
+                        type: "get",
+                        url: "/edit",
+                        dataType: "html",
+                        success: function (data, textStatus, request) {
+                            window.location = location;
+                        }
+                    })
+                }
+            });
+        });

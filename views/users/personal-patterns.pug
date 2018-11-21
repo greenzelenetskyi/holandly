@@ -27,8 +27,8 @@ block block_patterns
     //================== visitors page templates =========================
     #patternsView.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
         .input-group
-            a.userLink.card-link(href='user/shpp')
-                | user/shpp
+            a.userLink.card-link(href='#:USER')
+                | #:USER
             a.form-control.invisible
             .input-group-append
                 button.btn.btn-outline-secondary(type='button', data-toggle='modal', data-target='#editEvents-modal-form').invisible
