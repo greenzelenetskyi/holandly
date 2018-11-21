@@ -35,6 +35,7 @@ block block_visitors
             visitor = visitor.replace(/dataVisitorName/gi, visitorData.name);
             visitor = visitor.replace(/dataEmail/gi, visitorData.email);
             visitor = visitor.replace(/dataEventID/gi, visitorData.eventId);
+            visitor = visitor.replace(/dataVisitorId/gi, visitorData.visitorId);
             document.getElementById(visitorsListId).innerHTML += visitor;
         }
 
@@ -102,5 +103,9 @@ block block_visitors
             li.list-group-item.d-flex.justify-content-between.align-items-center
                 span dataVisitorName
                 span dataEmail
-                a.cancel-visitor.btn.btn-outline-danger.badge(data-eventId='dataEventID',data-visitor='dataVisitorName',
-                data-email='dataEmail' data-toggle="modal" data-target="#remove-modal-form" data-tooltip="tooltip" title="Отменить участие") Х
+                a.cancel-visitor.btn.btn-outline-danger.badge(
+                data-eventId='dataEventID',
+                data-visitor='dataVisitorName',
+                data-visitorId='dataVisitorId'
+                data-email='dataEmail',
+                data-toggle="modal", data-target="#remove-modal-form" data-tooltip="tooltip" title="Отменить участие") Х

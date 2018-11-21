@@ -7,7 +7,7 @@ block block_patterns
             if (typeof data === "object") {
                 data.forEach(function (pattern) {
                     newCard = document.createElement('div');
-                    newCard.classList.add('col-sm-4');
+                    newCard.classList.add('col-sm-3');
                     tempCard = document.getElementById('templatePattern').cloneNode(true).innerHTML;
                     tempCard = tempCard.replace(/templatePatternType/gi, pattern.type);
                     tempCard = tempCard.replace(/templatePatternId/gi, pattern.patternId);
@@ -57,7 +57,7 @@ block block_patterns
                         button.close(type='button', data-dismiss='modal', aria-label='Close')
                             span(aria-hidden='true') ×
                     .modal-body
-                        input#modalPattern_patternId(type='text', hidden)
+                        input#modalPattern_patternId(type='text', value='0', hidden)
                         .form-group
                             label(for='inputPatternType') Тип события
                             input#inputPatternType.form-control(type='text', aria-describedby='typeHelp', minlength='5')

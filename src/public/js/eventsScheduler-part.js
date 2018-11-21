@@ -41,6 +41,8 @@ function setDefaultPatternData() {
     $("#inputDescription").val('');
     $("input#inputNumber").val('1');
     $("input#inputDuration").val('60');
+    $("#inputMultiAccess").prop('checked', true);
+    $("#inputWebHookEnable").prop('checked', false);
 }
 
 function appendTimeToSchedule(timeEvent) {
