@@ -189,17 +189,17 @@ $(document).ready(function () {
     var modalWebHook = $('#webhook-modal-form');
     modalWebHook
         .on('show.bs.modal', function (event) {
-            console.log(event);
-            console.log(this);
-            console.log('webhook show');
+            // console.log(event);
+            // console.log(this);
+            // console.log('webhook show');
             getApiData();
         })
         .on('hide.bs.modal', function () {
-            console.log('webhook hide')
+            // console.log('webhook hide')
         })
         .on('submit.bs.modal', function (event) {
             event.preventDefault();
-            console.log('webhook submit');
+            // console.log('webhook submit');
             updateEnpoint({
                 endpoints: $('#endpointData').val(),
                 about: $('#aboutData').val(),
