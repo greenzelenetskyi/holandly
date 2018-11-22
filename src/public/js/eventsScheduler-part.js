@@ -77,7 +77,7 @@ function getScheduledDates() {
         var selectedDay = [];
         $('.dayOfWeek').each(function (i) {
             if ($(this)[0].checked) {
-                selectedDay.push($(this)[0].getAttribute('selectDayCode') * 1);
+                selectedDay.push($(this)[0].getAttribute('index') * 1);
             }
         });
         return getDates(editPatternEvents.startDate, editPatternEvents.endDate, selectedDay);
