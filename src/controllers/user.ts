@@ -25,20 +25,27 @@ export const requireLogin = (req: Request, res: Response, next: Function) => {
   }
 }
 
-export const getUserApiData = (req: Request, res: Response) => {
-  if (req.user.apikey && req.user.endpoints) {
-    res.json({ apikey: req.user.apikey, endpoints: req.user.endpoints });
+export const getUserApiData = async (req: Request, res: Response) => {
+  try {
+    let apiData = await userModel.retreiveApiData(req.user.userId, req.app.get('dbPool'));
+    if(apiData.length > 0) {
+      res.json(JSON.parse(JSON.stringify(apiData[0])));
+    } else {
+      res.status(400).json();
+    }
+  } catch (err) {
+    console.log(err)
+    res.status(500).json();
   }
 }
 
 export const updateUserEndpoints = async (req: Request, res: Response) => {
   try {
-    await userModel.addApiEndpoints(req.body.endpoints, req.user.userId, req.app.get('dbPool'));
+    await userModel.addApiEndpoints(req.body, req.user.userId, req.app.get('dbPool'));
     res.end();
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-
 }
 
 export const generateNewApiToken = async (req: Request, res: Response) => {
@@ -49,7 +56,7 @@ export const generateNewApiToken = async (req: Request, res: Response) => {
     }
     let token = jwt.sign({ user: req.user.login }, process.env.API_SECRET, { algorithm: process.env.API_ALGORITHM });
     await userModel.saveTokenToDb(token, req.user.userId, req.app.get('dbPool'));
-    res.json({ jwt: token, endpoints: req.user.endpoints });
+    res.json({ apikey: token, endpoints: req.user.endpoints });
   } catch (err) {
     console.log(err)
     res.status(500).json({ error: err.message });

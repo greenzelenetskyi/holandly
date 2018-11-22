@@ -11,9 +11,14 @@ const makeSqlQuery = (db: any, sqlString: string, params?: any): Promise<any> =>
   })
 }
 
-export const addApiEndpoints = (endpoints: string, userId: number, db: any) => {
-  let sqlString = `update users set endpoints=? where userId=?`;
-  return makeSqlQuery(db, sqlString, [endpoints, userId]);
+export const retreiveApiData = (userId: number, db: any) => {
+  let sqlString = `select apikey, endpoints, aboutClient as about from users where userId=?`;
+  return makeSqlQuery(db, sqlString, userId);
+}
+
+export const addApiEndpoints = (apiData: {endpoints: string, about: string}, userId: number, db: any) => {
+  let sqlString = `update users set endpoints=?, aboutClient=? where userId=?`;
+  return makeSqlQuery(db, sqlString, [apiData.endpoints, apiData.about, userId]);
 }
 
 export const saveTokenToDb = (token: any, userId: number, db: any) => {
@@ -22,7 +27,7 @@ export const saveTokenToDb = (token: any, userId: number, db: any) => {
 }
 
 export const getUserName = (userId: number, db: any) => {
-  let sqlString = `select userId, login, apikey, endpoints from holandly.users where userId=?`;
+  let sqlString = `select userId, login from holandly.users where userId=?`;
   return makeSqlQuery(db, sqlString, userId);
 }
 

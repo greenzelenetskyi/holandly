@@ -205,7 +205,7 @@ function updateEnpoint(endpointData) {
     $.ajax({
         type: "POST",
         url: '/edit/apiData',
-        data: JSON.stringify({endpoints: endpointData}),
+        data: JSON.stringify(endpointData),
         contentType: 'application/json',
         success: function (data) {
             console.log('======> updateEnpoint');

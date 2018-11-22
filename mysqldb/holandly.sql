@@ -35,7 +35,7 @@ CREATE TABLE `eventpattern` (
   UNIQUE KEY `id_UNIQUE` (`patternId`),
   KEY `fk_eventpattern_1_idx` (`userId`),
   CONSTRAINT `fk_eventpattern_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +44,6 @@ CREATE TABLE `eventpattern` (
 
 LOCK TABLES `eventpattern` WRITE;
 /*!40000 ALTER TABLE `eventpattern` DISABLE KEYS */;
-INSERT INTO `eventpattern` VALUES (7,'adfadsf',1,60,'adfadsad',1,0,'0'),(8,'asfddsafads',1,60,'adsfasfsa',1,0,'0'),(9,'asdfsaf',1,60,'safdasf',1,0,'0'),(10,'adsfasf',1,60,'',1,0,'0'),(11,'dsaffdafsa',1,60,'',1,0,'0');
 /*!40000 ALTER TABLE `eventpattern` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -126,7 +125,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('5KYEsviKSCa0a9NV1z83rjZbKk2aDlHj',1542556603,'{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"userId\":1,\"login\":\"Ш++\"}}}'),('RvoPc-nMkwblPJRkIeUKc3Zr0d43glqm',1542380148,'{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"userId\":1,\"login\":\"Ш++\"}}}'),('fN8jATMfSpSOgZt_Pl9xpFyeqofx7mMG',1542302829,'{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"userId\":1,\"login\":\"Ш++\"}}}'),('kNexKKok2KpygabKb57_gV6nQ36R8qlk',1542218866,'{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"userId\":1,\"login\":\"Ш++\"}}}');
+INSERT INTO `sessions` VALUES ('1Mb1qxhTiX3Aa9VSkAT3nL8X2ePLSkml',1542997001,'{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"userId\":1,\"login\":\"Ш++\"}}}'),('JQpy5DaY4Wiktl8IDKNNH5fqgd9Aivks',1542910666,'{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}'),('PAgB8ndzdilSwkZN3DwkQVT75bl0OwwH',1542910666,'{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}'),('mqNRAFEnTs2uWmzSIRcZJdSsz2ejdKc1',1542910666,'{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}'),('o5EtkF6zOwPeTw2fGvUWQv37Gf1NHEtu',1542924550,'{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"userId\":1,\"login\":\"Ш++\"}}}');
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,8 +140,9 @@ CREATE TABLE `users` (
   `userId` int(11) NOT NULL AUTO_INCREMENT,
   `login` varchar(45) CHARACTER SET utf8 NOT NULL,
   `password` varchar(45) CHARACTER SET utf8 NOT NULL,
-  `apikey` varchar(100) DEFAULT NULL,
+  `apikey` mediumtext,
   `endpoints` mediumtext,
+  `aboutClient` varchar(45) CHARACTER SET utf16 DEFAULT NULL,
   PRIMARY KEY (`userId`),
   UNIQUE KEY `email_UNIQUE` (`login`),
   UNIQUE KEY `id_UNIQUE` (`userId`)
@@ -155,7 +155,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Ш++','hola4',NULL,NULL),(2,'фа','a',NULL,NULL),(3,'1','1',NULL,NULL);
+INSERT INTO `users` VALUES (1,'Ш++','hola4','eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoi0KgrKyIsImlhdCI6MTU0MjczMjM4OH0.9eFsDFH4slE9UY-BsE4d9Q27oWzAOT3Wkf2J8QYbxy9kmQN4L7j718vSIhQ1xi6FmtUHjsOX9S51Hvtf2KPc1A','dsfhds','Школа программирования Ш++'),(2,'фа','a',NULL,NULL,NULL),(3,'1','1',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -174,7 +174,7 @@ CREATE TABLE `visitors` (
   UNIQUE KEY `id` (`visitorId`),
   UNIQUE KEY `id_2` (`visitorId`),
   UNIQUE KEY `id_3` (`visitorId`)
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,7 +183,7 @@ CREATE TABLE `visitors` (
 
 LOCK TABLES `visitors` WRITE;
 /*!40000 ALTER TABLE `visitors` DISABLE KEYS */;
-INSERT INTO `visitors` VALUES (1,'petro','asdf@adf.com'),(2,'kateryna','kat@kat.com'),(3,'vasyl','vas@vas.com'),(4,'ivan','iv@iv.com'),(5,'вася','g@f.com'),(6,'коля','а@a.com'),(7,'тарас','t@a.com'),(8,'Лера','v@gm.com'),(9,'Люда','liuda@g.com'),(10,'антон','a@afds.com'),(11,'петро','p@afds.com'),(12,'Марина','m@m.com'),(13,'петя','p@p.com'),(14,'вася','v@v.com'),(15,'кирюха','kir@k.com'),(16,'орест','o@m.com'),(17,'вуди','w@a.com'),(18,'лаки','lucky@l.com'),(19,'бенни','b@b.com'),(20,'таня','t@t.com'),(21,'валера','val@v.com'),(22,'тоник','ton@t.com'),(23,'костя','kos@k.com'),(24,'гена','gma@gma.com'),(25,'матвей','m@m.com'),(26,'Петя','z@a.com'),(27,'андрей','a@a.com'),(28,'вася','w@w.com'),(29,'анатолий','anat@a.com'),(30,'saf','afds@a.com'),(31,'kaka','kaka@kaka.com'),(32,'kaka','ka@ka.com'),(33,'afdsaf','afdasafads@csdfs.com'),(34,'asdfdsafasd','dsfads@adsfa.com'),(35,'fdsfdsfads','sdfads@adfa.com'),(36,'sdfaads','adsfs@sadfg.com'),(37,'sdsf','adfd@fdsf.com'),(38,'safsd','dsafads@gsadf.com'),(39,'dsfafddsafdsf','dsfds@asdfdsfs.com'),(40,'adfadsf','asdfds@gcmcma.com'),(41,'Василися','das@das.com'),(42,'Тартар','dsafa@gads.com'),(43,'Ляля','lala@la.com'),(44,'Конь','kon@das.com'),(45,'Кит','kit@gsa.com'),(46,'Лось','los@saa.com'),(47,'Дуб','dub@adf.com'),(48,'Бук','buk@gas.com'),(49,'Ананас','anna@ga.com'),(50,'Свинья','svin@ga.com'),(51,'Жаба','dsa@gmci.com'),(52,'Туз','dfsaaa@sl.com'),(53,'Бемби','bembi@ga.com'),(54,'Jason','gra@fsd.com'),(55,'Stas','adfsds@gsad.com'),(56,'Имя','greenzelen@gm.com'),(57,'Порося','poros@g.com');
+INSERT INTO `visitors` VALUES (1,'petro','asdf@adf.com'),(2,'kateryna','kat@kat.com'),(3,'vasyl','vas@vas.com'),(4,'ivan','iv@iv.com'),(5,'вася','g@f.com'),(6,'коля','а@a.com'),(7,'тарас','t@a.com'),(8,'Лера','v@gm.com'),(9,'Люда','liuda@g.com'),(10,'антон','a@afds.com'),(11,'петро','p@afds.com'),(12,'Марина','m@m.com'),(13,'петя','p@p.com'),(14,'вася','v@v.com'),(15,'кирюха','kir@k.com'),(16,'орест','o@m.com'),(17,'вуди','w@a.com'),(18,'лаки','lucky@l.com'),(19,'бенни','b@b.com'),(20,'таня','t@t.com'),(21,'валера','val@v.com'),(22,'тоник','ton@t.com'),(23,'костя','kos@k.com'),(24,'гена','gma@gma.com'),(25,'матвей','m@m.com'),(26,'Петя','z@a.com'),(27,'андрей','a@a.com'),(28,'вася','w@w.com'),(29,'анатолий','anat@a.com'),(30,'saf','afds@a.com'),(31,'kaka','kaka@kaka.com'),(32,'kaka','ka@ka.com'),(33,'afdsaf','afdasafads@csdfs.com'),(34,'asdfdsafasd','dsfads@adsfa.com'),(35,'fdsfdsfads','sdfads@adfa.com'),(36,'sdfaads','adsfs@sadfg.com'),(37,'sdsf','adfd@fdsf.com'),(38,'safsd','dsafads@gsadf.com'),(39,'dsfafddsafdsf','dsfds@asdfdsfs.com'),(40,'adfadsf','asdfds@gcmcma.com'),(41,'Василися','das@das.com'),(42,'Тартар','dsafa@gads.com'),(43,'Ляля','lala@la.com'),(44,'Конь','kon@das.com'),(45,'Кит','kit@gsa.com'),(46,'Лось','los@saa.com'),(47,'Дуб','dub@adf.com'),(48,'Бук','buk@gas.com'),(49,'Ананас','anna@ga.com'),(50,'Свинья','svin@ga.com'),(51,'Жаба','dsa@gmci.com'),(52,'Туз','dfsaaa@sl.com'),(53,'Бемби','bembi@ga.com'),(54,'Jason','gra@fsd.com'),(55,'Stas','adfsds@gsad.com'),(56,'Имя','greenzelen@gm.com'),(57,'Порося','poros@g.com'),(58,'Гоголь','gogol@ss.com'),(59,'дуда','sdfs@gsda.com'),(60,'Rdaf','aaa@aaaaaaa.com'),(61,'asdfdasf','afdsa@ads.cam'),(62,'Андрюха','greenzelenetskyi@gmail.com');
 /*!40000 ALTER TABLE `visitors` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -196,4 +196,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-18 16:29:52
+-- Dump completed on 2018-11-22 20:18:17
