@@ -46,11 +46,11 @@ var DEAD_ZONE = 120;
 
 /* GET home page. */
 exports.router.get('/', function (req, res) {
-    res.render('index', {title: 'Express'});
+    res.render('main');
 });
 
 
-exports.router.get('/', function (req, res) {
+exports.router.get('/:userName', function (req, res) {
     var usr = req.params.userName;
     var patterns = [];
     //  collects information about possible events of user patterns
@@ -94,7 +94,7 @@ exports.router.get('/', function (req, res) {
 });
 
 // events of the selected pattern
-exports.router.get('/:patternId', function (req, res) {
+exports.router.get('/:userName/:patternId', function (req, res) {
     var usr = req.params.userName;
     var patternId = req.params.patternId;
     con.query('select userId from users where login = ?', usr, function (err, results) {

@@ -5,10 +5,10 @@ const calendId = process.env.CALENDAR_ID;
 
 // configure a JWT auth client
 let jwtClient = new google.auth.JWT(
-    process.env.API_EMAIL,
+    process.env.GOOGLE_EMAIL,
     null,
-    process.env.API_KEY.replace(/\\n/g, '\n'),
-    [process.env.API_PATH]);
+    process.env.GOOGLE_KEY.replace(/\\n/g, '\n'),
+    [process.env.GOOGLE_PATH]);
 
 //authenticate request
 jwtClient.authorize((err: Error, tokens: any) => {
@@ -35,7 +35,7 @@ let calendar = google.calendar('v3');
 
 export const insertToCalendar = async (newEvent: any) => {
     let dateTime = moment(newEvent.date + ' ' + newEvent.time).format();
-    let id = '1000' + newEvent.eventId;
+    let id = '1100' + newEvent.eventId;
     try {
         let apiResponse: any = await callApi(calendar.events.insert, {
             auth: jwtClient,
@@ -59,7 +59,7 @@ export const insertToCalendar = async (newEvent: any) => {
 }
 
 export const deleteCalendarEvent = async (eventData: any) => {
-    let id = '1000' + eventData;
+    let id = '1100' + eventData;
     try {
         let apiResponse = await callApi(calendar.events.delete, {
             auth: jwtClient,

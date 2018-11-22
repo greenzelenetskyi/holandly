@@ -97,7 +97,7 @@ if (cluster.isMaster) {
   app.use('/api', apiRouter);
 
   // public page route
-  app.use('/:user', visitor.router);
+  app.use('/user', visitor.router);
 
   app.listen(process.env.PORT, () => {
     console.log('wat up');

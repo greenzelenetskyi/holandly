@@ -21,8 +21,3 @@ export const checkApiKey = (req: Request, res: Response, next: Function) => {
     }
   })
 }
-
-export const requestReceived = (req: Request, res: Response) => {
-  console.log(req.user);
-  console.log(req.params)
-}

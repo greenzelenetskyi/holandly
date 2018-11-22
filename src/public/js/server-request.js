@@ -132,7 +132,7 @@ function putPattern() {
     console.log('putPattern>>>');
     console.log(pattern);
     $.ajax({
-        type: (pattern.patternId === 0) ? "POST" : "PUT",
+        type: (pattern.patternId === '0') ? "POST" : "PUT",
         url: '/edit/pattern',
         data: JSON.stringify(pattern),
         contentType: 'application/json',

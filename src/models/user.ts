@@ -63,11 +63,11 @@ export const queryCreatedEvents = (userId: number, db: any) => {
 }
 
 export const insertNewPattern = (userId: number, pattern: any, db: any) => {
-  let sqlString = `insert into eventpattern (type, number, duration, description, hasApiHook, userId)
-                      select ?, ?, ?, ?, ?, ?
+  let sqlString = `insert into eventpattern (type, number, duration, description, hasApiHook, userId, multiaccess)
+                      select ?, ?, ?, ?, ?, ?, ?
                    where not exists (select * from eventpattern where (type=? and userId = ?));`
   let queryParams = [pattern.type, pattern.number, pattern.duration, pattern.description
-    , pattern.hasApiHook, userId, pattern.type, userId];
+    , pattern.hasApiHook, userId, pattern.multiaccess, pattern.type, userId];
   return makeSqlQuery(db, sqlString, queryParams);
 }
 

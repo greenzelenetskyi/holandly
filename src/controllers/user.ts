@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import path from 'path';
 import * as userModel from '../models/user';
-import moment, { relativeTimeThreshold } from 'moment';
+import moment from 'moment';
 import * as calendar from '../models/calendar';
 import * as mailer from '../models/mailer';
 import pug from 'pug';
@@ -56,11 +56,15 @@ export const generateNewApiToken = async (req: Request, res: Response) => {
   }
 }
 
-export let getMainPage = (req: Request, res: Response) => {
-  res.render('users/personal', { name: req.user.login});
+export const getMainPage = (req: Request, res: Response) => {
+  try {
+    res.render('users/personal', { login: req.user.login });
+  } catch (err) {
+    console.log('hi');
+  }
 }
 
-export let stopSession = (req: Request, res: Response) => {
+export const stopSession = (req: Request, res: Response) => {
   req.session.destroy((err: Error) => {
     if (err)
       throw err;
@@ -68,8 +72,12 @@ export let stopSession = (req: Request, res: Response) => {
   });
 }
 
-export let getLoginPage = (req: Request, res: Response) => {
-  res.render('users/signIn');
+export const getLoginPage = (req: Request, res: Response) => {
+  try {
+    res.render('users/signIn');
+  } catch (err) {
+    console.log('hi');
+  }
 }
 
 const makeVisitorObject = (entry: any): any => {
@@ -165,14 +173,14 @@ export const sendAvailableEvents = async (req: Request, res: Response) => {
   }
 }
 
-export let addNewEventPattern = async (req: Request, res: Response) => {
+export const addNewEventPattern = async (req: Request, res: Response) => {
   try {
     let insertionResult = await userModel.insertNewPattern(req.user.userId, req.body
       , req.app.get('dbPool'));
     if (insertionResult.affectedRows === 0) {
       return res.status(409).end();
     }
-    if (req.body.hasApiHook) { // TODO: remove / testing
+    if (req.body.hasApiHook) { //for testing, should not be here
       api.sendHookData({
         event: 'signin',
         pattern: 'random',
@@ -232,7 +240,7 @@ export const deleteEventPattern = async (req: Request, res: Response) => { // de
   }
 }
 
-export let deleteEvent = async (req: Request, res: Response) => {
+export const deleteEvent = async (req: Request, res: Response) => {
   try {
     let notificationData = await userModel.getEventNotificationData(req.params[0], req.app.get('dbPool'));
     let deletionResult = await userModel.deleteEvent(req.params[0], req.app.get('dbPool'));
@@ -251,7 +259,7 @@ export let deleteEvent = async (req: Request, res: Response) => {
   }
 }
 
-export let deleteEventVisitor = async (req: Request, res: Response) => {
+export const deleteEventVisitor = async (req: Request, res: Response) => {
   try {
     let args;
     if (req.body) {
@@ -297,7 +305,7 @@ interface EventObject {
 }
 
 // schedules new or updates existing
-export let scheduleEvent = async (req: Request, res: Response) => {
+export const scheduleEvent = async (req: Request, res: Response) => {
   let dbPool: Pool = req.app.get('dbPool');
   let events: EventObject[] = req.body;
   try {
@@ -348,8 +356,8 @@ const rescheduleInCalendar = async (event: any, duration: number) => {
       'start': {
         'dateTime': dateTime,
       },
-      'end': {  // TODO get duration from the front-end if convenient
-        'dateTime': dateTime + duration,
+      'end': {
+        'dateTime': moment(dateTime).add(duration, 'minutes'),
       }
     });
   } catch (err) {

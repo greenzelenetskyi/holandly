@@ -14,7 +14,7 @@ interface TemplateVars {
     description: string,
     email: string
 }
-/*
+
 const mailgunOptions = {
     auth: {
         api_key: process.env.MAILGUN_API_KEY,
@@ -23,7 +23,7 @@ const mailgunOptions = {
 }
 
 const mailer = nodemailer.createTransport(mailgun(mailgunOptions));
-*/
+/*
 const mailer = nodemailer.createTransport({
     host: 'smtp.ethereal.email',
     port: 587,
@@ -32,7 +32,7 @@ const mailer = nodemailer.createTransport({
         pass: 'jBCaPvxe7UFeCf61VT'
     }
 });
-
+*/
 
 export const notify = async (events: TemplateVars[], name: string, explanation: string
     , emailSubject: string, useTemplate: Function) => {
@@ -42,7 +42,7 @@ export const notify = async (events: TemplateVars[], name: string, explanation: 
             event.before = events[0].before;
         }
         mailer.sendMail({
-            from: 'greenzelenetskyi@gmail.com',
+            from: process.env.DOMAIN_MAIL,
             to: event.email,
             subject: emailSubject + ' ' + event.type + ' ' + event.date
                 + ' в ' + event.time,
