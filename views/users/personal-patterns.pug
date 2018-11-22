@@ -27,8 +27,9 @@ block block_patterns
     //================== visitors page templates =========================
     #patternsView.tab-content.shadow-lg.p-3.mb-5.bg-white.rounded
         .input-group
-            a.userLink.card-link(href='#:USER')
-                | #:USER
+            a.userLink.card-link(href='/'+ login ) Страница подписки на собития "
+                = login
+            |"
             a.form-control.invisible
             .input-group-append
                 button.btn.btn-outline-secondary(type='button', data-toggle='modal', data-target='#editEvents-modal-form').invisible
@@ -137,8 +138,14 @@ block block_patterns
                                         #tab-2.tab-content
                                             each val, index in {1:'ПН',2:'ВТ',3:'СР',4:'ЧТ',5:'ПТ',6:'СБ',0:'ВС'}
                                                 .form-check.form-check-inline
+<<<<<<< HEAD
                                                     temp = input.dayOfWeek(id="inlineCheckbox" + index)
                                                     temp.form-check-input(type='checkbox', selectDayCode= index)
+=======
+                                                    temp = input.dayOfWeek( id="inlineCheckbox" + index)
+                                                    temp.form-check-input(type='checkbox', selectDayCode= index)
+                                                    //input.dayOfWeek( id="inlineCheckbox" + index ).form-check-input(type='checkbox', selectDayCode= index)
+>>>>>>> 3c80018b65a0b09078d988075f598bc845d09e0f
                                                     label.form-check-label(for= "inlineCheckbox" + index )= val
                                             .form-group
                                                 label(for='finalDate') Дата окончания

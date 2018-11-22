@@ -200,7 +200,10 @@ $(document).ready(function () {
         .on('submit.bs.modal', function (event) {
             event.preventDefault();
             console.log('webhook submit');
-            updateEnpoint($('#endpointData').val());
+            updateEnpoint({
+                endpoints: $('#endpointData').val(),
+                about: $('#aboutData').val(),
+            });
             modalWebHook.modal('hide');
         });
     $('#apiKayGenerate').on('click', function () {

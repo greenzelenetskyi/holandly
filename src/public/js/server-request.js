@@ -181,6 +181,7 @@ function logOut() {
 function apiDataForm(data) {
     $('#apiKey').val(data.apikey);
     $('#endpointData').val(data.endpoints);
+    $('#aboutData').val(data.about);
 }
 
 function getApiData() {
@@ -201,8 +202,6 @@ function getApiData() {
 
 function updateEnpoint(endpointData) {
     console.log('>updateEnpoint');
-    console.log(endpointData);
-    console.log(endpointData.split('\n'));
     $.ajax({
         type: "POST",
         url: '/edit/apiData',
